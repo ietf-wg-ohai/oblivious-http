@@ -1,3 +1,5 @@
+MD_PREPROCESSOR := sed -e 's/{DATE}/'"$$(git log -n 1 --date=short --format='%ad' @)"'/g'
+
 LIBDIR := lib
 include $(LIBDIR)/main.mk
 
