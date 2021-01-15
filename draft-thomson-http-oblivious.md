@@ -159,10 +159,110 @@ occur, as shown in {{fig-overview}}:
 
 # HPKE Encapsulation
 
+HTTP message encapsulation uses HPKE for request and response encryption.
+An encapsulated HTTP message includes the following values:
+
+1. A binary-encoded HTTP message [CITEME].
+2. Padding of arbitrary length which MUST contain all zeroes.
+
+The encoding of an HTTP message is as follows:
+
+~~~
+Plaintext Message {
+  Message Length (i),
+  Message (..),
+  Padding Length (i),
+  Padding (..),
+}
+~~~
+
+This structure is then encrypted under a key with a specific identity, forming an encapsulated HTTP
+message, with the following structure:
+
+~~~
+Key Identifer {
+  Key ID Length (i),
+  Key ID (..),
+}
+
+Encapsulated Message {
+  Key Identifier (..)
+  Encrypted Message Length (i),
+  Encrypted Message (..),
+}
+~~~
+
+The encapsulated message Key ID, as well as the encryption mechanics, are different for requests
+and responses, as described below.
+
 ## HPKE Encapsulation of Requests {#request}
+
+Clients encapsulate a request Plaintext Message `msg` with an HPKE public key `pkR`, whose Key Identifier
+is `keyID` as follows:
+
+1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation key `enc`
+2. Encrypt (seal) `msg` with `keyID` as associated data using `context`, yielding ciphertext `ct`
+3. Concatenate `enc` and `ct`, yielding an Encrypted Message `encrypted_msg`
+
+In pseudocode, this procedure is as follows:
+
+~~~
+enc, context = SetupBaseS(pkR, "request")
+aad = 0x01 || keyID
+encrypted_msg = context.Seal(aad, msg)
+~~~
+
+Clients construct the Encapsulated Message `req` using `keyID` and `encrypted_msg`.
+
+Servers decrypt an Encapsulated Message by reversing this process. Given an Encapsulated Message `req` request
+with Key Identifier `keyID` corresponding to an existing HPKE private key `skR`, servers decapsulate
+the Message as follows:
+
+1. Parse the `req` Encrypted Message as the concatenation of `enc` and `encrypted_message`
+2. Compute an HPKE context using `skR` and the encapsulated key `enc` from `req`, yielding `context`
+3. Decrypt `encrypted_message` with `keyID` as associated data, yielding `msg` or an error on failure
+
+In pseudocode, this procedure is as follows:
+
+~~~
+context = SetupBaseR(enc, skR, "request")
+aad = 0x01 || keyID
+msg, error = context.Open(aad, ct)
+~~~
+
+Servers MUST verify that the Plaintext Message padding consists of all zeroes before processing the
+corresponding Message.
 
 ## HPKE Encapsulation of Responses {#response}
 
+Given an HPKE context `context` and a response Plaintext Message `resp` sent in response to a Plaintext
+Message `req`, servers encrypt the data as follows:
+
+1. Derive a symmetric key and nonce from `context`
+2. Encrypt `resp` with empty Key Identifier `emptyKeyID` as associated data, yielding `encrypted_msg`
+
+In pseudocode, this procedure is as follows:
+
+~~~
+secret = context.Export("secret", 32)
+prk = Extract(req, secret)
+key = Expand(secret, "key", Nk)
+nonce = Expand(secret, "nonce", Nn)
+aad = 0x02 || emptyKeyID
+encrypted_msg = Seal(key, nonce, aad, resp)
+~~~
+
+Extract and Expand are functions corresponding to the HPKE context's KDF algorithm, and Seal, Nk, and
+Nn correspond to the HPKE context's AEAD algorithm.
+
+Clients decrypt an Encapsulated Message by reversing this process. Namely, they derive the
+necessary AEAD parameters from an existing HPKE context and then decrypt (open) the Encapsulated
+Message encrypted message.
+
+## Padding
+
+Plaintext Messages support arbitrary length padding. Clients and servers MAY pad HTTP messages
+as needed to hide metadata leakage through ciphertext length.
 
 # Responsibility of Roles
 
