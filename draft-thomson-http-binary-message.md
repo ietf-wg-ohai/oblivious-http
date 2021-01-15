@@ -94,14 +94,7 @@ Message with Known-Length {
 
 Known-Length Field Section {
   Length (i) = 2..,
-  Field (..) ...,
-}
-
-Field {
-  Name Length (i) = 1..,
-  Name (..),
-  Value Length (i) = 1..,
-  Value (..),
+  Field Line (..) ...,
 }
 
 Known-Length Content {
@@ -163,7 +156,7 @@ Indeterminate-Length Content Chunk {
 }
 
 Indeterminate-Length Field Section {
-  Field (..) ...,
+  Field Line (..) ...,
   Content Terminator (i) = 0,
 }
 
@@ -275,8 +268,22 @@ follows.
 ## Header and Trailer Fields {#fields}
 
 Header and trailer field sections consist of zero or more field lines; see
-Section 5 of {{!HTTP}}. Each field line includes a name and a value. Both the
-name and value are non-zero length sequences of bytes.
+Section 5 of {{!HTTP}}. The format of a field section depends on whether the
+message is known- or intermediate-length.
+
+Each field line includes a name and a value. Both the name and value are
+non-zero length sequences of bytes. The format of a field line is shown in
+{{format-field-line}}.
+
+~~~
+Field Line {
+  Name Length (i) = 1..,
+  Name (..),
+  Value Length (i) = 1..,
+  Value (..),
+}
+~~~
+{: #format-field-line title="Format of a Field Line"}
 
 For field names, byte values that are not permitted in an HTTP field name cause
 the message to be invalid; see Section 5.1 of {{!HTTP}} and {{invalid}}. In
@@ -289,7 +296,8 @@ For field values, byte values that are not permitted in an HTTP field value
 cause the message to be invalid; see Section 5.5 of {{!HTTP}} and {{invalid}}.
 
 The same field name can be repeated in multiple field lines; see Section 5.2 of
-{{!HTTP}}.
+{{!HTTP}} for the semantics of repeated field names and rules for combining
+values.
 
 Like HTTP/2, this format has an exception for the combination of multiple
 instances of the `Cookie` field. Instances of fields with the ASCII-encoded
