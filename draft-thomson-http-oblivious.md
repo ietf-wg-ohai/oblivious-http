@@ -266,7 +266,7 @@ size of an AEAD key for the corresponding HPKE ciphersuite.
 ## HPKE Encapsulation of Requests {#request}
 
 Clients encapsulate a request `request` with an HPKE public key `pkR`,
-whose wire-encoded Key Identifier is `keyID` as follows:
+whose Key Identifier is `keyID` as follows:
 
 1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation
    key `enc`.
@@ -275,7 +275,7 @@ whose wire-encoded Key Identifier is `keyID` as follows:
    yielding ciphertext `ct`.
 
 3. Concatenate the length of `keyID` as a variable-length integer, `keyID`,
-   `enc` and `ct`, yielding an Encapsulated Request `enc_request`. Note that
+   `enc`, and `ct`, yielding an Encapsulated Request `enc_request`. Note that
    `enc` is of fixed-length, so there is no ambiguity in parsing `enc` and
    `ct`.
 
@@ -284,7 +284,7 @@ In pseudocode, this procedure is as follows:
 ~~~
 enc, context = SetupBaseS(pkR, "request")
 ct = context.Seal(keyID, request)
-enc_request = concat(keyID, enc, ct)
+enc_request = concat(vencode(len(keyID)), keyID, enc, ct)
 ~~~
 
 Servers decrypt an Encapsulated Request by reversing this process. Given an
@@ -298,8 +298,8 @@ Encapsulated Request `enc_request`, a server:
 2. Compute an HPKE context using `skR` and the encapsulated key `enc`, yielding
    `context`.
 
-3. Construct additional associated data, `aad`, as the wire-encoded Key
-   Identifier `keyID` from `enc_request`.
+3. Construct additional associated data, `aad`, as the Key Identifier `keyID`
+   from `enc_request`.
 
 4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
    on failure. If decryption fails, the server returns an error.
