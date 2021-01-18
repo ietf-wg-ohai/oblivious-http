@@ -31,6 +31,15 @@ normative:
 
 informative:
 
+  Dingledine2004:
+    title: "Tor: The Second-Generation Onion Router"
+    date: 2004-08
+    target: "https://svn.torproject.org/svn/projects/design-paper/tor-design.html"
+    author:
+      - ins: R. Dingledine
+      - ins: N. Mathewson
+      - ins: P. Syverson
+
 
 --- abstract
 
@@ -43,11 +52,44 @@ link requests to other requests from the same client.
 
 # Introduction
 
-Words...
+The act of making a request using HTTP reveals information about the client
+identity to a server. Though the content of requests might reveal information,
+that is information under the control of the client. In comparison, the source
+address on the connection reveals information that a client has only limited
+control over.
+
+Even where an IP address is not directly attributed to an individual, the use
+of an address over time can be used to correlate requests. Servers are able to
+use this information to assemble profiles of client behavior, from which they
+can make inferences about the people involved. The use of persistent
+connections to make multiple requests improves performance, but provides
+servers with additional certainty about the identity of clients in a similar
+fashion.
+
+Use of an HTTP proxy can provide a degree of protection against servers
+correlating requests. Systems like virtual private networks or the Tor network
+{{Dingledine2004}}, provide other options for clients.
+
+Though the overhead imposed by these methods varies, the cost for each request
+is significant. In order to prevent linking requests to the same client, each
+request requires a completely new TLS connection to the server. At a minimum,
+this requires an additional round trip to the server in addition to that
+required by the request. In addition to having high latency, there are
+significant secondary costs, both in terms of the number of additional bytes
+exchanged and the CPU cost of cryptographic computations.
 
 This document describes a method of encapsulation for binary HTTP messages
 {{BINARY}} using Hybrid Public Key Encryption (HPKE;
-{{!HPKE=I-D.irtf-cfrg-hpke}}).
+{{!HPKE=I-D.irtf-cfrg-hpke}}). This protects the content of both requests and
+responses and enables a deployment architecture that can separate the identity
+of a requester from the request.
+
+Though this scheme requires that servers and proxies explicitly support it,
+this design represents a performance improvement over options that perform just
+one request in each connection. With limited trust placed in the proxy (see
+{{trust}}), clients are assured that requests are not uniquely attributed to
+them or linked to other requests.
+
 
 # Conventions and Definitions
 
@@ -264,15 +306,131 @@ Message encrypted message.
 Plaintext Messages support arbitrary length padding. Clients and servers MAY pad HTTP messages
 as needed to hide metadata leakage through ciphertext length.
 
-# Responsibility of Roles
+
+# Responsibility of Roles {#trust}
+
+In this design, a client wishes to make a request of a server that is
+authoritative for the oblivious target resource. The client wishes to make this
+request without linking that request with either:
+
+1. The identity at the network and transport layer of the client (that is, the
+   client IP address and TCP or UDP port number the client uses to create a
+   connection).
+
+2. Any other request the client might have made in the past or might make in
+   the future.
+
+In order to ensure this, the client selects a proxy (that serves the oblivious
+proxy resource) that it trusts will protect this information by forwarding the
+encapsulated request and response without passing the server (that serves the
+oblivious request resource).
+
+In this section, a deployment where there are three entities is considered:
+
+* A client makes requests and receives responses
+* A proxy operates the oblivious proxy resource
+* A server operates both the oblivious request resource and the oblivious
+  target resource
+
+To achieve the stated privacy goals, the oblivious proxy resource cannot be
+operated by the same entity as the oblivious request resource. However,
+colocation of the oblivious request resource and oblivious target resource
+simplifies the interactions between those resources without affecting client
+privacy.
+
 
 ## Client
 
-## Oblivious Proxy Resource
+Clients have the fewest direct responsibilities, though clients do need to
+ensure that they do not undermine the process.
 
-## Oblivious Request Resource
+Clients cannot carry connection-level state between requests as they only
+establish direct connections to the proxy responsible for the oblivious proxy
+resource. However, clients need to ensure that they construct requests without
+any information gained from previous requests. Otherwise, the server might be
+able to use that information to link requests. Cookies {{?COOKIES=RFC6265}} are
+the most obvious feature that MUST NOT be used by clients. However, clients
+need to include all information learned from requests, which could include the
+identity of resources.
 
-## Oblivious Target Resource
+Clients also need to ensure that they correctly generate a new HPKE context for
+every request, using a good source of entropy ({{?RANDOM=RFC4086}}). Key reuse
+not only risks linkability, but it could expose request and response contents
+to the proxy. Note that an HPKE implementation is stateful and so prevents AEAD
+nonce reuse.
+
+Clients constructing the request that is to be encapsulated need to avoid
+including identifying information. Similarly, the request that is sent to the
+oblivious request resource, though this request can contain only minimal
+information as it only needs to include a method and the oblivious request
+resource URL.
+
+
+## Proxy Responsibilities
+
+The proxy that serves the oblivious proxy resource has a very simple function
+to perform. It forwards messages received at this resource to the oblivious
+request resource.
+
+The proxy MUST NOT add information about the client identity when forwarding
+requests. This includes the Via field, the Forwarded field
+{{?FORWARDED=RFC7239}}, and any similar information.
+
+
+### Denial of Service {#dos}
+
+As there are privacy benefits from having a large rate of requests forwarded by
+the same proxy (see {{ta}}), servers that operate the oblivious request
+resource might need an arrangement with proxies. This arrangement might be
+necessary to prevent having the large volume of requests being classified as an
+attack by the server.
+
+If a server does accept a large volume of requests from a proxy, it needs to
+trust that the proxy does not allow abusive levels of request volumes from
+clients. That is, if a server allows requests from the proxy to be exempt from
+rate limits, the server might want to ensure that the proxy applies similar
+rate limiting when receiving requests from clients.
+
+Servers that enter into an agreement with a proxy that enables a higher request
+rate might choose to authenticate the proxy to enable the higher rate.
+
+
+### Linkability Through Traffic Analysis {#ta}
+
+As the time at which encapsulated request or response messages are sent can
+reveal information to a network observer. Though messages exchanged between the
+oblivious proxy resource and the oblivious request resource might be sent in a
+single connection, traffic analysis could be used to match messages that are
+forwarded by the proxy.
+
+A proxy could, as part of its function, add delays in order to increase the
+anonymity set into which each message is attributed. This could latency to the
+overall time clients take to receive a response, which might not what some
+clients want.
+
+A proxy can use padding to reduce the effectiveness of traffic analysis.
+
+A proxy that forwards large volumes of exchanges can provide better privacy by
+providing larger sets of messages that need to be matched.
+
+What steps a proxy takes to mitigate the risk of traffic analysis is something
+a client needs to consider when selecting a proxy.
+
+
+## Server Responsibilities
+
+A server that operates both oblivious request and oblivious target resources is
+responsible for removing request encapsulation, generating a response the
+encapsulated request, and encapsulating the response.
+
+A server needs to ensure that the encapsulated responses it sends are padded to
+protect against traffic analysis; see {{ta}}.
+
+If separate entities provide the oblivious request resource and oblivious
+target resource, these entities might need an arrangement similar to that
+between server and proxy for managing denial of service; see {{dos}}. It is
+also necessary to provide confidentiality protection for the unprotected
+requests and responses, plus protections for traffic analysis; see {{ta}}.
 
 
 # Security Considerations
