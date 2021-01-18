@@ -71,8 +71,8 @@ correlating requests. Systems like virtual private networks or the Tor network
 {{Dingledine2004}}, provide other options for clients.
 
 Though the overhead imposed by these methods varies, the cost for each request
-is significant. In order to prevent linking requests to the same client, each
-request requires a completely new TLS connection to the server. At a minimum,
+is significant. Preventing request linkability requires that each request
+use a completely new TLS connection to the server. At a minimum,
 this requires an additional round trip to the server in addition to that
 required by the request. In addition to having high latency, there are
 significant secondary costs, both in terms of the number of additional bytes
@@ -356,8 +356,7 @@ identity of resources.
 Clients also need to ensure that they correctly generate a new HPKE context for
 every request, using a good source of entropy ({{?RANDOM=RFC4086}}). Key reuse
 not only risks linkability, but it could expose request and response contents
-to the proxy. Note that an HPKE implementation is stateful and so prevents AEAD
-nonce reuse.
+to the proxy. 
 
 Clients constructing the request that is to be encapsulated need to avoid
 including identifying information. Similarly, the request that is sent to the
@@ -370,7 +369,9 @@ resource URL.
 
 The proxy that serves the oblivious proxy resource has a very simple function
 to perform. It forwards messages received at this resource to the oblivious
-request resource.
+request resource, and forwards responses from the oblivious request resource
+back to clients. The proxy MUST forward response status codes without
+modification.
 
 The proxy MUST NOT add information about the client identity when forwarding
 requests. This includes the Via field, the Forwarded field
@@ -413,8 +414,6 @@ A proxy can use padding to reduce the effectiveness of traffic analysis.
 A proxy that forwards large volumes of exchanges can provide better privacy by
 providing larger sets of messages that need to be matched.
 
-What steps a proxy takes to mitigate the risk of traffic analysis is something
-a client needs to consider when selecting a proxy.
 
 
 ## Server Responsibilities
@@ -423,8 +422,9 @@ A server that operates both oblivious request and oblivious target resources is
 responsible for removing request encapsulation, generating a response the
 encapsulated request, and encapsulating the response.
 
-A server needs to ensure that the encapsulated responses it sends are padded to
-protect against traffic analysis; see {{ta}}.
+Servers should account for traffic analysis based on response size or generation time.
+Techniques such as padding or timing delays can help protect against such attacks;
+see {{ta}}.
 
 If separate entities provide the oblivious request resource and oblivious
 target resource, these entities might need an arrangement similar to that
