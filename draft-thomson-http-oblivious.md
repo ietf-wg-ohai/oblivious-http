@@ -252,6 +252,17 @@ Responses are bound to responses and so consist only of AEAD-protected content.
 {{response}} describes the process for constructing and processing an
 Encapsulated Response.
 
+~~~
+Encapsulated Response {
+  Nonce (Nk),
+  AEAD-Protected Response (..),
+}
+~~~
+{: #fig-enc-response title="Encapsulated Response"}
+
+The size of the Nonce field in an Encapsulated Response corresponds to the
+size of an AEAD key for the corresponding HPKE ciphersuite.
+
 ## HPKE Encapsulation of Requests {#request}
 
 Clients encapsulate a request `request` with an HPKE public key `pkR`,
@@ -260,22 +271,19 @@ whose Key Identifier is `keyID` as follows:
 1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation
    key `enc`.
 
-2. Construct additional associated data, `aad`, by prepending a single byte
-   with a value of 0x01 to the key identifier. The key identifier length is not
-   included in the AAD.
-
-3. Encrypt (seal) `request` with `keyID` as associated data using `context`,
+2. Encrypt (seal) `request` with `keyID` as associated data using `context`,
    yielding ciphertext `ct`.
 
-4. Concatenate the length of `keyID` as a variable-length integer, `keyID`,
-   `enc` and `ct`, yielding an Encapsulated Request `enc_request`.
+3. Concatenate the length of `keyID` as a variable-length integer, `keyID`,
+   `enc`, and `ct`, yielding an Encapsulated Request `enc_request`. Note that
+   `enc` is of fixed-length, so there is no ambiguity in parsing `enc` and
+   `ct`.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
 enc, context = SetupBaseS(pkR, "request")
-aad = concat(0x01, keyID)
-ct = context.Seal(aad, request)
+ct = context.Seal(keyID, request)
 enc_request = concat(vencode(len(keyID)), keyID, enc, ct)
 ~~~
 
@@ -284,29 +292,28 @@ Encapsulated Request `enc_request`, a server:
 
 1. Parses `enc_request` into `keyID`, `enc`, and `ct` (indicated using the
    function `parse()` in pseudocode). The server is then able to find the HPKE
-   private key, `skR`, corresponding to `keyID`.
+   private key, `skR`, corresponding to `keyID`. If no such key exists, the
+   server returns an error.
 
 2. Compute an HPKE context using `skR` and the encapsulated key `enc`, yielding
    `context`.
 
-3. Construct additional associated data, `aad`, by prepending a single byte
-   with a value of 0x01 to the key identifier.
+3. Construct additional associated data, `aad`, as the Key Identifier `keyID`
+   from `enc_request`.
 
 4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
-   on failure.
+   on failure. If decryption fails, the server returns an error.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
 keyID, enc, ct = parse(enc_request)
 context = SetupBaseR(enc, skR, "request")
-aad = concat(0x01, keyID)
-request, error = context.Open(aad, ct)
+request, error = context.Open(keyID, ct)
 ~~~
 
 Servers MUST verify that the request padding consists of all zeroes before
 processing the corresponding Message.
-
 
 ## HPKE Encapsulation of Responses {#response}
 
@@ -315,43 +322,48 @@ Given an HPKE context `context`, a request message `request`, and a response
 follows:
 
 1. Export a secret `secret` from `context`, using the string "response" as a
-   label. The length of this secret is `Nsk` - the length of the secret
+   label. The length of this secret is `Nk` - the length of an AEAD key
    assocated with `context`.
 
-2. Extract a pseudorandom key `prk` using the `Extract` function provided by
-   the KDF algorithm associated with `context`. The `ikm` input to this
-   function is `secret`; the `salt` input is `request`.
+2. Generate a random value of length `max(Nn, Nk)` bytes, called `response_nonce`.
 
-3. Use the `Expand` function provided by the same KDF to extract an AEAD key
+3. Extract a pseudorandom key `prk` using the `Extract` function provided by
+   the KDF algorithm associated with `context`. The `ikm` input to this
+   function is `secret`; the `salt` input is the concatenation of `enc` (from
+   `enc_request`) and `response_nonce`
+
+4. Use the `Expand` function provided by the same KDF to extract an AEAD key
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
    with `context`. Generating `key` uses a label of "key".
 
-4. Use the same `Expand` function to extract a nonce `nonce` of length `Nn` -
+5. Use the same `Expand` function to extract a nonce `nonce` of length `Nn` -
    the length of the nonce used by the AEAD. Generating `nonce` uses a label of
    "nonce".
 
-5. Construct additional associated data `aad`, that consists of a single byte
-   with a value of 0x02. <!-- Do we really need anything here? If we drop this,
-   we can drop the 0x01 prefix thing too. -->
-
 6. Encrypt `response`, passing the AEAD function Seal the values of `key`,
-   `nonce`, `aad`, and a `pt` input of `request`, which yields `enc_response`.
+   `nonce`, empty `aad`, and a `pt` input of `request`, which yields `ct`.
+
+7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
+   `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
+   ambiguity in parsing either `response_nonce` or `ct`.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
-secret = context.Export("secret", Nsk)
-prk = Extract(request, secret)
-key = Expand(secret, "key", Nk)
-nonce = Expand(secret, "nonce", Nn)
-aad = concat(0x02, emptyKeyID)
-enc_reponse = Seal(key, nonce, aad, response)
+secret = context.Export("secret", Nk)
+response_nonce = random(max(Nn, Nk))
+salt = concat(enc, response_nonce)
+prk = Extract(salt, secret)
+aead_key = Expand(secret, "key", Nk)
+aead_nonce = Expand(secret, "nonce", Nn)
+enc_reponse = Seal(aead_key, aead_nonce, "", response)
 ~~~
 
 Clients decrypt an Encapsulated Request by reversing this process. That is,
-clients follow the same process to derive values for `key`, `nonce`, and `aad`.
-The client then decrypts the Encapsulated Response using the Open function
-provided by the AEAD. Decrypting might produce an error, as shown.
+they first parse `enc_response` into `response_nonce` and `ct`. They then
+follow the same process to derive values for `aead_key` and `aead_nonce`.
+Finally, the client decrypts `ct` using the Open function provided by the
+AEAD. Decrypting might produce an error, as shown.
 
 ~~~
 reponse, error = Open(key, nonce, aad, enc_response)
@@ -413,7 +425,7 @@ identity of resources.
 Clients also need to ensure that they correctly generate a new HPKE context for
 every request, using a good source of entropy ({{?RANDOM=RFC4086}}). Key reuse
 not only risks linkability, but it could expose request and response contents
-to the proxy. 
+to the proxy.
 
 Clients constructing the request that is to be encapsulated need to avoid
 including identifying information. Similarly, the request that is sent to the
