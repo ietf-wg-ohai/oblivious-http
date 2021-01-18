@@ -325,7 +325,7 @@ follows:
    label. The length of this secret is `Nk` - the length of an AEAD key
    assocated with `context`.
 
-2. Generate a random value of length `Nk` bytes, called `response_nonce`.
+2. Generate a random value of length `max(Nn, Nk)` bytes, called `response_nonce`.
 
 3. Extract a pseudorandom key `prk` using the `Extract` function provided by
    the KDF algorithm associated with `context`. The `ikm` input to this
@@ -351,7 +351,7 @@ In pseudocode, this procedure is as follows:
 
 ~~~
 secret = context.Export("secret", Nk)
-response_nonce = random(Nk)
+response_nonce = random(max(Nn, Nk))
 salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
 aead_key = Expand(secret, "key", Nk)
