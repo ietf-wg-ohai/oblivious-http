@@ -80,6 +80,16 @@ Oblivious Target Resource:
   logically handles only regular HTTP requests and responses and so might be
   ignorant of the use of oblivious HTTP to reach it.
 
+This draft includes pseudocode that uses the functions and conventions defined
+in {{!HPKE}}.
+
+This draft uses the variable-length integer encoding from Section 16 of
+{{!QUIC=I-D.ietf-quic-transport}}. Encoding and decoding variable-length
+integers to a sequence of bytes are described using the functions `vencode()`
+and `vdecode()`. The function `len()` takes the length of a sequence of bytes.
+
+Formats are described using notation from Section 1.3 of {{!QUIC}}.
+
 
 # Overview
 
@@ -162,7 +172,7 @@ occur, as shown in {{fig-overview}}:
 HTTP message encapsulation uses HPKE for request and response encryption.
 An encapsulated HTTP message includes the following values:
 
-1. A binary-encoded HTTP message [CITEME].
+1. A binary-encoded HTTP message; see {{BINARY}}.
 2. Padding of arbitrary length which MUST contain all zeroes.
 
 The encoding of an HTTP message is as follows:
@@ -176,8 +186,11 @@ Plaintext Message {
 }
 ~~~
 
-This structure is then encrypted under a key with a specific identity, forming an encapsulated HTTP
-message, with the following structure:
+An Encapsulated Request is comprised of a length-prefixed key identifier and a
+HPKE-protected request message. HPKE protection includes an encapsulated KEM
+shared secret (or `enc`), plus the AEAD-protected request message. An
+Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes the
+process for constructing and processing an Encapsulated Request.
 
 ~~~
 Key Identifer {
@@ -185,79 +198,123 @@ Key Identifer {
   Key ID (..),
 }
 
-Encapsulated Message {
-  Key Identifier (..)
-  Encrypted Message Length (i),
-  Encrypted Message (..),
+Encapsulated Request {
+  Key Identifier (..),
+  Encapsulated KEM Shared Secret (..),
+  AEAD-Protected Request (..),
 }
 ~~~
+{: #fig-enc-request title="Encapsulated Request"}
 
-The encapsulated message Key ID, as well as the encryption mechanics, are different for requests
-and responses, as described below.
+Responses are bound to responses and so consist only of AEAD-protected content.
+{{response}} describes the process for constructing and processing an
+Encapsulated Response.
 
 ## HPKE Encapsulation of Requests {#request}
 
-Clients encapsulate a request Plaintext Message `msg` with an HPKE public key `pkR`, whose Key Identifier
-is `keyID` as follows:
+Clients encapsulate a request `request` with an HPKE public key `pkR`,
+whose Key Identifier is `keyID` as follows:
 
-1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation key `enc`
-2. Encrypt (seal) `msg` with `keyID` as associated data using `context`, yielding ciphertext `ct`
-3. Concatenate `enc` and `ct`, yielding an Encrypted Message `encrypted_msg`
+1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation
+   key `enc`.
+
+2. Construct additional associated data, `aad`, by prepending a single byte
+   with a value of 0x01 to the key identifier. The key identifier length is not
+   included in the AAD.
+
+3. Encrypt (seal) `request` with `keyID` as associated data using `context`,
+   yielding ciphertext `ct`.
+
+4. Concatenate the length of `keyID` as a variable-length integer, `keyID`,
+   `enc` and `ct`, yielding an Encapsulated Request `enc_request`.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
 enc, context = SetupBaseS(pkR, "request")
-aad = 0x01 || keyID
-encrypted_msg = context.Seal(aad, msg)
+aad = concat(0x01, keyID)
+ct = context.Seal(aad, request)
+enc_request = concat(vencode(len(keyID)), keyID, enc, ct)
 ~~~
 
-Clients construct the Encapsulated Message `req` using `keyID` and `encrypted_msg`.
+Servers decrypt an Encapsulated Request by reversing this process. Given an
+Encapsulated Request `enc_request`, a server:
 
-Servers decrypt an Encapsulated Message by reversing this process. Given an Encapsulated Message `req` request
-with Key Identifier `keyID` corresponding to an existing HPKE private key `skR`, servers decapsulate
-the Message as follows:
+1. Parses `enc_request` into `keyID`, `enc`, and `ct` (indicated using the
+   function `parse()` in pseudocode). The server is then able to find the HPKE
+   private key, `skR`, corresponding to `keyID`.
 
-1. Parse the `req` Encrypted Message as the concatenation of `enc` and `encrypted_message`
-2. Compute an HPKE context using `skR` and the encapsulated key `enc` from `req`, yielding `context`
-3. Decrypt `encrypted_message` with `keyID` as associated data, yielding `msg` or an error on failure
+2. Compute an HPKE context using `skR` and the encapsulated key `enc`, yielding
+   `context`.
+
+3. Construct additional associated data, `aad`, by prepending a single byte
+   with a value of 0x01 to the key identifier.
+
+4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
+   on failure.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
+keyID, enc, ct = parse(enc_request)
 context = SetupBaseR(enc, skR, "request")
-aad = 0x01 || keyID
-msg, error = context.Open(aad, ct)
+aad = concat(0x01, keyID)
+request, error = context.Open(aad, ct)
 ~~~
 
-Servers MUST verify that the Plaintext Message padding consists of all zeroes before processing the
-corresponding Message.
+Servers MUST verify that the request padding consists of all zeroes before
+processing the corresponding Message.
+
 
 ## HPKE Encapsulation of Responses {#response}
 
-Given an HPKE context `context` and a response Plaintext Message `resp` sent in response to a Plaintext
-Message `req`, servers encrypt the data as follows:
+Given an HPKE context `context`, a request message `request`, and a response
+`response`, servers generate an Encapsulated Response `enc_response` as
+follows:
 
-1. Derive a symmetric key and nonce from `context`
-2. Encrypt `resp` with empty Key Identifier `emptyKeyID` as associated data, yielding `encrypted_msg`
+1. Export a secret `secret` from `context`, using the string "response" as a
+   label. The length of this secret is `Nsk` - the length of the secret
+   assocated with `context`.
+
+2. Extract a pseudorandom key `prk` using the `Extract` function provided by
+   the KDF algorithm associated with `context`. The `ikm` input to this
+   function is `secret`; the `salt` input is `request`.
+
+3. Use the `Expand` function provided by the same KDF to extract an AEAD key
+   `key`, of length `Nk` - the length of the keys used by the AEAD associated
+   with `context`. Generating `key` uses a label of "key".
+
+4. Use the same `Expand` function to extract a nonce `nonce` of length `Nn` -
+   the length of the nonce used by the AEAD. Generating `nonce` uses a label of
+   "nonce".
+
+5. Construct additional associated data `aad`, that consists of a single byte
+   with a value of 0x02. <!-- Do we really need anything here? If we drop this,
+   we can drop the 0x01 prefix thing too. -->
+
+6. Encrypt `response`, passing the AEAD function Seal the values of `key`,
+   `nonce`, `aad`, and a `pt` input of `request`, which yields `enc_response`.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
-secret = context.Export("secret", 32)
-prk = Extract(req, secret)
+secret = context.Export("secret", Nsk)
+prk = Extract(request, secret)
 key = Expand(secret, "key", Nk)
 nonce = Expand(secret, "nonce", Nn)
-aad = 0x02 || emptyKeyID
-encrypted_msg = Seal(key, nonce, aad, resp)
+aad = concat(0x02, emptyKeyID)
+enc_reponse = Seal(key, nonce, aad, response)
 ~~~
 
-Extract and Expand are functions corresponding to the HPKE context's KDF algorithm, and Seal, Nk, and
-Nn correspond to the HPKE context's AEAD algorithm.
+Clients decrypt an Encapsulated Request by reversing this process. That is,
+clients follow the same process to derive values for `key`, `nonce`, and `aad`.
+The client then decrypts the Encapsulated Response using the Open function
+provided by the AEAD. Decrypting might produce an error, as shown.
 
-Clients decrypt an Encapsulated Message by reversing this process. Namely, they derive the
-necessary AEAD parameters from an existing HPKE context and then decrypt (open) the Encapsulated
-Message encrypted message.
+~~~
+reponse, error = Open(key, nonce, aad, enc_response)
+~~~
+
 
 ## Padding
 
