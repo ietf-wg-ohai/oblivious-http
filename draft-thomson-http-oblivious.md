@@ -237,8 +237,8 @@ whose wire-encoded Key Identifier is `keyID` as follows:
    yielding ciphertext `ct`.
 
 4. Concatenate the length of `keyID` as a variable-length integer, `keyID`,
-   `enc` and `ct`, yielding an Encapsulated Request `enc_request`. Note that 
-   `enc` is of fixed-length, so there is no ambiguity in parsing `enc` and 
+   `enc` and `ct`, yielding an Encapsulated Request `enc_request`. Note that
+   `enc` is of fixed-length, so there is no ambiguity in parsing `enc` and
    `ct`.
 
 In pseudocode, this procedure is as follows:
@@ -254,17 +254,17 @@ Encapsulated Request `enc_request`, a server:
 
 1. Parses `enc_request` into `keyID`, `enc`, and `ct` (indicated using the
    function `parse()` in pseudocode). The server is then able to find the HPKE
-   private key, `skR`, corresponding to `keyID`. If no such key exists, the 
+   private key, `skR`, corresponding to `keyID`. If no such key exists, the
    server MUST return an error with HTTP status code 401.
 
 2. Compute an HPKE context using `skR` and the encapsulated key `enc`, yielding
    `context`.
 
-3. Construct additional associated data, `aad`, as the wire-encoded Key 
+3. Construct additional associated data, `aad`, as the wire-encoded Key
    Identifier `keyID` from `enc_request`.
 
 4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
-   on failure. If decryption fails, the server MUST return an error with HTTP 
+   on failure. If decryption fails, the server MUST return an error with HTTP
    status code 400.
 
 In pseudocode, this procedure is as follows:
@@ -291,7 +291,8 @@ follows:
 
 2. Extract a pseudorandom key `prk` using the `Extract` function provided by
    the KDF algorithm associated with `context`. The `ikm` input to this
-   function is `secret`; the `salt` input is `request`.
+   function is `secret`; the `salt` input is the concatenation of `enc` (from
+   `enc_request`) and `Nk` random bytes.
 
 3. Use the `Expand` function provided by the same KDF to extract an AEAD key
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
@@ -305,7 +306,7 @@ follows:
    `nonce`, `aad`, and a `pt` input of `request`, which yields `ct`.
 
 6. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
-   `enc_response`. Note that `response_nonce` is of fixed-length, so there is no 
+   `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
    ambiguity in parsing either `response_nonce` or `ct`.
 
 In pseudocode, this procedure is as follows:
@@ -321,9 +322,9 @@ enc_reponse = Seal(aead_key, aead_nonce, "", response)
 ~~~
 
 Clients decrypt an Encapsulated Request by reversing this process. That is,
-they first parse `enc_response` into `response_nonce` and `ct`. They then 
+they first parse `enc_response` into `response_nonce` and `ct`. They then
 follow the same process to derive values for `aead_key` and `aead_nonce`.
-Finally, the client decrypts `ct` using the Open function provided by the 
+Finally, the client decrypts `ct` using the Open function provided by the
 AEAD. Decrypting might produce an error, as shown.
 
 ~~~
