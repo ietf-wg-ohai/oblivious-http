@@ -298,7 +298,7 @@ Encapsulated Request `enc_request`, a server:
 1. Parses `enc_request` into `keyID`, `enc`, and `ct` (indicated using the
    function `parse()` in pseudocode). The server is then able to find the HPKE
    private key, `skR`, corresponding to `keyID`. If no such key exists, the
-   server returns an error.
+   server returns an error; see {{errors}}.
 
 2. Compute an HPKE context using `skR` and the encapsulated key `enc`, yielding
    `context`.
@@ -379,6 +379,226 @@ reponse, error = Open(key, nonce, aad, enc_response)
 
 Plaintext Messages support arbitrary length padding. Clients and servers MAY pad HTTP messages
 as needed to hide metadata leakage through ciphertext length.
+
+
+# HTTP Usage
+
+A client interacts with the oblivious proxy resource by constructing an
+encapsulated request.  This encapsulated request is included as the content of a
+POST request to the oblivious proxy resource.  This request MUST only contain
+those fields necessary to carry the encapsulated request: a method of POST, a
+target URI of the URI of the oblivious proxy resource, a header field containing
+the content type (see ({{media-types}}), and the encapsulated request as the
+request content.  Clients MAY include fields that do not reveal information
+about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}.
+
+The oblivious proxy resource interacts with the oblivious request resource by
+constructing a request using the same restrictions as the client request, except
+that the target URI is the oblivious request resource.  The content of this
+request is copied from the client.  The oblivious proxy resource MUST NOT add
+information about the client to this request.
+
+When a response is received from the oblivious request resource, the oblivious
+proxy resource forwards the response according to the rules of an HTTP proxy;
+see Section 7.6 of {{!HTTP}}.
+
+An oblivious request resource, if it receives any response from the oblivious
+target resource, sends a single 200 response containing the encapsulated
+response.  Like the request from the client, this response MUST only contain
+those fields necessary to carry the encapsulated response: a 200 status code, a
+header field indicating the content type, and the encapsulated response as the
+response content.  As with requests, additional fields MAY be used to convey
+information that does not reveal information about the encapsulated response.
+
+An oblivious request resource acts as a gateway for requests to the oblivious
+target resource (see Section 7.6 of {{!HTTP}}).  The one exception is that any
+information it might forward in a response MUST be encapsulated, unless it is
+responding to errors it detects before removing encapsulation of the request;
+see {{errors}}.
+
+
+## Informational Responses
+
+This encapsulation does not permit progressive processing of responses.  Though
+the binary HTTP response format does support the inclusion of informational
+(1xx) status codes, the AEAD encapsulation cannot be removed until the entire
+message is received.
+
+In particular, the Expect header field with 100-continue (see Section 10.1.1 of
+{{!HTTP=I-D.ietf-httpbis-semantics}}) cannot be used.  Clients MUST NOT
+construct a request that includes a 100-continue expectation; the oblivious
+request resource MUST generate an error if a 100-continue expectation is
+received.
+
+
+## Errors
+
+A server that receives an invalid message for any reason MUST generate an HTTP
+response with a 4xx status code.
+
+Errors detected by the oblivious proxy resource and errors detected by the
+oblivious request resource before removing protection (including being unable to
+remove encapsulation for any reason) result in the status code being sent
+without protection in response to the POST request made to that resource.
+
+Errors detected by the oblivious request resource after successfully removing
+encapsulation and errors detected by the oblivious target resource MUST be sent
+in an encapsulated response.
+
+
+# Media Types {#media-types}
+
+Media types are used to identify encapsulated requests and responses.
+
+
+## message/ohttp-req Media Type
+
+The "message/ohttp-req" identifies an encapsulated binary HTTP request.  This
+is a binary format that is defined in {{request}}.
+
+Type name:
+
+: message
+
+Subtype name:
+
+: ohttp-req
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: None
+
+Encoding considerations:
+
+: only "8bit" or "binary" is permitted
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: N/A
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl>
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IESG
+
+
+## message/ohttp-res Media Type
+
+The "message/ohttp-res" identifies an encapsulated binary HTTP response. This
+is a binary format that is defined in {{response}}.
+
+Type name:
+
+: message
+
+Subtype name:
+
+: ohttp-res
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: None
+
+Encoding considerations:
+
+: only "8bit" or "binary" is permitted
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: N/A
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl>
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IESG
 
 
 # Responsibility of Roles {#trust}
@@ -507,14 +727,17 @@ also necessary to provide confidentiality protection for the unprotected
 requests and responses, plus protections for traffic analysis; see {{ta}}.
 
 
-# Security Considerations
+# Security Considerations {#security}
 
 Words...
 
 
 # IANA Considerations
 
-TODO: Define a media type or types here.
+Please update the "Media Types" registry at
+<https://www.iana.org/assignments/media-types> with the registration
+information in {{media-types}} for the media types "message/ohttp-req" and
+"message/ohttp-res".
 
 
 --- back
