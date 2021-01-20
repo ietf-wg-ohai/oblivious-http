@@ -367,11 +367,12 @@ enc_reponse = Seal(aead_key, aead_nonce, "", response)
 Clients decrypt an Encapsulated Request by reversing this process. That is,
 they first parse `enc_response` into `response_nonce` and `ct`. They then
 follow the same process to derive values for `aead_key` and `aead_nonce`.
-Finally, the client decrypts `ct` using the Open function provided by the
-AEAD. Decrypting might produce an error, as shown.
+
+The client uses these values to decrypt `ct` using the Open function provided by
+the AEAD. Decrypting might produce an error, as follows:
 
 ~~~
-reponse, error = Open(key, nonce, aad, enc_response)
+reponse, error = Open(aead_key, aead_nonce, "", ct)
 ~~~
 
 
