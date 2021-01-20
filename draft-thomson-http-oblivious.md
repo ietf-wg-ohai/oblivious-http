@@ -355,7 +355,7 @@ follows:
 In pseudocode, this procedure is as follows:
 
 ~~~
-secret = context.Export("secret", Nk)
+secret = context.Export("request", Nk)
 response_nonce = random(max(Nn, Nk))
 salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
