@@ -746,4 +746,6 @@ information in {{media-types}} for the media types "message/ohttp-req" and
 # Acknowledgments
 {: numbered="false"}
 
-TODO: credit where credit is due.
+This design is based on a design for oblivious DoH, described in
+{{?ODOH=I-D.pauly-dprive-oblivious-doh}}. Eric Rescorla helped unify the
+structure of the key format.
