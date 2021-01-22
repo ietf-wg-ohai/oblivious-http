@@ -217,21 +217,6 @@ occur, as shown in {{fig-overview}}:
 # HPKE Encapsulation
 
 HTTP message encapsulation uses HPKE for request and response encryption.
-An encapsulated HTTP message includes the following values:
-
-1. A binary-encoded HTTP message; see {{BINARY}}.
-2. Padding of arbitrary length which MUST contain all zeroes.
-
-The encoding of an HTTP message is as follows:
-
-~~~
-Plaintext Message {
-  Message Length (i),
-  Message (..),
-  Padding Length (i),
-  Padding (..),
-}
-~~~
 
 An Encapsulated Request is comprised of a length-prefixed key identifier and a
 HPKE-protected request message. HPKE protection includes an encapsulated KEM
@@ -378,8 +363,12 @@ reponse, error = Open(aead_key, aead_nonce, "", ct)
 
 ## Padding
 
-Plaintext Messages support arbitrary length padding. Clients and servers MAY pad HTTP messages
-as needed to hide metadata leakage through ciphertext length.
+Binary HTTP messages support padding of any length by adding zero-valued bytes
+to the end of messages; see {{BINARY}}. Messages can be padded to hide
+metadata leakage through ciphertext length.
+
+Clients and oblivious request resources MUST validate that padding contains
+only zero-valued bytes.
 
 
 # Responsibility of Roles {#trust}

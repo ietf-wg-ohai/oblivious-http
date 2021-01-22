@@ -343,6 +343,17 @@ Omitting content by truncating a message is only possible if the content is
 zero-length.
 
 
+## Padding
+
+Messages can contain arbitrary amounts of padding. Padding is simply any number
+of 0-valued bytes that are appended to messages. A message that contains
+non-zero padding MAY be treated as invalid; see {{invalid}}. Alternatively,
+non-zero padding can be discarded.
+
+For a truncated message, adding has the effect of adding zero-length field
+sections or content.
+
+
 # Invalid Messages {#invalid}
 
 This document describes a number of ways that a message can be invalid. Invalid
