@@ -491,7 +491,7 @@ chunk extensions cannot be conveyed using the binary format.
 
 ~~~ http-message
 HTTP/1.1 200 OK
-Transfer-Encoding: camel, chunked
+Transfer-Encoding: chunked
 
 4
 This
