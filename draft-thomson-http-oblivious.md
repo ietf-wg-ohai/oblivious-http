@@ -387,7 +387,7 @@ A client interacts with the oblivious proxy resource by constructing an
 encapsulated request.  This encapsulated request is included as the content of a
 POST request to the oblivious proxy resource.  This request MUST only contain
 those fields necessary to carry the encapsulated request: a method of POST, a
-target URI of the URI of the oblivious proxy resource, a header field containing
+target URI of the oblivious proxy resource, a header field containing
 the content type (see ({{media-types}}), and the encapsulated request as the
 request content.  Clients MAY include fields that do not reveal information
 about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}.
