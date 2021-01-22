@@ -237,6 +237,9 @@ encapsulation method (KEM) and the combinations of key derivation function
 (KDF) and authenticated encryption with associated data (AEAD) in this
 decision.
 
+Evolution of the key configuration format is supported through the definition
+of new formats that are identified by new media types.
+
 
 ## Key Configuration Encoding {#key-config}
 
