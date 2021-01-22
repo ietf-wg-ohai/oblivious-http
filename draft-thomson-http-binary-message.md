@@ -122,15 +122,15 @@ Known-Length Informational Response {
 
 That is, a known-length message consists of a framing indicator, a block of
 control data that is formatted according to the value of the framing indicator,
-a header field section with a length prefix, binary content with a length
-prefix, and a trailer field section with a length prefix.
+a header section with a length prefix, binary content with a length prefix, and
+a trailer section with a length prefix.
 
 Response messages that contain informational status codes result in a different
 structure; see {{informational}}.
 
-Fields in the header and trailer field sections consist of a length-prefixed
-name and length-prefixed value. Both name and value are sequences of bytes that
-cannot be zero length.
+Fields in the header and trailer sections consist of a length-prefixed name and
+length-prefixed value. Both name and value are sequences of bytes that cannot
+be zero length.
 
 The format allows for the message to be truncated before any of the length
 prefixes that precede the field sections or content. This reduces the overall
@@ -180,9 +180,9 @@ Indeterminate-Length Informational Response {
 
 That is, an indeterminate length consists of a framing indicator, a block of
 control data that is formatted according to the value of the framing indicator,
-a header field section that is terminated by a zero value, any number of
-non-zero-length chunks of binary content, a zero value, and a trailer field
-section that is terminated by a zero value.
+a header section that is terminated by a zero value, any number of
+non-zero-length chunks of binary content, a zero value, and a trailer section
+that is terminated by a zero value.
 
 Response messages that contain informational status codes result in a different
 structure; see {{informational}}.
@@ -260,8 +260,8 @@ Final Response Control Data {
 
 This format supports informational status codes (see Section 15.2 of
 {{!HTTP}}). Responses that include information status codes are encoded by
-repeating the response control data and associated header field section until
-the final status code is encoded.
+repeating the response control data and associated header section until the
+final status code is encoded.
 
 The format of the informational response control data is shown in
 {{format-informational}}.
@@ -275,17 +275,17 @@ Informational Response Control Data {
 
 A response message can include any number of informational responses. If the
 response control data includes an informational status code (that is, a value
-between 100 and 199 inclusive), the control data is followed by a header field
+between 100 and 199 inclusive), the control data is followed by a header
 section (encoded with known- or indeterminate- length according to the framing
-indicator). After the header field section, another response control data block
+indicator). After the header section, another response control data block
 follows.
 
 
 ## Header and Trailer Field Lines {#fields}
 
-Header and trailer field sections consist of zero or more field lines; see
-Section 5 of {{!HTTP}}. The format of a field section depends on whether the
-message is known- or intermediate-length.
+Header and trailer sections consist of zero or more field lines; see Section 5
+of {{!HTTP}}. The format of a field section depends on whether the message is
+known- or intermediate-length.
 
 Each field line includes a name and a value. Both the name and value are
 non-zero length sequences of bytes. The format of a field line is shown in
@@ -400,8 +400,8 @@ This example shows that the Host header field is not replicated in the
 accurately; see Section 8.1.2.3 of {{H2}}.
 
 The same message can be truncated with no effect on interpretation. In this
-case, the last two bytes - corresponding to content and a trailer field
-section - can each be removed without altering the semantics of the message.
+case, the last two bytes - corresponding to content and a trailer section - can
+each be removed without altering the semantics of the message.
 
 The same message, encoded using an indefinite-length encoding is shown in
 {{ex-bini-request}}. As the content of this message is empty, the difference in
