@@ -92,7 +92,7 @@ of a requester from the request.
 Though this scheme requires that servers and proxies explicitly support it,
 this design represents a performance improvement over options that perform just
 one request in each connection. With limited trust placed in the proxy (see
-{{trust}}), clients are assured that requests are not uniquely attributed to
+{{security}}), clients are assured that requests are not uniquely attributed to
 them or linked to other requests.
 
 
@@ -212,6 +212,145 @@ occur, as shown in {{fig-overview}}:
 
 10. The client removes the encapsulation to obtain the response to the original
     request.
+
+
+# Key Configuration {#key-configuration}
+
+A client needs to acquire information about the key configuration of the
+oblivious request resource in order to send encapsulated requests.
+
+In order to ensure that clients do not encapsulate messages that other entities
+can intercept, the key configuration MUST be authenticated and have integrity
+protection. One way to ensure integrity for key configuration is for the
+oblivious request resource to serve content to the client directly, using HTTPS
+and the "application/ohttp-keys" media type; see {{ohttp-keys}}.
+
+Specifying a format for expressing the information a client needs to construct
+an encapsulated request ensures that different client implementations can be
+configured in the same way. This also enables advertising key configurations in
+a consistent format.
+
+A client might have multiple key configurations to select from when
+encapsulating a request. Clients are responsible for selecting a preferred key
+configuration from those it supports. Clients need to consider both the key
+encapsulation method (KEM) and the combinations of key derivation function
+(KDF) and authenticated encryption with associated data (AEAD) in this
+decision.
+
+Evolution of the key configuration format is supported through the definition
+of new formats that are identified by new media types.
+
+
+## Key Configuration Encoding {#key-config}
+
+A single key configuration consists of a key identifier, a public key, an
+identifier for the KEM that the public key uses, and a set HPKE symmetric
+algorithms. Each symmetric algorithm consists of an identifier for a KDF and an
+identifier for an AEAD.
+
+{{format-key-config}} shows a single key configuration, KeyConfig, that is
+expressed using the TLS syntax; see Section 3 of {{!TLS=RFC8446}}.
+
+~~~ tls-syntax
+opaque HpkePublicKey<1..2^16-1>;
+uint16 HpkeKemId;
+uint16 HpkeKdfId;
+uint16 HpkeAeadId;
+
+struct {
+  HpkeKdfId kdf_id;
+  HpkeAeadId aead_id;
+} HpkeSymmetricAlgorithms;
+
+struct {
+  uint8 key_id;
+  HpkePublicKey public_key;
+  HpkeKemId kem_id;
+  HpkeSymmetricAlgorithms cipher_suites<4..2^16-4>;
+} KeyConfig;
+~~~
+{: #format-key-config title="A Single Key Configuration"}
+
+The types HpkeKemId, HpkeKdfId, and HpkeAeadId identify a KEM, KDF, and AEAD
+respectively. The definitions for these identifiers and the semantics of the
+algorithms they identify can be found in {{!HPKE}}.
+
+
+## Key Configuration Media Type {#ohttp-keys}
+
+The "application/ohttp-keys" format is a media type that identifies a
+serialized collection of key configurations. The content of this media type
+comprises one or more key configuration encodings (see {{key-config}}) that are
+concatenated.
+
+Type name:
+
+: application
+
+Subtype name:
+
+: ohttp-keys
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: None
+
+Encoding considerations:
+
+: only "8bit" or "binary" is permitted
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: N/A
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl>
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IESG
 
 
 # HPKE Encapsulation
@@ -382,7 +521,7 @@ Plaintext Messages support arbitrary length padding. Clients and servers MAY pad
 as needed to hide metadata leakage through ciphertext length.
 
 
-# HTTP Usage
+# HTTP Usage {#http-usage}
 
 A client interacts with the oblivious proxy resource by constructing an
 encapsulated request.  This encapsulated request is included as the content of a
@@ -391,7 +530,9 @@ those fields necessary to carry the encapsulated request: a method of POST, a
 target URI of the oblivious proxy resource, a header field containing
 the content type (see ({{media-types}}), and the encapsulated request as the
 request content.  Clients MAY include fields that do not reveal information
-about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}.
+about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}, or
+information that it trusts the oblivious proxy resource to remove, such as
+fields that are listed in the Connection header field.
 
 The oblivious proxy resource interacts with the oblivious request resource by
 constructing a request using the same restrictions as the client request, except
@@ -450,6 +591,9 @@ in an encapsulated response.
 # Media Types {#media-types}
 
 Media types are used to identify encapsulated requests and responses.
+
+Evolution of the format of encapsulated requests and responses is supported
+through the definition of new formats that are identified by new media types.
 
 
 ## message/ohttp-req Media Type
@@ -602,7 +746,7 @@ Change controller:
 : IESG
 
 
-# Responsibility of Roles {#trust}
+# Security Considerations {#security}
 
 In this design, a client wishes to make a request of a server that is
 authoritative for the oblivious target resource. The client wishes to make this
@@ -636,8 +780,12 @@ privacy.
 
 ## Client
 
-Clients have the fewest direct responsibilities, though clients do need to
-ensure that they do not undermine the process.
+Clients MUST ensure that the key configuration they select for generating
+encapsulated requests is integrity protected and authenticated so that it can
+be attributed to the oblivious request resource; see {{key-configuration}}.
+
+Clients MUST NOT include identifying information in the request that is
+encapsulated.
 
 Clients cannot carry connection-level state between requests as they only
 establish direct connections to the proxy responsible for the oblivious proxy
@@ -648,27 +796,41 @@ the most obvious feature that MUST NOT be used by clients. However, clients
 need to include all information learned from requests, which could include the
 identity of resources.
 
-Clients also need to ensure that they correctly generate a new HPKE context for
-every request, using a good source of entropy ({{?RANDOM=RFC4086}}). Key reuse
-not only risks linkability, but it could expose request and response contents
-to the proxy.
+Clients MUST generate a new HPKE context for every request, using a good source
+of entropy ({{?RANDOM=RFC4086}}) for generating keys. Key reuse not only risks
+requests being linked, reuse could expose request and response contents to the
+proxy.
 
-Clients constructing the request that is to be encapsulated need to avoid
-including identifying information. Similarly, the request that is sent to the
-oblivious request resource, though this request can contain only minimal
-information as it only needs to include a method and the oblivious request
-resource URL.
+The request the client sends to the oblivious proxy resource only requires
+minimal information; see {{http-usage}}. The request that carries the
+encapsulated request and is sent to the oblivious proxy resource MUST NOT
+include identifying information unless the client ensures that this information
+is removed by the proxy. A client MAY include information only for the
+oblivious proxy resource in header fields identified by the Connection header
+field if it trusts the proxy to remove these as required by Section 7.6.1 of
+{{!HTTP}}. The client needs to trust that the proxy does not replicate the
+source addressing information in the request it forwards.
+
+Clients rely on the oblivious proxy resource to forward encapsulated requests
+and responses. However, the proxy can only refuse to forward messages, it
+cannot inspect or modify the contents of encapsulated requests or responses.
 
 
 ## Proxy Responsibilities
 
 The proxy that serves the oblivious proxy resource has a very simple function
-to perform. It forwards messages received at this resource to the oblivious
-request resource, and forwards responses from the oblivious request resource
-back to clients. The proxy MUST forward response status codes without
-modification.
+to perform. For each request it receives, it makes a request of the oblivious
+request resource that includes the same content. When it receives a response,
+it sends a response to the client that includes the content of the response
+from the oblivious request resource. When generating a request, the proxy MUST
+follow the forwarding rules in Section 7.6 of {{!HTTP}}.
 
-The proxy MUST NOT add information about the client identity when forwarding
+A proxy can also generate responses, though it assumed to not be able to
+examine the content of a request (other than to observe the choice of key
+identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
+encapsulated response.
+
+A proxy MUST NOT add information about the client identity when forwarding
 requests. This includes the Via field, the Forwarded field
 {{?FORWARDED=RFC7239}}, and any similar information.
 
@@ -710,7 +872,6 @@ A proxy that forwards large volumes of exchanges can provide better privacy by
 providing larger sets of messages that need to be matched.
 
 
-
 ## Server Responsibilities
 
 A server that operates both oblivious request and oblivious target resources is
@@ -739,17 +900,12 @@ corresponds to the key identifier, but the encapsulated request cannot be
 successfully decrypted using the key.
 
 
-# Security Considerations {#security}
-
-Words...
-
-
 # IANA Considerations
 
 Please update the "Media Types" registry at
 <https://www.iana.org/assignments/media-types> with the registration
-information in {{media-types}} for the media types "message/ohttp-req" and
-"message/ohttp-res".
+information in {{media-types}} for the media types "message/ohttp-req",
+"message/ohttp-res", and "application/ohttp-keys".
 
 
 --- back
