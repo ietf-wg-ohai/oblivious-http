@@ -32,8 +32,8 @@ This document defines a binary format for representing HTTP messages.
 This document defines a simple format for representing an HTTP message
 ({{!HTTP=I-D.ietf-httpbis-semantics}}), either request or response. This allows
 for the encoding of HTTP messages that can be conveyed outside of an HTTP
-protocol. This enables the application of transformations to entire messages,
-including the application of encryption and authentication.
+protocol. This enables the transformation of entire messages,
+including the application of authenticated encryption.
 
 This format is informed by the framing structure of HTTP/2 ({{?H2=RFC7540}})
 and HTTP/3 ({{?H3=I-D.ietf-quic-http}}). In comparison, this format simpler by
@@ -51,16 +51,14 @@ Two modes for encoding are described:
   components; and
 
 * an indefinite-length encoding enables efficient generation of messages where
-  lengths are not known when starting an encoding.
+  lengths are not known when encoding starts.
 
 
 # Conventions and Definitions
 
 {::boilerplate bcp14}
 
-This document uses terminology from HTTP ({{!HTTP}}).
-
-This document uses notation from QUIC ({{!QUIC=I-D.ietf-quic-transport}}).
+This document uses terminology from HTTP ({{!HTTP}}) and notation from QUIC ({{!QUIC=I-D.ietf-quic-transport}}).
 
 
 # Format
@@ -218,7 +216,7 @@ fields described in HTTP/2 (Section 8.1.2.3 of {{!H2}}). These fields are
 encoded, each with a length prefix, in the order listed.
 
 The rules in Section 8.1.2.3 of {{!H2}} for constructing pseudo-header fields
-apply to the construction of these values. However, where tge `:authority`
+apply to the construction of these values. However, where the `:authority`
 pseudo-header field might be omitted in HTTP/2, a zero-length value is encoded
 instead.
 
