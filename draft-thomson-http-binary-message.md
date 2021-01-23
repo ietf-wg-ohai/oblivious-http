@@ -406,7 +406,7 @@ The same message, encoded using an indefinite-length encoding is shown in
 formats is negligible.
 
 ~~~ hex-dump
-01034745 54056874 74707300 0a2f6865  ..GET.https../he
+02034745 54056874 74707300 0a2f6865  ..GET.https../he
 6c6c6f2e 7478740a 75736572 2d616765  llo.txt.user-age
 6e743463 75726c2f 372e3136 2e33206c  nt4curl/7.16.3 l
 69626375 726c2f37 2e31362e 33204f70  ibcurl/7.16.3 Op
@@ -508,7 +508,7 @@ Trailer: text
 the transfer-encoding header field is removed.
 
 ~~~ hex-dump
-0240c800 1d546869 7320636f 6e74656e  .@...This conten
+0140c800 1d546869 7320636f 6e74656e  .@...This conten
 7420636f 6e746169 6e732043 524c462e  t contains CRLF.
 0d0a0d07 74726169 6c657204 74657874  ....trailer.text
 ~~~
