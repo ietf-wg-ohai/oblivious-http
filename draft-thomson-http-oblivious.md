@@ -130,12 +130,13 @@ Oblivious Target Resource:
 This draft includes pseudocode that uses the functions and conventions defined
 in {{!HPKE}}.
 
-This draft uses the variable-length integer encoding from Section 16 of
-{{!QUIC=I-D.ietf-quic-transport}}. Encoding and decoding variable-length
-integers to a sequence of bytes are described using the functions `vencode()`
-and `vdecode()`. The function `len()` takes the length of a sequence of bytes.
+Encoding an integer to a sequence of bytes in network byte order is described
+using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
+the integer value. The function `len()` returns the length of a sequence of
+bytes.
 
-Formats are described using notation from Section 1.3 of {{!QUIC}}.
+Formats are described using notation from Section 1.3 of
+{{!QUIC=I-D.ietf-quic-transport}}.
 
 
 # Overview
@@ -379,13 +380,8 @@ Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes the
 process for constructing and processing an Encapsulated Request.
 
 ~~~
-Key Identifer {
-  Key ID Length (i),
-  Key ID (..),
-}
-
 Encapsulated Request {
-  Key Identifier (..),
+  Key Identifier (8),
   Encapsulated KEM Shared Secret (..),
   AEAD-Protected Request (..),
 }
@@ -407,43 +403,64 @@ Encapsulated Response {
 The size of the Nonce field in an Encapsulated Response corresponds to the
 size of an AEAD key for the corresponding HPKE ciphersuite.
 
+
 ## HPKE Encapsulation of Requests {#request}
 
-Clients encapsulate a request `request` with an HPKE public key `pkR`,
-whose Key Identifier is `keyID` as follows:
+Clients encapsulate a request `request` using values from a key configuration:
+
+* the key identifier from the configuration, `keyID`,
+
+* the public key from the configuration, `pkR`, and
+
+* a selected combination of KDF, identified by `kdfID`, and AEAD, identified by
+  `aeadID`.
+
+The client then constructs an encapsulated request, `enc_request`, as follows:
 
 1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation
    key `enc`.
 
-2. Encrypt (seal) `request` with `keyID` as associated data using `context`,
+2. Construct associated data, `aad`, by concatenating the values of `keyID`,
+   `kdfID`, and `aeadID`, as 8-, 16- and 16-bit integers respectively, each in
+   network byte order.
+
+2. Encrypt (seal) `request` with `aad` as associated data using `context`,
    yielding ciphertext `ct`.
 
-3. Concatenate the length of `keyID` as a variable-length integer, `keyID`,
-   `enc`, and `ct`, yielding an Encapsulated Request `enc_request`. Note that
-   `enc` is of fixed-length, so there is no ambiguity in parsing `enc` and
-   `ct`.
+3. Concatenate the three values of `aad`, `enc`, and `ct`, yielding an
+   Encapsulated Request `enc_request`.
+
+Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
+structure.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
 enc, context = SetupBaseS(pkR, "request")
-ct = context.Seal(keyID, request)
-enc_request = concat(vencode(len(keyID)), keyID, enc, ct)
+aad = concat(encode(1, keyID),
+             encode(2, kdfID),
+             encode(2, aeadID))
+ct = context.Seal(aad, request)
+enc_request = concat(aad, keyID, enc, ct)
 ~~~
 
 Servers decrypt an Encapsulated Request by reversing this process. Given an
 Encapsulated Request `enc_request`, a server:
 
-1. Parses `enc_request` into `keyID`, `enc`, and `ct` (indicated using the
-   function `parse()` in pseudocode). The server is then able to find the HPKE
-   private key, `skR`, corresponding to `keyID`. If no such key exists, the
-   server returns an error; see {{errors}}.
+1. Parses `enc_request` into `keyID`, `kdfID`, `aeadID`, `enc`, and `ct`
+   (indicated using the function `parse()` in pseudocode). The server is then
+   able to find the HPKE private key, `skR`, corresponding to `keyID`. 
+   
+   a. If `keyID` does not identify a key, the server returns an error.
 
-2. Compute an HPKE context using `skR` and the encapsulated key `enc`, yielding
-   `context`.
+   b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
+      server is unwilling to use with `skR`, the server returns an error.
 
-3. Construct additional associated data, `aad`, as the Key Identifier `keyID`
-   from `enc_request`.
+2. Compute an HPKE context using `skR` and the encapsulated key `enc`,
+   yielding `context`.
+
+3. Construct additional associated data, `aad`, from `keyID`, `kdfID`, and
+   `aeadID` or as the first five bytes of `enc_request`.
 
 4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
    on failure. If decryption fails, the server returns an error.
@@ -451,13 +468,17 @@ Encapsulated Request `enc_request`, a server:
 In pseudocode, this procedure is as follows:
 
 ~~~
-keyID, enc, ct = parse(enc_request)
+keyID, kdfID, aeadID, enc, ct = parse(enc_request)
+aad = concat(encode(1, keyID),
+             encode(2, kdfID),
+             encode(2, aeadID))
 context = SetupBaseR(enc, skR, "request")
 request, error = context.Open(keyID, ct)
 ~~~
 
 Servers MUST verify that the request padding consists of all zeroes before
 processing the corresponding Message.
+
 
 ## HPKE Encapsulation of Responses {#response}
 
