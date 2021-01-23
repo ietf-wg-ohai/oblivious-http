@@ -727,6 +727,17 @@ between server and proxy for managing denial of service; see {{dos}}. It is
 also necessary to provide confidentiality protection for the unprotected
 requests and responses, plus protections for traffic analysis; see {{ta}}.
 
+An oblivious request resource needs to have a plan for replacing keys. This
+might include regular replacement of keys, which can be assigned new key
+identifiers. If an oblivious request resource receives a request that contains
+a key identifier that it does not understand or that corresponds to a key that
+has been replaced, the server can respond with an HTTP 422 (Unprocessable
+Content) status code.
+
+A server can also use a 422 status code if the server has a key that
+corresponds to the key identifier, but the encapsulated request cannot be
+successfully decrypted using the key.
+
 
 # Security Considerations {#security}
 
