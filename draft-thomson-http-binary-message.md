@@ -68,19 +68,19 @@ Section 6 of {{!HTTP}}:
 
 1. Framing indicator. This format uses a single integer to describe framing, which describes
    whether the message is a request or response and how subsequent sections are
-   formatted; see {{framing}}
+   formatted; see {{framing}}.
 
-2. Control data. For a request, this contains the request method and target.
+2. For a response, any number of interim responses, each consisting of an
+   informational status code and header section.
+
+3. Control data. For a request, this contains the request method and target.
    For a response, this contains the status code.
 
-3. Header section.  This contains zero or more header fields.
+4. Header section.  This contains zero or more header fields.
 
-4. Content.  This is a sequence of zero or more bytes.
+5. Content.  This is a sequence of zero or more bytes.
 
-5. Trailer section.  This contains zero or more trailer fields.
-
-A response message can include multiple informational responses, which causes
-the control data and header section to be repeated.
+6. Trailer section.  This contains zero or more trailer fields.
 
 All lengths and numeric values are encoded using the variable-length integer
 encoding from {{!QUIC}}.
