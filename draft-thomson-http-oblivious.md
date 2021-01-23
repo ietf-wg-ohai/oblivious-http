@@ -382,6 +382,8 @@ process for constructing and processing an Encapsulated Request.
 ~~~
 Encapsulated Request {
   Key Identifier (8),
+  KDF Identifier (16),
+  AEAD Identifier (16),
   Encapsulated KEM Shared Secret (..),
   AEAD-Protected Request (..),
 }
@@ -427,8 +429,8 @@ The client then constructs an encapsulated request, `enc_request`, as follows:
 2. Encrypt (seal) `request` with `aad` as associated data using `context`,
    yielding ciphertext `ct`.
 
-3. Concatenate the three values of `aad`, `enc`, and `ct`, yielding an
-   Encapsulated Request `enc_request`.
+3. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encapsulated
+   Request `enc_request`.
 
 Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
 structure.
@@ -441,7 +443,7 @@ aad = concat(encode(1, keyID),
              encode(2, kdfID),
              encode(2, aeadID))
 ct = context.Seal(aad, request)
-enc_request = concat(aad, keyID, enc, ct)
+enc_request = concat(aad, enc, ct)
 ~~~
 
 Servers decrypt an Encapsulated Request by reversing this process. Given an
@@ -449,8 +451,8 @@ Encapsulated Request `enc_request`, a server:
 
 1. Parses `enc_request` into `keyID`, `kdfID`, `aeadID`, `enc`, and `ct`
    (indicated using the function `parse()` in pseudocode). The server is then
-   able to find the HPKE private key, `skR`, corresponding to `keyID`. 
-   
+   able to find the HPKE private key, `skR`, corresponding to `keyID`.
+
    a. If `keyID` does not identify a key, the server returns an error.
 
    b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
@@ -473,11 +475,8 @@ aad = concat(encode(1, keyID),
              encode(2, kdfID),
              encode(2, aeadID))
 context = SetupBaseR(enc, skR, "request")
-request, error = context.Open(keyID, ct)
+request, error = context.Open(aad, ct)
 ~~~
-
-Servers MUST verify that the request padding consists of all zeroes before
-processing the corresponding Message.
 
 
 ## HPKE Encapsulation of Responses {#response}
@@ -486,9 +485,9 @@ Given an HPKE context `context`, a request message `request`, and a response
 `response`, servers generate an Encapsulated Response `enc_response` as
 follows:
 
-1. Export a secret `secret` from `context`, using the string "response" as a
-   label. The length of this secret is `Nk` - the length of an AEAD key
-   assocated with `context`.
+1. Export a secret `secret` from `context`, using the string "response" as context.
+   The length of this secret is `max(Nn, Nk)`, where `Nn` and `Nk` are the length
+   of AEAD key and nonce associated with `context`.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called `response_nonce`.
 
@@ -521,7 +520,8 @@ salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
 aead_key = Expand(secret, "key", Nk)
 aead_nonce = Expand(secret, "nonce", Nn)
-enc_reponse = Seal(aead_key, aead_nonce, "", response)
+ct = Seal(aead_key, aead_nonce, "", response)
+enc_response = concat(response_nonce, ct)
 ~~~
 
 Clients decrypt an Encapsulated Request by reversing this process. That is,
@@ -534,12 +534,6 @@ the AEAD. Decrypting might produce an error, as follows:
 ~~~
 reponse, error = Open(aead_key, aead_nonce, "", ct)
 ~~~
-
-
-## Padding
-
-Plaintext Messages support arbitrary length padding. Clients and servers MAY pad HTTP messages
-as needed to hide metadata leakage through ciphertext length.
 
 
 # HTTP Usage {#http-usage}
