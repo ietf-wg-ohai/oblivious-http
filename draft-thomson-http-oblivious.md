@@ -265,8 +265,8 @@ struct {
 
 struct {
   uint8 key_id;
-  HpkePublicKey public_key;
   HpkeKemId kem_id;
+  HpkePublicKey public_key;
   HpkeSymmetricAlgorithms cipher_suites<4..2^16-4>;
 } KeyConfig;
 ~~~
