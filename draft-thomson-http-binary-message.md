@@ -16,6 +16,11 @@ author:
     name: Martin Thomson
     org: Mozilla
     email: mt@lowentropy.net
+  -
+    ins: C.A. Wood
+    name: Christopher A. Wood
+    org: Cloudflare
+    email: caw@heapingbits.net
 
 informative:
 
