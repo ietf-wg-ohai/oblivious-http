@@ -1,4 +1,4 @@
-MD_PREPROCESSOR := sed -e 's/{DATE}/'"$$(git log -n 1 --date=short --format='%ad' @)"'/g'
+MD_PREPROCESSOR = sed -e 's/{DATE}/'"$$(if [ $$(git status --porcelain $(drafts_source) | wc -l) -gt 0 ]; then date '+%Y-%m-%d'; else git log -n 1 --date=short --format='%ad' @; fi)"'/g'
 
 LIBDIR := lib
 include $(LIBDIR)/main.mk
