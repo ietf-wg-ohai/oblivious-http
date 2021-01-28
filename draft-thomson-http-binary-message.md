@@ -368,7 +368,7 @@ The example HTTP/1.1 message in {{ex-request}} shows the content of a
 `message/http`.
 
 Valid HTTP/1.1 messages require lines terminated with CRLF (the two bytes 0x0a
-and 0x0d). For simplicity and consistenct, the content of these examples is
+and 0x0d). For simplicity and consistency, the content of these examples is
 limited to text, which also uses CRLF for line endings.
 
 ~~~ http-message
