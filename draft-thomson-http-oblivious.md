@@ -960,13 +960,23 @@ wishes to send an HTTP request of a GET request to `https://example.com`, it con
 00034745540568747470730b6578616d706c652e636f6d012f
 ~~~
 
-The client then reads the oblivious request resource key configuration and selects a mutually supported KDF and AEAD. In this example, the client selects HKDF-SHA256 and AES-128-GCM. The client then generates an X25519 key pair:
+The client then reads the oblivious request resource key configuration and
+selects a mutually supported KDF and AEAD. In this example, the client selects
+HKDF-SHA256 and AES-128-GCM. The client then generates an HPKE context that
+uses the server public key. This results in the following encapsulated key:
+
+~~~
+a7e0dffe93bc9ed807b51588f10669cd2f09ceb7f6a71153658275993eb88276
+~~~
+
+The corresponding private key is:
 
 ~~~
 3b04f76e7ea1313484dd73c343adb94c23671f98cb66fc7ecc6127f38e1d4431
 ~~~
 
-This allows the client to construct an encapsulated request:
+Applying the Seal operation from the HPKE context produces an encrypted
+message, allowing the client to construct the following encapsulated request:
 
 ~~~
 0100010001a7e0dffe93bc9ed807b51588f10669cd2f09ceb7f6a71153658275
