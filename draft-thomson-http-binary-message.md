@@ -339,8 +339,8 @@ lines.
 
 The content of messages is a sequence of bytes of any length. Though a
 known-length message has a limit, this limit is large enough that it is
-unlikely to be a practical limitation. There is there is no limit to an
-indeterminate length message.
+unlikely to be a practical limitation. There is no limit to the size of content
+in an indeterminate length message.
 
 Omitting content by truncating a message is only possible if the content is
 zero-length.
