@@ -49,8 +49,9 @@ informative:
 --- abstract
 
 This document describes a system for the forwarding of encrypted HTTP messages.
-This allows clients to make requests of servers without the server being able to
-link requests to other requests from the same client.
+This allows a client to make multiple requests of a server without the server being able
+to link those requests to the client or to identify the requests as having come
+from the same client.
 
 
 --- middle
