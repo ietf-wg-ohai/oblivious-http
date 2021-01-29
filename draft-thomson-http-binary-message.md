@@ -339,8 +339,8 @@ lines.
 
 The content of messages is a sequence of bytes of any length. Though a
 known-length message has a limit, this limit is large enough that it is
-unlikely to be a practical limitation. There is there is no limit to an
-indeterminate length message.
+unlikely to be a practical limitation. There is no limit to the size of content
+in an indeterminate length message.
 
 Omitting content by truncating a message is only possible if the content is
 zero-length.
@@ -368,7 +368,7 @@ The example HTTP/1.1 message in {{ex-request}} shows the content of a
 `message/http`.
 
 Valid HTTP/1.1 messages require lines terminated with CRLF (the two bytes 0x0a
-and 0x0d). For simplicity and consistenct, the content of these examples is
+and 0x0d). For simplicity and consistency, the content of these examples is
 limited to text, which also uses CRLF for line endings.
 
 ~~~ http-message
