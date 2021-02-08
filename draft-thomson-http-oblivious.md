@@ -161,25 +161,25 @@ request with the client IP or other requests that the client might make to that
 server.
 
 ~~~
-+---------+        +----------+        +----------+    +----------+
-| Client  |        | Proxy    |        | Request  |    | Target   |
-|         |        | Resource |        | Resource |    | Resource |
-+---------+        +----------+        +----------+    +----------+
-     |                  |                   |               |
-     | Encapsulated     |                   |               |
-     | Request          |                   |               |
-     |----------------->| Encapsulated      |               |
-     |                  | Request           |               |
-     |                  |------------------>| Request       |
-     |                  |                   |-------------->|
-     |                  |                   |               |
-     |                  |                   |      Response |
-     |                  |      Encapsulated |<--------------|
-     |                  |          Response |               |
-     |     Encapsulated |<------------------|               |
-     |         Response |                   |               |
-     |<-----------------|                   |               |
-     |                  |                   |               |
++---------+       +----------+       +----------+    +----------+
+| Client  |       | Proxy    |       | Request  |    | Target   |
+|         |       | Resource |       | Resource |    | Resource |
++---------+       +----------+       +----------+    +----------+
+     |                 |                  |               |
+     | Encapsulated    |                  |               |
+     | Request         |                  |               |
+     |---------------->| Encapsulated     |               |
+     |                 | Request          |               |
+     |                 |----------------->| Request       |
+     |                 |                  |-------------->|
+     |                 |                  |               |
+     |                 |                  |      Response |
+     |                 |     Encapsulated |<--------------|
+     |                 |         Response |               |
+     |    Encapsulated |<-----------------|               |
+     |        Response |                  |               |
+     |<----------------|                  |               |
+     |                 |                  |               |
 ~~~
 {: #fig-overview title="Overview of Oblivious HTTP"}
 
