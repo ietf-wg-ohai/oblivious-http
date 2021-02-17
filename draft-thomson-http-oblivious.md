@@ -34,6 +34,10 @@ normative:
         name: Martin Thomson
         org: Mozilla
 
+  HTTP: I-D.ietf-httpbis-semantics
+  QUIC: I-D.ietf-quic-transport
+  TLS: RFC8446
+
 informative:
 
   Dingledine2004:
@@ -136,8 +140,7 @@ using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
 the integer value. The function `len()` returns the length of a sequence of
 bytes.
 
-Formats are described using notation from Section 1.3 of
-{{!QUIC=I-D.ietf-quic-transport}}.
+Formats are described using notation from {{Section 1.3 of QUIC}}.
 
 
 # Overview
@@ -251,7 +254,7 @@ algorithms. Each symmetric algorithm consists of an identifier for a KDF and an
 identifier for an AEAD.
 
 {{format-key-config}} shows a single key configuration, KeyConfig, that is
-expressed using the TLS syntax; see Section 3 of {{!TLS=RFC8446}}.
+expressed using the TLS syntax; see {{Section 3 of TLS}}.
 
 ~~~ tls-syntax
 opaque HpkePublicKey<1..2^16-1>;
@@ -558,7 +561,7 @@ information about the client to this request.
 
 When a response is received from the oblivious request resource, the oblivious
 proxy resource forwards the response according to the rules of an HTTP proxy;
-see Section 7.6 of {{!HTTP}}.
+see {{Section 7.6 of HTTP}}.
 
 An oblivious request resource, if it receives any response from the oblivious
 target resource, sends a single 200 response containing the encapsulated
@@ -569,7 +572,7 @@ response content.  As with requests, additional fields MAY be used to convey
 information that does not reveal information about the encapsulated response.
 
 An oblivious request resource acts as a gateway for requests to the oblivious
-target resource (see Section 7.6 of {{!HTTP}}).  The one exception is that any
+target resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
 responding to errors it detects before removing encapsulation of the request;
 see {{errors}}.
@@ -583,7 +586,7 @@ the binary HTTP response format does support the inclusion of informational
 message is received.
 
 In particular, the Expect header field with 100-continue (see Section 10.1.1 of
-{{!HTTP=I-D.ietf-httpbis-semantics}}) cannot be used.  Clients MUST NOT
+{{HTTP}}) cannot be used.  Clients MUST NOT
 construct a request that includes a 100-continue expectation; the oblivious
 request resource MUST generate an error if a 100-continue expectation is
 received.
@@ -824,7 +827,7 @@ include identifying information unless the client ensures that this information
 is removed by the proxy. A client MAY include information only for the
 oblivious proxy resource in header fields identified by the Connection header
 field if it trusts the proxy to remove these as required by Section 7.6.1 of
-{{!HTTP}}. The client needs to trust that the proxy does not replicate the
+{{HTTP}}. The client needs to trust that the proxy does not replicate the
 source addressing information in the request it forwards.
 
 Clients rely on the oblivious proxy resource to forward encapsulated requests
@@ -839,7 +842,7 @@ to perform. For each request it receives, it makes a request of the oblivious
 request resource that includes the same content. When it receives a response,
 it sends a response to the client that includes the content of the response
 from the oblivious request resource. When generating a request, the proxy MUST
-follow the forwarding rules in Section 7.6 of {{!HTTP}}.
+follow the forwarding rules in {{Section 7.6 of HTTP}}.
 
 A proxy can also generate responses, though it assumed to not be able to
 examine the content of a request (other than to observe the choice of key
@@ -918,19 +921,24 @@ successfully decrypted using the key.
 
 ## Replay Attacks
 
-Encapsulated requests can be copied and replayed toward servers. The replay
-risk is similar to the exposure to replay attack in TLS early data (see
-{{!TLS=RFC8446}}).
+Encapsulated requests can be copied and replayed by the oblivious proxy
+resource. The design of oblivious HTTP does not assume that the oblivious proxy
+resource will not replay requests. In addition, if a client sends an
+encapsulated request in TLS early data (see {{Section 8 of TLS}} and
+{{!RFC8470}}), a network-based adversary might be able to cause the request to
+be replayed. In both cases, the effect of a replay attack and the mitigations
+that might be employed are similar to TLS early data.
 
 A client or oblivious proxy resource MUST NOT automatically attempt to retry a
 failed request unless it receives a positive signal indicating that the request
 was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code (Section
 8.1.4 of {{!RFC7540}}), the HTTP/3 H3_REQUEST_REJECTED error code (Section 8.1
-of {{!QUIC-HTTP=I-D.ietf-quic-http}}) and a GOAWAY frame (in either protocol
-version) are all sufficient signals that no processing occurred. Connection failures or interruptions
-are not sufficient signals that no processing occurred. 
+of {{!QUIC-HTTP=I-D.ietf-quic-http}}), or a GOAWAY frame (in either protocol
+version) are all sufficient signals that no processing occurred. Connection
+failures or interruptions are not sufficient signals that no processing
+occurred.
 
-The anti-replay mechanisms described in Section 8 of {{!TLS}} are generally
+The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
 applicable to oblivious HTTP requests. Servers can use the encapsulated keying
 material as a unique key for identifying potential replays.
 
