@@ -927,7 +927,8 @@ failed request unless it receives a positive signal indicating that the request
 was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code (Section
 8.1.4 of {{!RFC7540}}), the HTTP/3 H3_REQUEST_REJECTED error code (Section 8.1
 of {{!QUIC-HTTP=I-D.ietf-quic-http}}) and a GOAWAY frame (in either protocol
-version) are all sufficient signals that no processing occurred.
+version) are all sufficient signals that no processing occurred. Connection failures or interruptions
+are not sufficient signals that no processing occurred. 
 
 The anti-replay mechanisms described in Section 8 of {{!TLS}} are generally
 applicable to oblivious HTTP requests. Servers can use the encapsulated keying
