@@ -229,14 +229,13 @@ Oblivious HTTP has limited applicability.  Many uses of HTTP benefit from being
 able to carry state between requests, such as with cookies ({{?RFC6265}}),
 authentication (Section 11 of {{?I-D.ietf-httpbis-semantics}}), or even
 alternative services ({{?RFC7838}}).  Oblivious HTTP seeks to prevent this sort
-of linkage, which also means that this sort of feature cannot be used.
+of linkage, which requires that applications not carry state between requests.
 
-Oblivious HTTP is only useful where privacy risks associated with possible
+Oblivious HTTP is primarily useful where privacy risks associated with possible
 stateful treatment of requests are sufficiently negative that the cost of
 deploying this protocol can be justified.  Oblivious HTTP is simpler and less
 costly than more robust systems, like Prio ({{PRIO}}) or Tor
-({{Dingledine2004}}), which provide stronger guarantees, but cost more to
-operate.
+({{Dingledine2004}}), which can provide stronger guarantees at higher operational costs.
 
 Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
@@ -245,11 +244,11 @@ several ways in which oblivious HTTP is more expensive than a direct request:
 * Each oblivious request requires at least two regular HTTP requests, which adds
   latency.
 
-* Each request is expanded in size with duplicate HTTP fields,
+* Each request is expanded in size with additional HTTP fields,
   encryption-related metadata, and AEAD expansion.
 
-* Deriving cryptographic keys and applying them to protecting requests and
-  responses takes non-negligible computational resources.
+* Deriving cryptographic keys and applying them for request and
+  response protection takes non-negligible computational resources.
 
 Examples of where preventing the linking of requests might justify these costs
 include:
