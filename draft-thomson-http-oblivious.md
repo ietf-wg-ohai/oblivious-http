@@ -859,7 +859,7 @@ resource might need an arrangement with proxies. This arrangement might be
 necessary to prevent having the large volume of requests being classified as an
 attack by the server.
 
-If a server does accept a larger volume of requests from a proxy, it needs to
+If a server accepts a larger volume of requests from a proxy, it needs to
 trust that the proxy does not allow abusive levels of request volumes from
 clients. That is, if a server allows requests from the proxy to be exempt from
 rate limits, the server might want to ensure that the proxy applies a rate
