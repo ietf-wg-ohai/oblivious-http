@@ -794,7 +794,7 @@ simplifies the interactions between those resources without affecting client
 privacy.
 
 
-## Client
+## Client Responsibilities
 
 Clients MUST ensure that the key configuration they select for generating
 encapsulated requests is integrity protected and authenticated so that it can
@@ -916,6 +916,50 @@ corresponds to the key identifier, but the encapsulated request cannot be
 successfully decrypted using the key.
 
 
+## Replay Attacks
+
+Encapsulated requests can be copied and replayed toward servers. The replay
+risk is similar to the exposure to replay attack in TLS early data (see
+{{!TLS=RFC8446}}).
+
+A client or oblivious proxy resource MUST NOT automatically attempt to retry a
+failed request unless it receives a positive signal indicating that the request
+was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code (Section
+8.1.4 of {{!RFC7540}}), the HTTP/3 H3_REQUEST_REJECTED error code (Section 8.1
+of {{!QUIC-HTTP=I-D.ietf-quic-http}}) and a GOAWAY frame (in either protocol
+version) are all sufficient signals that no processing occurred.
+
+The anti-replay mechanisms described in Section 8 of {{!TLS}} are generally
+applicable to oblivious HTTP requests. Servers can use the encapsulated keying
+material as a unique key for identifying potential replays.
+
+The mechanism used in TLS for managing differences in client and server clocks
+cannot be used as it depends on being able to observe previous interactions.
+Applications can still include an explicit indication of time to limit the span
+of time over which a server might need to track accepted requests. Clock
+information could be used for client identification, so reduction in precision
+or obfuscation might be necessary.
+
+The considerations in {{!RFC8470}} as they relate to managing the risk of
+replay also apply, though there is no option to delay the processing of a
+request.
+
+Limiting requests to those with safe methods might not be satisfactory for some
+applications, particularly those that involve the submission of data to a
+server. The use of idempotent methods might be of some use in managing replay
+risk, though it is important to recognize that different idempotent requests
+can be combined to be not idempotent.
+
+Idempotent actions with a narrow scope based on the value of a protected nonce
+could enable data submission with limited replay exposure. A nonce might be
+added as an explicit part of a request, or, if the oblivious request and target
+resources are co-located, the encapsulated keying material can be used to
+produce a nonce.
+
+The server-chosen `response_nonce` field ensures that responses have unique
+AEAD keys and nonces even when requests are replayed.
+
+
 # IANA Considerations
 
 Please update the "Media Types" registry at
@@ -955,7 +999,8 @@ corresponding public key as follows:
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
-wishes to send an HTTP request of a GET request to `https://example.com`, it constructs the following binary HTTP message:
+wishes to send an HTTP request of a GET request to `https://example.com`, it
+constructs the following binary HTTP message:
 
 ~~~
 00034745540568747470730b6578616d706c652e636f6d012f
