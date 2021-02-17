@@ -45,6 +45,14 @@ informative:
       - ins: N. Mathewson
       - ins: P. Syverson
 
+  PRIO:
+    title: "Prio: Private, Robust, and Scalable Computation of Aggregate Statistics"
+    date: 2017-03-14
+    target: "https://crypto.stanford.edu/prio/paper.pdf"
+    author:
+      - ins: H. Corrigan-Gibbs
+      - ins: D. Boneh
+
 
 --- abstract
 
@@ -95,7 +103,6 @@ this design represents a performance improvement over options that perform just
 one request in each connection. With limited trust placed in the proxy (see
 {{security}}), clients are assured that requests are not uniquely attributed to
 them or linked to other requests.
-
 
 # Conventions and Definitions
 
@@ -214,6 +221,44 @@ occur, as shown in {{fig-overview}}:
 
 10. The client removes the encapsulation to obtain the response to the original
     request.
+
+
+## Applicability
+
+Oblivious HTTP has limited applicability.  Many uses of HTTP benefit from being
+able to carry state between requests, such as with cookies ({{?RFC6265}}),
+authentication (Section 11 of {{?I-D.ietf-httpbis-semantics}}), or even
+alternative services ({{?RFC7838}}).  Oblivious HTTP seeks to prevent this sort
+of linkage, which requires that applications not carry state between requests.
+
+Oblivious HTTP is primarily useful where privacy risks associated with possible
+stateful treatment of requests are sufficiently negative that the cost of
+deploying this protocol can be justified.  Oblivious HTTP is simpler and less
+costly than more robust systems, like Prio ({{PRIO}}) or Tor
+({{Dingledine2004}}), which can provide stronger guarantees at higher operational costs.
+
+Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
+like those involved with connection setup, can be amortized, but there are
+several ways in which oblivious HTTP is more expensive than a direct request:
+
+* Each oblivious request requires at least two regular HTTP requests, which adds
+  latency.
+
+* Each request is expanded in size with additional HTTP fields,
+  encryption-related metadata, and AEAD expansion.
+
+* Deriving cryptographic keys and applying them for request and
+  response protection takes non-negligible computational resources.
+
+Examples of where preventing the linking of requests might justify these costs
+include:
+
+* DNS queries.  DNS queries made to a recursive resolver reveal information
+  about the requester, particularly if linked to other queries.
+
+* Telemetry submission.  Applications that submit reports about their usage to
+  their developers might use oblivious HTTP for some types of moderately
+  sensitive data.
 
 
 # Key Configuration {#key-configuration}
