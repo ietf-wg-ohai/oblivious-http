@@ -936,6 +936,7 @@ material as a unique key for identifying potential replays.
 
 The mechanism used in TLS for managing differences in client and server clocks
 cannot be used as it depends on being able to observe previous interactions.
+Oblivious HTTP explicitly prevents such linkability.
 Applications can still include an explicit indication of time to limit the span
 of time over which a server might need to track accepted requests. Clock
 information could be used for client identification, so reduction in precision
