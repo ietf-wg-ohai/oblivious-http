@@ -859,11 +859,11 @@ resource might need an arrangement with proxies. This arrangement might be
 necessary to prevent having the large volume of requests being classified as an
 attack by the server.
 
-If a server does accept a large volume of requests from a proxy, it needs to
+If a server accepts a larger volume of requests from a proxy, it needs to
 trust that the proxy does not allow abusive levels of request volumes from
 clients. That is, if a server allows requests from the proxy to be exempt from
-rate limits, the server might want to ensure that the proxy applies similar
-rate limiting when receiving requests from clients.
+rate limits, the server might want to ensure that the proxy applies a rate
+limiting policy that is acceptable to the server.
 
 Servers that enter into an agreement with a proxy that enables a higher request
 rate might choose to authenticate the proxy to enable the higher rate.
@@ -879,7 +879,7 @@ forwarded by the proxy.
 
 A proxy could, as part of its function, add delays in order to increase the
 anonymity set into which each message is attributed. This could latency to the
-overall time clients take to receive a response, which might not what some
+overall time clients take to receive a response, which might not be what some
 clients want.
 
 A proxy can use padding to reduce the effectiveness of traffic analysis.
