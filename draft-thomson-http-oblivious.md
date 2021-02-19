@@ -1015,6 +1015,25 @@ The server-chosen `response_nonce` field ensures that responses have unique
 AEAD keys and nonces even when requests are replayed.
 
 
+## Post-Compromise Security
+
+This design does not provide post-compromise security for responses. A client
+only needs to retain keying material that might be used compromise the
+confidentiality and integrity of a response until that response is consumed, so
+there is negligible risk associated with a client compromise.
+
+A server retains a secret key that might be used to remove protection from messages
+over much longer periods. A server compromise that provided access to the
+oblivious request resource secret key could allow an attacker to recover the
+plaintext of all requests sent toward affected keys and all of the responses
+that were generated. Accessing requests and responses also requires access to
+requests and responses, which implies either compromise of TLS connections or
+collusion with the oblivious proxy resource.
+
+The total number of affected messages affected by server key compromise can be
+limited by regular rotation of server keys.
+
+
 # IANA Considerations
 
 Please update the "Media Types" registry at
