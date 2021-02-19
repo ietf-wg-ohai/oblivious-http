@@ -1037,7 +1037,7 @@ limited by regular rotation of server keys.
 # Privacy Considerations
 
 One goal of this design is that independent client requests are only linkable
-by the chosen KeyConfig. The obliviious proxy and request resources can link
+by the chosen KeyConfig. The oblivious proxy and request resources can link
 requests using the same KeyConfig by matching KeyConfig.key_id. The oblivious
 proxy can also link requests using the public key corresponding to
 KeyConfig.key_id. The proxy cannot determine precisely which public key was used
