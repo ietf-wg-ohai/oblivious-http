@@ -1042,6 +1042,24 @@ The total number of affected messages affected by server key compromise can be
 limited by regular rotation of server keys.
 
 
+# Privacy Considerations
+
+One goal of this design is that independent client requests are only linkable
+by the chosen KeyConfig. The oblivious proxy and request resources can link
+requests using the same KeyConfig by matching KeyConfig.key_id. The oblivious
+proxy can also link requests using the public key corresponding to
+KeyConfig.key_id. The proxy cannot determine precisely which public key was used
+to encapsulate a request, given that multiple public keys may have matching key
+identifiers.
+
+Request resources are capable of linking requests depending on how KeyConfigs
+are produced by servers and discovered by clients. Specifically, servers can
+maliciously construct KeyConfigs to track individual clients. While KeyConfig
+discovery is outside the scope of this specification, clients should consider
+this tracking vector in deployments. Applications using this design should
+provide accommodations to mitigation this tracking vector.
+
+
 # IANA Considerations
 
 Please update the "Media Types" registry at
