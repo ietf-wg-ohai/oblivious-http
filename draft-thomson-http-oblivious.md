@@ -923,7 +923,7 @@ only needs to retain keying material that might be used compromise the
 confidentiality and integrity of a response until that response is consumed, so
 there is negligible risk associated with a client compromise.
 
-A server retains a secret that might be used to remove protection from messages
+A server retains a secret key that might be used to remove protection from messages
 over much longer periods. A server compromise that provided access to the
 oblivious request resource secret key could allow an attacker to recover the
 plaintext of all requests sent toward affected keys and all of the responses
