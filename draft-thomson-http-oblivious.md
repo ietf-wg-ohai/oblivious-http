@@ -302,7 +302,7 @@ identifier for an AEAD.
 expressed using the TLS syntax; see {{Section 3 of TLS}}.
 
 ~~~ tls-syntax
-opaque HpkePublicKey<1..2^16-1>;
+opaque HpkePublicKey[Npk];
 uint16 HpkeKemId;
 uint16 HpkeKdfId;
 uint16 HpkeAeadId;
@@ -323,7 +323,8 @@ struct {
 
 The types HpkeKemId, HpkeKdfId, and HpkeAeadId identify a KEM, KDF, and AEAD
 respectively. The definitions for these identifiers and the semantics of the
-algorithms they identify can be found in {{!HPKE}}.
+algorithms they identify can be found in {{!HPKE}}. The Npk parameter
+corresponding to the HpkeKdfId can be found in {{!HPKE}}.
 
 
 ## Key Configuration Media Type {#ohttp-keys}
@@ -431,13 +432,16 @@ process for constructing and processing an Encapsulated Request.
 ~~~
 Encapsulated Request {
   Key Identifier (8),
+  KEM Identifier (16),
   KDF Identifier (16),
   AEAD Identifier (16),
-  Encapsulated KEM Shared Secret (..),
+  Encapsulated KEM Shared Secret (8*Nenc),
   AEAD-Protected Request (..),
 }
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
+
+The Nenc parameter corresponding to the HpkeKdfId can be found in {{!HPKE}}.
 
 Responses are bound to responses and so consist only of AEAD-protected content.
 {{response}} describes the process for constructing and processing an
@@ -459,7 +463,8 @@ size of an AEAD key for the corresponding HPKE ciphersuite.
 
 Clients encapsulate a request `request` using values from a key configuration:
 
-* the key identifier from the configuration, `keyID`,
+* the key identifier from the configuration, `keyID`, with the corresponding KEM
+  identified by `kemID`,
 
 * the public key from the configuration, `pkR`, and
 
@@ -472,8 +477,8 @@ The client then constructs an encapsulated request, `enc_request`, as follows:
    key `enc`.
 
 2. Construct associated data, `aad`, by concatenating the values of `keyID`,
-   `kdfID`, and `aeadID`, as 8-, 16- and 16-bit integers respectively, each in
-   network byte order.
+   `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
+   integers, respectively, each in network byte order.
 
 2. Encrypt (seal) `request` with `aad` as associated data using `context`,
    yielding ciphertext `ct`.
@@ -489,6 +494,7 @@ In pseudocode, this procedure is as follows:
 ~~~
 enc, context = SetupBaseS(pkR, "request")
 aad = concat(encode(1, keyID),
+             encode(2, kemID),
              encode(2, kdfID),
              encode(2, aeadID))
 ct = context.Seal(aad, request)
@@ -498,11 +504,12 @@ enc_request = concat(aad, enc, ct)
 Servers decrypt an Encapsulated Request by reversing this process. Given an
 Encapsulated Request `enc_request`, a server:
 
-1. Parses `enc_request` into `keyID`, `kdfID`, `aeadID`, `enc`, and `ct`
+1. Parses `enc_request` into `keyID`, `kemID`, `kdfID`, `aeadID`, `enc`, and `ct`
    (indicated using the function `parse()` in pseudocode). The server is then
    able to find the HPKE private key, `skR`, corresponding to `keyID`.
 
-   a. If `keyID` does not identify a key, the server returns an error.
+   a. If `keyID` does not identify a key matching the type of `kemID`, the server
+      returns an error.
 
    b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
       server is unwilling to use with `skR`, the server returns an error.
@@ -519,8 +526,9 @@ Encapsulated Request `enc_request`, a server:
 In pseudocode, this procedure is as follows:
 
 ~~~
-keyID, kdfID, aeadID, enc, ct = parse(enc_request)
+keyID, kemID, kdfID, aeadID, enc, ct = parse(enc_request)
 aad = concat(encode(1, keyID),
+             encode(2, kemID),
              encode(2, kdfID),
              encode(2, aeadID))
 context = SetupBaseR(enc, skR, "request")
