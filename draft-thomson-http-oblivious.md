@@ -459,7 +459,7 @@ The size of the Nonce field in an Encapsulated Response corresponds to the
 size of an AEAD key for the corresponding HPKE ciphersuite.
 
 
-## HPKE Encapsulation of Requests {#request}
+## Encapsulation of Requests {#request}
 
 Clients encapsulate a request `request` using values from a key configuration:
 
@@ -480,10 +480,10 @@ The client then constructs an encapsulated request, `enc_request`, as follows:
    `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
    integers, respectively, each in network byte order.
 
-2. Encrypt (seal) `request` with `aad` as associated data using `context`,
+3. Encrypt (seal) `request` with `aad` as associated data using `context`,
    yielding ciphertext `ct`.
 
-3. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encapsulated
+4. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encapsulated
    Request `enc_request`.
 
 Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
@@ -536,7 +536,7 @@ request, error = context.Open(aad, ct)
 ~~~
 
 
-## HPKE Encapsulation of Responses {#response}
+## Encapsulation of Responses {#response}
 
 Given an HPKE context `context`, a request message `request`, and a response
 `response`, servers generate an Encapsulated Response `enc_response` as
@@ -1046,9 +1046,9 @@ limited by regular rotation of server keys.
 
 One goal of this design is that independent client requests are only linkable
 by the chosen KeyConfig. The oblivious proxy and request resources can link
-requests using the same KeyConfig by matching KeyConfig.key_id. The oblivious
+requests using the same KeyConfig by matching KeyConfig.key\_id. The oblivious
 proxy can also link requests using the public key corresponding to
-KeyConfig.key_id. The proxy cannot determine precisely which public key was used
+KeyConfig.key\_id. The proxy cannot determine precisely which public key was used
 to encapsulate a request, given that multiple public keys may have matching key
 identifiers.
 
