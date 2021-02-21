@@ -1090,23 +1090,23 @@ The oblivious request resource generates a key pair. In this example the server
 chooses DHKEM(X25519, HKDF-SHA256) and generates an X25519 key pair
 {{?X25519=RFC7748}}. The X25519 secret key is:
 
-~~~
-15ce887006e079dcc7d67e73e5c13e31a55083f816eca9ebcf523b90ea2ab7b0
+~~~ hex-dump
+cb14d538a70d8a74d47fb7e3ac5052a086da127c678d3585dcad72f98e3bff83
 ~~~
 
 The oblivious request resource constructs a key configuration that includes the
 corresponding public key as follows:
 
-~~~
-0100200020f21c612398e4384c21b7f2a759133c6c2d1b9ce6d033613dfad2c7
-3d4826214900080001000100010003
+~~~ hex-dump
+01002012a45279412ea6ef11e9f839bb5a422fc1262b5c023d787e4e636e70ae
+d3d56e00080001000100010003
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
 wishes to send an HTTP request of a GET request to `https://example.com`, it
 constructs the following binary HTTP message:
 
-~~~
+~~~ hex-dump
 00034745540568747470730b6578616d706c652e636f6d012f
 ~~~
 
@@ -1115,23 +1115,23 @@ selects a mutually supported KDF and AEAD. In this example, the client selects
 HKDF-SHA256 and AES-128-GCM. The client then generates an HPKE context that
 uses the server public key. This results in the following encapsulated key:
 
-~~~
-a7e0dffe93bc9ed807b51588f10669cd2f09ceb7f6a71153658275993eb88276
+~~~ hex-dump
+cd7786fd75143f12e03398dbe2bcfa8e01a8132e7b66050674db72730623ca3b
 ~~~
 
 The corresponding private key is:
 
-~~~
-3b04f76e7ea1313484dd73c343adb94c23671f98cb66fc7ecc6127f38e1d4431
+~~~ hex-dump
+c20afd33a2f2663faf023acf5d56fc08fddd38aada29b21b3b96e16f4326ccf7
 ~~~
 
 Applying the Seal operation from the HPKE context produces an encrypted
 message, allowing the client to construct the following encapsulated request:
 
-~~~
-0100010001a7e0dffe93bc9ed807b51588f10669cd2f09ceb7f6a71153658275
-993eb88276b497362592977a4abc7857cf9892377af698ca0ee31fe72d21ca12
-6ff2074eb9292ce7a83fc53158ff
+~~~ hex-dump
+01002000010001cd7786fd75143f12e03398dbe2bcfa8e01a8132e7b66050674
+db72730623ca3b68b9e75a0576745da12c4fa5053b7ec06d7f625197564a6087
+ec299f8d6fffa2a8addfc1c0f64b4b05
 ~~~
 
 The client then sends this to the oblivious proxy resource in a POST request,
@@ -1166,51 +1166,51 @@ target resource. The request can be served directly by the oblivious target
 resource, which generates a minimal response (consisting of just a 200 status
 code) as follows:
 
-~~~
+~~~ hex-dump
 0140c8
 ~~~
 
 The response is constructed by extracting a secret from the HPKE context:
 
-~~~
-861c67eefd91906068ee3208a9102274
+~~~ hex-dump
+9c0b96b577b9fc7a5beef536e0ff3a64
 ~~~
 
 The key derivation for the encapsulated response uses both the encapsulated KEM
 key from the request and a randomly selected nonce. This produces a salt of:
 
-~~~
-a7e0dffe93bc9ed807b51588f10669cd2f09ceb7f6a71153658275993eb88276
-55645b6626d6e8b1163d739c6cd3d94a
+~~~ hex-dump
+cd7786fd75143f12e03398dbe2bcfa8e01a8132e7b66050674db72730623ca3b
+061d62d5df5832c6c9fa4617ceb848a7
 ~~~
 
 The salt and secret are both passed to the Extract function of the selected KDF
 (HKDF-SHA256) to produce a pseudorandom key of:
 
-~~~
-ac29e0e1df48de4b349bb97db74da7f6732557a2fa6d12019ddadd8bf1e9cd99
+~~~ hex-dump
+a0ab55d3b1811694943bb72c386f59bd030e1278692a3db2f30d8aac2f89a5fc
 ~~~
 
 The pseudorandom key is used with the Expand function of the KDF and an info
 field of "key" to produce a 16-byte key for the selected AEAD (AES-128-GCM):
 
-~~~
-0d81ce961eb6e61d510e18053418f316
+~~~ hex-dump
+1dae9d7fe263d23e51a768bcaf310aa5
 ~~~
 
 With the same KDF and pseudorandom key, an info field of "nonce" is used to
 generate a 12-byte nonce:
 
-~~~
-ba2d3637b5f041cc15ef73b2
+~~~ hex-dump
+e520beec147740e4f8a3b553
 ~~~
 
 The AEAD Seal function is then used to encrypt the response, which is added
 to the randomized nonce value to produce the encapsulated response:
 
-~~~
-55645b6626d6e8b1163d739c6cd3d94ac7e0cfd48adf8057517241ee220d20bc
-e00a4a
+~~~ hex-dump
+061d62d5df5832c6c9fa4617ceb848a7a6f694da45accc3c32ad576cb204f7cd
+3bf23e
 ~~~
 
 The oblivious request resource then constructs a response:
