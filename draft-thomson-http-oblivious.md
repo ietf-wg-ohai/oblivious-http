@@ -271,9 +271,13 @@ oblivious request resource in order to send encapsulated requests.
 
 In order to ensure that clients do not encapsulate messages that other entities
 can intercept, the key configuration MUST be authenticated and have integrity
-protection. One way to ensure integrity for key configuration is for the
-oblivious request resource to serve content to the client directly, using HTTPS
-and the "application/ohttp-keys" media type; see {{ohttp-keys}}.
+protection.
+
+This document describes the "application/ohttp-keys" media type; see
+{{ohttp-keys}}.  This media type might be used, for example with HTTPS, as part
+of a system for configuring or discovering key configurations.  Note however
+that such a system needs to consider the potential for key configuration to be
+used to compromise client privacy; see {{privacy}}.
 
 Specifying a format for expressing the information a client needs to construct
 an encapsulated request ensures that different client implementations can be
@@ -1042,22 +1046,22 @@ The total number of affected messages affected by server key compromise can be
 limited by regular rotation of server keys.
 
 
-# Privacy Considerations
+# Privacy Considerations {#privacy}
 
 One goal of this design is that independent client requests are only linkable
-by the chosen KeyConfig. The oblivious proxy and request resources can link
-requests using the same KeyConfig by matching KeyConfig.key\_id. The oblivious
-proxy can also link requests using the public key corresponding to
-KeyConfig.key\_id. The proxy cannot determine precisely which public key was used
-to encapsulate a request, given that multiple public keys may have matching key
-identifiers.
+by the chosen key configuration. The oblivious proxy and request resources can link
+requests using the same key configuration by matching KeyConfig.key\_id, or, if
+the oblivious target resource is willing to use trial decryption, a limited set
+of key configurations that share an identifier. An oblivious proxy can link
+requests using the public key corresponding to KeyConfig.key\_id.
 
 Request resources are capable of linking requests depending on how KeyConfigs
 are produced by servers and discovered by clients. Specifically, servers can
-maliciously construct KeyConfigs to track individual clients. While KeyConfig
-discovery is outside the scope of this specification, clients should consider
-this tracking vector in deployments. Applications using this design should
-provide accommodations to mitigation this tracking vector.
+maliciously construct key configurations to track individual clients. A specific
+method for a client to acquire key configurations is not included in this
+specification. Clients need to consider these tracking vectors when choosing a
+discovery method.  Applications using this design should provide accommodations
+to mitigate tracking.
 
 
 # IANA Considerations
