@@ -496,7 +496,7 @@ structure.
 In pseudocode, this procedure is as follows:
 
 ~~~
-enc, context = SetupBaseS(pkR, "request")
+enc, context = SetupBaseS(pkR, "ohttp request")
 aad = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
@@ -535,7 +535,7 @@ aad = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
              encode(2, aeadID))
-context = SetupBaseR(enc, skR, "request")
+context = SetupBaseR(enc, skR, "ohttp request")
 request, error = context.Open(aad, ct)
 ~~~
 
@@ -546,9 +546,9 @@ Given an HPKE context `context`, a request message `request`, and a response
 `response`, servers generate an Encapsulated Response `enc_response` as
 follows:
 
-1. Export a secret `secret` from `context`, using the string "response" as context.
-   The length of this secret is `max(Nn, Nk)`, where `Nn` and `Nk` are the length
-   of AEAD key and nonce associated with `context`.
+1. Export a secret `secret` from `context`, using the string "ohttp response" as
+   context. The length of this secret is `max(Nn, Nk)`, where `Nn` and `Nk` are
+   the length of AEAD key and nonce associated with `context`.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called `response_nonce`.
 
@@ -575,7 +575,7 @@ follows:
 In pseudocode, this procedure is as follows:
 
 ~~~
-secret = context.Export("response", Nk)
+secret = context.Export("ohttp response", Nk)
 response_nonce = random(max(Nn, Nk))
 salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
