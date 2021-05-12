@@ -908,7 +908,10 @@ encapsulated response.
 
 A proxy MUST NOT add information about the client identity when forwarding
 requests. This includes the Via field, the Forwarded field
-{{?FORWARDED=RFC7239}}, and any similar information.
+{{?FORWARDED=RFC7239}}, and any similar information.  A client does not depend
+on the proxy using an authenticated and encrypted connection to the oblivious request
+resource, only that information about the client not be attached to forwarded
+requests. 
 
 
 ### Denial of Service {#dos}
