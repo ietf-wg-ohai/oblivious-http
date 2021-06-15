@@ -1000,7 +1000,8 @@ signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
 applicable to oblivious HTTP requests. Servers can use the encapsulated keying
-material as a unique key for identifying potential replays.
+material as a unique key for identifying potential replays. This depends on
+clients generating a new HPKE context for every request.
 
 The mechanism used in TLS for managing differences in client and server clocks
 cannot be used as it depends on being able to observe previous interactions.
