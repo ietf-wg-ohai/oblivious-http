@@ -35,7 +35,7 @@ normative:
         org: Mozilla
 
   HTTP: I-D.ietf-httpbis-semantics
-  QUIC: I-D.ietf-quic-transport
+  QUIC: RFC9000
   TLS: RFC8446
 
 informative:
@@ -911,7 +911,7 @@ requests. This includes the Via field, the Forwarded field
 {{?FORWARDED=RFC7239}}, and any similar information.  A client does not depend
 on the proxy using an authenticated and encrypted connection to the oblivious request
 resource, only that information about the client not be attached to forwarded
-requests. 
+requests.
 
 
 ### Denial of Service {#dos}

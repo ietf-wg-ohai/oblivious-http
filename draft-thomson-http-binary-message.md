@@ -63,7 +63,8 @@ Two modes for encoding are described:
 
 {::boilerplate bcp14}
 
-This document uses terminology from HTTP ({{!HTTP}}) and notation from QUIC ({{!QUIC=I-D.ietf-quic-transport}}).
+This document uses terminology from HTTP ({{!HTTP}}) and notation from QUIC
+({{!QUIC=RFC9000}}).
 
 
 # Format
