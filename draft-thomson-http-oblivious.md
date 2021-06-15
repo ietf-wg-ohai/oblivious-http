@@ -1064,7 +1064,7 @@ maliciously construct key configurations to track individual clients. A specific
 method for a client to acquire key configurations is not included in this
 specification. Clients need to consider these tracking vectors when choosing a
 discovery method.  Applications using this design should provide accommodations
-to mitigate tracking.
+to mitigate tracking use key configurations.
 
 
 # IANA Considerations
@@ -1238,5 +1238,5 @@ construct the AEAD key and nonce and decrypt the response.
 {: numbered="false"}
 
 This design is based on a design for oblivious DoH, described in
-{{?ODOH=I-D.pauly-dprive-oblivious-doh}}. Eric Rescorla helped unify the
-structure of the key format.
+{{?ODOH=I-D.pauly-dprive-oblivious-doh}}. David Benjamin and Eric Rescorla made
+technical contributions.
