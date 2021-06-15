@@ -27,7 +27,7 @@ normative:
     title: "Binary Representation of HTTP Messages"
     date: {DATE}
     seriesinfo:
-      Internet-Draft: draft-ietf-http-binary-message-latest
+      Internet-Draft: draft-thomson-http-binary-message-latest
     author:
       -
         ins: M.Thomson
