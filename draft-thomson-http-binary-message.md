@@ -25,6 +25,7 @@ author:
 normative:
   HTTP: I-D.ietf-httpbis-semantics
   MESSAGING: I-D.ietf-httpbis-messaging
+  H2: I-D.ietf-httpbis-http2bis
 
 informative:
 
@@ -44,7 +45,7 @@ messages that can be conveyed outside of an HTTP protocol. This enables the
 transformation of entire messages, including the application of authenticated
 encryption.
 
-This format is informed by the framing structure of HTTP/2 ({{?H2=RFC7540}})
+This format is informed by the framing structure of HTTP/2 ({{H2}})
 and HTTP/3 ({{?H3=I-D.ietf-quic-http}}). In comparison, this format simpler by
 virtue of not including either header compression ({{?HPACK=RFC7541}},
 {{?QPACK=I-D.ietf-quic-qpack}}) or a generic framing layer.
@@ -222,10 +223,10 @@ Other values cause the message to be invalid; see {{invalid}}.
 
 The control data for a request message includes four values that correspond to
 the values of the `:method`, `:scheme`, `:authority`, and `:path` pseudo-header
-fields described in HTTP/2 (Section 8.1.2.3 of {{!H2}}). These fields are
+fields described in HTTP/2 ({{Section 8.1.2.3 of H2}}). These fields are
 encoded, each with a length prefix, in the order listed.
 
-The rules in Section 8.1.2.3 of {{!H2}} for constructing pseudo-header fields
+The rules in {{Section 8.1.2.3 of H2}} for constructing pseudo-header fields
 apply to the construction of these values. However, where the `:authority`
 pseudo-header field might be omitted in HTTP/2, a zero-length value is encoded
 instead.
@@ -250,7 +251,7 @@ Request Control Data {
 ## Response Control Data
 
 The control data for a request message includes a single field that corresponds
-to the `:status` pseudo-header field in HTTP/2 {{!H2}}. This field is encoded
+to the `:status` pseudo-header field in HTTP/2 {{H2}}. This field is encoded
 as a single variable length integer, not a decimal string.
 
 The format of final response control data is shown in
@@ -329,7 +330,7 @@ values.
 Like HTTP/2, this format has an exception for the combination of multiple
 instances of the `Cookie` field. Instances of fields with the ASCII-encoded
 value of `cookie` are combined using a semicolon octet (0x3b) rather than a
-comma; see Section 8.1.2.5 of {{!H2}}.
+comma; see {{Section 8.1.2.5 of H2}}.
 
 This format provides fixed locations for content that would be carried in
 HTTP/2 pseudo-fields. Therefore, there is no need to include field lines
@@ -405,7 +406,7 @@ of the content is not modified.
 
 This example shows that the Host header field is not replicated in the
 :authority field, as is required for ensuring that the request is reproduced
-accurately; see Section 8.1.2.3 of {{H2}}.
+accurately; see {{Section 8.1.2.3 of H2}}.
 
 The same message can be truncated with no effect on interpretation. In this
 case, the last two bytes - corresponding to content and a trailer section - can
