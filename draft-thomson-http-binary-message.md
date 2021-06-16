@@ -99,7 +99,7 @@ format shown in {{format-known-length}}.
 
 ~~~ quic-format
 Message with Known-Length {
-  Framing (i) = 0..1,
+  Framing Indicator (i) = 0..1,
   Known-Length Informational Response (..) ...,
   Control Data (..),
   Known-Length Field Section (..),
