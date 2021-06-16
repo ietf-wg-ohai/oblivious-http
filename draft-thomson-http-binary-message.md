@@ -22,6 +22,10 @@ author:
     org: Cloudflare
     email: caw@heapingbits.net
 
+normative:
+  HTTP: I-D.ietf-httpbis-semantics
+  MESSAGING: I-D.ietf-httpbis-messaging
+
 informative:
 
 
@@ -35,10 +39,10 @@ This document defines a binary format for representing HTTP messages.
 # Introduction
 
 This document defines a simple format for representing an HTTP message
-({{!HTTP=I-D.ietf-httpbis-semantics}}), either request or response. This allows
-for the encoding of HTTP messages that can be conveyed outside of an HTTP
-protocol. This enables the transformation of entire messages,
-including the application of authenticated encryption.
+({{HTTP}}), either request or response. This allows for the encoding of HTTP
+messages that can be conveyed outside of an HTTP protocol. This enables the
+transformation of entire messages, including the application of authenticated
+encryption.
 
 This format is informed by the framing structure of HTTP/2 ({{?H2=RFC7540}})
 and HTTP/3 ({{?H3=I-D.ietf-quic-http}}). In comparison, this format simpler by
@@ -46,9 +50,9 @@ virtue of not including either header compression ({{?HPACK=RFC7541}},
 {{?QPACK=I-D.ietf-quic-qpack}}) or a generic framing layer.
 
 This format provides an alternative to the `message/http` content type defined
-in {{?MESSAGING=I-D.ietf-httpbis-messaging}}. A binary format permits more
-efficient encoding and processing of messages. A binary format also reduces
-exposure to security problems related to processing of HTTP messages.
+in {{MESSAGING}}. A binary format permits more efficient encoding and processing
+of messages. A binary format also reduces exposure to security problems related
+to processing of HTTP messages.
 
 Two modes for encoding are described:
 
@@ -63,14 +67,14 @@ Two modes for encoding are described:
 
 {::boilerplate bcp14}
 
-This document uses terminology from HTTP ({{!HTTP}}) and notation from QUIC
+This document uses terminology from HTTP ({{HTTP}}) and notation from QUIC
 ({{!QUIC=RFC9000}}).
 
 
 # Format
 
 An HTTP message is split into five sections, following the structure defined in
-Section 6 of {{!HTTP}}:
+{{Section 6 of HTTP}}:
 
 1. Framing indicator. This format uses a single integer to describe framing, which describes
    whether the message is a request or response and how subsequent sections are
@@ -262,8 +266,8 @@ Final Response Control Data {
 
 ### Informational Status Codes {#informational}
 
-This format supports informational status codes (see Section 15.2 of
-{{!HTTP}}). Responses that include information status codes are encoded by
+This format supports informational status codes (see {{Section 15.2 of
+HTTP}}). Responses that include information status codes are encoded by
 repeating the response control data and associated header section until the
 final status code is encoded.
 
@@ -287,8 +291,8 @@ follows.
 
 ## Header and Trailer Field Lines {#fields}
 
-Header and trailer sections consist of zero or more field lines; see Section 5
-of {{!HTTP}}. The format of a field section depends on whether the message is
+Header and trailer sections consist of zero or more field lines; see {{Section 5
+of HTTP}}. The format of a field section depends on whether the message is
 known- or intermediate-length.
 
 Each field line includes a name and a value. Both the name and value are
@@ -306,7 +310,7 @@ Field Line {
 {: #format-field-line title="Format of a Field Line"}
 
 For field names, byte values that are not permitted in an HTTP field name cause
-the message to be invalid; see Section 5.1 of {{!HTTP}} for a definition of
+the message to be invalid; see {{Section 5.1 of HTTP}} for a definition of
 what is valid and {{invalid}} for handling of invalid messages.
 
 In addition, values from the ASCII uppercase range (0x41-0x5a inclusive) MUST
@@ -315,11 +319,11 @@ messages. A recipient MUST treat a message containing field names with bytes in
 the range 0x41-0x5a as invalid; see {{invalid}}.
 
 For field values, byte values that are not permitted in an HTTP field value
-cause the message to be invalid; see Section 5.5 of {{!HTTP}} for a definition
+cause the message to be invalid; see {{Section 5.5 of HTTP}} for a definition
 of valid values.
 
-The same field name can be repeated in multiple field lines; see Section 5.2 of
-{{!HTTP}} for the semantics of repeated field names and rules for combining
+The same field name can be repeated in multiple field lines; see {{Section 5.2 of
+HTTP}} for the semantics of repeated field names and rules for combining
 values.
 
 Like HTTP/2, this format has an exception for the combination of multiple
@@ -487,7 +491,7 @@ phrase is not retained by this encoding.
 ~~~
 {: #ex-bini-response title="Binary Response including Interim Responses"}
 
-A response that uses the chunked encoding (Section 7.1 of {{!MESSAGING}}) as
+A response that uses the chunked encoding (see {{Section 7.1 of MESSAGING}}) as
 shown for {{ex-chunked}} can be encoded by preserving chunk boundaries using
 indefinite-length encoding, which minimizes buffering needed to translate into
 the binary format. However, these boundaries do not need to be retained and any
@@ -600,7 +604,7 @@ Change controller:
 # Security Considerations {#security}
 
 Many of the considerations that apply to HTTP message handling apply to this
-format; see Section 17 of {{!HTTP}} and Section 11 of {{!MESSAGING}} for common
+format; see {{Section 17 of HTTP}} and {{Section 11 of MESSAGING}} for common
 issues in handling HTTP messages.
 
 Strict parsing of the format with no tolerance for errors can help avoid a
@@ -611,7 +615,7 @@ large messages, particularly those with large numbers of fields.
 The format is designed to allow for minimal state when translating for use with
 HTTP proper. However, producing a combined value for fields, which might be
 necessary for the `Cookie` field when translating this format (like HTTP/1.1
-{{!MESSAGING}}), can require the commitment of resources. Implementations need
+{{MESSAGING}}), can require the commitment of resources. Implementations need
 to ensure that they aren't subject to resource exhaustion attack from a
 maliciously crafted message.
 
