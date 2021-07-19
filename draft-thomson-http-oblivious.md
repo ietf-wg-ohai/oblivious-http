@@ -993,14 +993,15 @@ A client or oblivious proxy resource MUST NOT automatically attempt to retry a
 failed request unless it receives a positive signal indicating that the request
 was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code (Section
 8.1.4 of {{!RFC7540}}), the HTTP/3 H3_REQUEST_REJECTED error code (Section 8.1
-of {{!QUIC-HTTP=I-D.ietf-quic-http}}), or a GOAWAY frame (in either protocol
-version) are all sufficient signals that no processing occurred. Connection
-failures or interruptions are not sufficient signals that no processing
-occurred.
+of {{!QUIC-HTTP=I-D.ietf-quic-http}}), or a GOAWAY frame with a low enough
+identifier (in either protocol version) are all sufficient signals that no
+processing occurred. Connection failures or interruptions are not sufficient
+signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
 applicable to oblivious HTTP requests. Servers can use the encapsulated keying
-material as a unique key for identifying potential replays.
+material as a unique key for identifying potential replays. This depends on
+clients generating a new HPKE context for every request.
 
 The mechanism used in TLS for managing differences in client and server clocks
 cannot be used as it depends on being able to observe previous interactions.
@@ -1064,7 +1065,7 @@ maliciously construct key configurations to track individual clients. A specific
 method for a client to acquire key configurations is not included in this
 specification. Clients need to consider these tracking vectors when choosing a
 discovery method.  Applications using this design should provide accommodations
-to mitigate tracking.
+to mitigate tracking use key configurations.
 
 
 # IANA Considerations
@@ -1238,5 +1239,5 @@ construct the AEAD key and nonce and decrypt the response.
 {: numbered="false"}
 
 This design is based on a design for oblivious DoH, described in
-{{?ODOH=I-D.pauly-dprive-oblivious-doh}}. Eric Rescorla helped unify the
-structure of the key format.
+{{?ODOH=I-D.pauly-dprive-oblivious-doh}}. David Benjamin and Eric Rescorla made
+technical contributions.
