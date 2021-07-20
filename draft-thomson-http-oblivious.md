@@ -60,7 +60,7 @@ informative:
   ODoH:
     title: "Oblivious DNS over HTTPS (ODoH): A Practical Privacy Enhancement to DNS"
     date: 2021-01-07
-    target: https://arxiv.org/abs/2011.10121
+    target: https://www.petsymposium.org/2021/files/papers/issue4/popets-2021-0085.pdf
     author:
       - fullname: Sudheesh Singanamalla
       - fullname: Suphanat Chunhapanya
