@@ -861,7 +861,9 @@ encapsulated requests is integrity protected and authenticated so that it can
 be attributed to the oblivious request resource; see {{key-configuration}}.
 
 Clients MUST NOT include identifying information in the request that is
-encapsulated.
+encapsulated. Identifying information includes cookies {{?COOKIES=RFC6265}},
+authentication credentials or tokens, and any information that might reveal
+client-specific information such as account credentials.
 
 Clients cannot carry connection-level state between requests as they only
 establish direct connections to the proxy responsible for the oblivious proxy
