@@ -230,9 +230,9 @@ occur, as shown in {{fig-overview}}:
 
 Oblivious HTTP has limited applicability.  Many uses of HTTP benefit from being
 able to carry state between requests, such as with cookies ({{?RFC6265}}),
-authentication (Section 11 of {{?I-D.ietf-httpbis-semantics}}), or even
-alternative services ({{?RFC7838}}).  Oblivious HTTP seeks to prevent this sort
-of linkage, which requires that applications not carry state between requests.
+authentication ({{Section 11 of HTTP}}), or even alternative services
+({{?RFC7838}}).  Oblivious HTTP seeks to prevent this sort of linkage, which
+requires that applications not carry state between requests.
 
 Oblivious HTTP is primarily useful where privacy risks associated with possible
 stateful treatment of requests are sufficiently negative that the cost of
