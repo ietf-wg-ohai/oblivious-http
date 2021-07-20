@@ -57,6 +57,21 @@ informative:
       - ins: H. Corrigan-Gibbs
       - ins: D. Boneh
 
+  ODoH:
+    title: "Oblivious DNS over HTTPS (ODoH): A Practical Privacy Enhancement to DNS"
+    date: 2021-01-07
+    target: https://arxiv.org/abs/2011.10121
+    author:
+      - fullname: Sudheesh Singanamalla
+      - fullname: Suphanat Chunhapanya
+      - fullname: Marek Vavrusa
+      - fullname: Tanya Verma
+      - fullname: Peter Wu
+      - fullname: Marwan Fayed
+      - fullname: Kurtis Heimerl
+      - fullname: Nick Sullivan
+      - fullname: Christopher A. Wood
+
 
 --- abstract
 
@@ -1068,6 +1083,26 @@ method for a client to acquire key configurations is not included in this
 specification. Clients need to consider these tracking vectors when choosing a
 discovery method.  Applications using this design should provide accommodations
 to mitigate tracking use key configurations.
+
+
+# Operational and Deployment Considerations {#deployment}
+
+Using Oblivious HTTP adds both cryptographic and latency to requests relative to
+a simple HTTP request-response exchange.  Deploying proxy services that are on
+path between clients and servers avoids adding significant additional delay due
+to network topology.  A study of a similar system {{ODoH}} found that deploying
+proxies close to servers was most effective in minimizing additional latency.
+
+Oblivious HTTP might be incompatible with network interception regimes, such as
+those that rely on configuring clients with trust anchors and intercepting TLS
+connections.  While TLS might be intercepted successfully, interception
+middleboxes devices might not receive updates that would allow Oblivious HTTP to
+be correctly identified using the media types defined in {{media-types}}.
+
+Oblivious HTTP has a simple key management design that is not trivially altered
+to enable interception by intermediaries.  Clients that are configured to enable
+interception might choose to disable Oblivious HTTP in order to ensure that
+content is accessible to middleboxes.
 
 
 # IANA Considerations
