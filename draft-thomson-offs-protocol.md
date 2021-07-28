@@ -1,6 +1,6 @@
 ---
-title: "Oblivious HTTP"
-docname: draft-thomson-http-oblivious-latest
+title: "Oblivious Forwarding For HTTP"
+docname: draft-thomson-offs-protocol-latest
 category: std
 ipr: trust200902
 area: ART
@@ -191,7 +191,7 @@ server.
      |<----------------|                  |               |
      |                 |                  |               |
 ~~~
-{: #fig-overview title="Overview of Oblivious HTTP"}
+{: #fig-overview title="Overview of Oblivious Forwarding For HTTP"}
 
 In order to make a request to an oblivious target resource, the following steps
 occur, as shown in {{fig-overview}}:
@@ -228,21 +228,24 @@ occur, as shown in {{fig-overview}}:
 
 ## Applicability
 
-Oblivious HTTP has limited applicability.  Many uses of HTTP benefit from being
-able to carry state between requests, such as with cookies ({{?RFC6265}}),
-authentication (Section 11 of {{?I-D.ietf-httpbis-semantics}}), or even
-alternative services ({{?RFC7838}}).  Oblivious HTTP seeks to prevent this sort
-of linkage, which requires that applications not carry state between requests.
+Oblivious Forwarding For HTTP has limited applicability.  Many uses of HTTP
+benefit from being able to carry state between requests, such as with cookies
+({{?RFC6265}}), authentication (Section 11 of {{?I-D.ietf-httpbis-semantics}}),
+or even alternative services ({{?RFC7838}}).  Oblivious Forwarding For HTTP
+seeks to prevent this sort of linkage, which requires that applications not
+carry state between requests.
 
-Oblivious HTTP is primarily useful where privacy risks associated with possible
-stateful treatment of requests are sufficiently negative that the cost of
-deploying this protocol can be justified.  Oblivious HTTP is simpler and less
-costly than more robust systems, like Prio ({{PRIO}}) or Tor
-({{Dingledine2004}}), which can provide stronger guarantees at higher operational costs.
+Oblivious Forwarding For HTTP is primarily useful where privacy risks associated
+with possible stateful treatment of requests are sufficiently negative that the
+cost of deploying this protocol can be justified.  Oblivious Forwarding For HTTP
+is simpler and less costly than more robust systems, like Prio ({{PRIO}}) or Tor
+({{Dingledine2004}}), which can provide stronger guarantees at higher
+operational costs.
 
-Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
-like those involved with connection setup, can be amortized, but there are
-several ways in which oblivious HTTP is more expensive than a direct request:
+Oblivious Forwarding For HTTP is more costly than a direct connection to a
+server.  Some costs, like those involved with connection setup, can be
+amortized, but there are several ways in which oblivious HTTP is more expensive
+than a direct request:
 
 * Each oblivious request requires at least two regular HTTP requests, which adds
   latency.
@@ -911,7 +914,7 @@ requests. This includes the Via field, the Forwarded field
 {{?FORWARDED=RFC7239}}, and any similar information.  A client does not depend
 on the proxy using an authenticated and encrypted connection to the oblivious request
 resource, only that information about the client not be attached to forwarded
-requests. 
+requests.
 
 
 ### Denial of Service {#dos}
@@ -1004,7 +1007,7 @@ material as a unique key for identifying potential replays.
 
 The mechanism used in TLS for managing differences in client and server clocks
 cannot be used as it depends on being able to observe previous interactions.
-Oblivious HTTP explicitly prevents such linkability.
+Oblivious Forwarding For HTTP explicitly prevents such linkability.
 Applications can still include an explicit indication of time to limit the span
 of time over which a server might need to track accepted requests. Clock
 information could be used for client identification, so reduction in precision
