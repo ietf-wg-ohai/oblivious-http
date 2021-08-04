@@ -26,6 +26,7 @@ normative:
   HTTP: I-D.ietf-httpbis-semantics
   MESSAGING: I-D.ietf-httpbis-messaging
   H2: I-D.ietf-httpbis-http2bis
+  QUIC: RFC9000
 
 informative:
 
@@ -69,13 +70,13 @@ Two modes for encoding are described:
 {::boilerplate bcp14}
 
 This document uses terminology from HTTP ({{HTTP}}) and notation from QUIC
-({{!QUIC=RFC9000}}).
+({{Section 1.3 of QUIC}}).
 
 
 # Format
 
-An HTTP message is split into five sections, following the structure defined in
-{{Section 6 of HTTP}}:
+{{Section 6 of HTTP}} defines five distinct parts to HTTP messages.  A framing
+indicator is added to signal how these parts are composed:
 
 1. Framing indicator. This format uses a single integer to describe framing, which describes
    whether the message is a request or response and how subsequent sections are
@@ -94,7 +95,7 @@ An HTTP message is split into five sections, following the structure defined in
 6. Trailer section.  This contains zero or more trailer fields.
 
 All lengths and numeric values are encoded using the variable-length integer
-encoding from {{!QUIC}}.
+encoding from {{Section 16 of QUIC}}.
 
 
 ## Known Length Messages
@@ -223,10 +224,10 @@ Other values cause the message to be invalid; see {{invalid}}.
 
 The control data for a request message includes four values that correspond to
 the values of the `:method`, `:scheme`, `:authority`, and `:path` pseudo-header
-fields described in HTTP/2 ({{Section 8.1.2.3 of H2}}). These fields are
+fields described in HTTP/2 ({{Section 8.3.1 of H2}}). These fields are
 encoded, each with a length prefix, in the order listed.
 
-The rules in {{Section 8.1.2.3 of H2}} for constructing pseudo-header fields
+The rules in {{Section 8.3 of H2}} for constructing pseudo-header fields
 apply to the construction of these values. However, where the `:authority`
 pseudo-header field might be omitted in HTTP/2, a zero-length value is encoded
 instead.
@@ -251,8 +252,9 @@ Request Control Data {
 ## Response Control Data
 
 The control data for a request message includes a single field that corresponds
-to the `:status` pseudo-header field in HTTP/2 {{H2}}. This field is encoded
-as a single variable length integer, not a decimal string.
+to the `:status` pseudo-header field in HTTP/2; see {{Section 8.3.2 of
+H2}}. This field is encoded as a single variable length integer, not a decimal
+string.
 
 The format of final response control data is shown in
 {{format-response-control-data}}.
@@ -267,10 +269,9 @@ Final Response Control Data {
 
 ### Informational Status Codes {#informational}
 
-This format supports informational status codes (see {{Section 15.2 of
-HTTP}}). Responses that include information status codes are encoded by
-repeating the response control data and associated header section until the
-final status code is encoded.
+Responses that include information status codes (see {{Section 15.2 of HTTP}})
+are encoded by repeating the response control data and associated header section
+until the final status code is encoded.
 
 The format of the informational response control data is shown in
 {{format-informational}}.
@@ -314,14 +315,9 @@ For field names, byte values that are not permitted in an HTTP field name cause
 the message to be invalid; see {{Section 5.1 of HTTP}} for a definition of
 what is valid and {{invalid}} for handling of invalid messages.
 
-In addition, values from the ASCII uppercase range (0x41-0x5a inclusive) MUST
-be translated to lowercase values (0x61-0x7a) when generating or forwarding
-messages. A recipient MUST treat a message containing field names with bytes in
-the range 0x41-0x5a as invalid; see {{invalid}}.
-
-For field values, byte values that are not permitted in an HTTP field value
-cause the message to be invalid; see {{Section 5.5 of HTTP}} for a definition
-of valid values.
+Field names and values MUST be constructed and validated according to the rules
+of {{Section 8.2.1 of H2}}.  A recipient MUST treat a message that HTTP/2
+regards as malformed by these rules as invalid; see {{invalid}}.
 
 The same field name can be repeated in multiple field lines; see {{Section 5.2 of
 HTTP}} for the semantics of repeated field names and rules for combining
@@ -330,15 +326,16 @@ values.
 Like HTTP/2, this format has an exception for the combination of multiple
 instances of the `Cookie` field. Instances of fields with the ASCII-encoded
 value of `cookie` are combined using a semicolon octet (0x3b) rather than a
-comma; see {{Section 8.1.2.5 of H2}}.
+comma; see {{Section 8.2.3 of H2}}.
 
-This format provides fixed locations for content that would be carried in
-HTTP/2 pseudo-fields. Therefore, there is no need to include field lines
-containing a name of `:method`, `:scheme`, `:authority`, `:path`, or `:status`.
-Fields that contain one of these names cause the message to be invalid; see
+This format provides fixed locations for content that would be carried in HTTP/2
+pseudo-fields. Therefore, there is no need to include field lines containing a
+name of `:method`, `:scheme`, `:authority`, `:path`, or `:status`.  Fields that
+contain one of these names cause the message to be invalid; see
 {{invalid}}. Pseudo-fields that are defined by protocol extensions MAY be
-included, however field lines containing pseudo-fields MUST precede other field
-lines.
+included.  Field lines containing pseudo-fields MUST precede other field lines;
+a message that contains a pseudo-field after any other field is invalid; see
+{{invalid}}.
 
 
 ## Content
@@ -406,7 +403,7 @@ of the content is not modified.
 
 This example shows that the Host header field is not replicated in the
 :authority field, as is required for ensuring that the request is reproduced
-accurately; see {{Section 8.1.2.3 of H2}}.
+accurately; see {{Section 8.3.1 of H2}}.
 
 The same message can be truncated with no effect on interpretation. In this
 case, the last two bytes - corresponding to content and a trailer section - can
@@ -493,10 +490,10 @@ phrase is not retained by this encoding.
 {: #ex-bini-response title="Binary Response including Interim Responses"}
 
 A response that uses the chunked encoding (see {{Section 7.1 of MESSAGING}}) as
-shown for {{ex-chunked}} can be encoded by preserving chunk boundaries using
-indefinite-length encoding, which minimizes buffering needed to translate into
-the binary format. However, these boundaries do not need to be retained and any
-chunk extensions cannot be conveyed using the binary format.
+shown for {{ex-chunked}} can be encoded using indefinite-length encoding, which
+minimizes buffering needed to translate into the binary format. However, chunk
+boundaries do not need to be retained and any chunk extensions cannot be
+conveyed using the binary format.
 
 ~~~ http-message
 HTTP/1.1 200 OK
