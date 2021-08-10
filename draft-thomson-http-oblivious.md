@@ -930,7 +930,7 @@ on the proxy using an authenticated and encrypted connection to the oblivious re
 resource, only that information about the client not be attached to forwarded
 requests.  As a consequence, application configurations wherein clients make
 policy decisions about target connections, e.g., to apply certificate pinning,
-are incompatible with Oblivious HTTP.  In such cases, alternate technologies
+are incompatible with Oblivious HTTP.  In such cases, alternative technologies
 such as HTTP CONNECT {{?HTTP-CONNECT=RFC7231, Section 4.3.6}} should be used.
 
 
