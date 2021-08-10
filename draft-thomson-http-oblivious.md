@@ -928,7 +928,10 @@ requests. This includes the Via field, the Forwarded field
 {{?FORWARDED=RFC7239}}, and any similar information.  A client does not depend
 on the proxy using an authenticated and encrypted connection to the oblivious request
 resource, only that information about the client not be attached to forwarded
-requests.
+requests.  As a consequence, application configurations wherein clients make
+policy decisions about target connections, e.g., to apply certificate pinning,
+are incompatible with Oblivious HTTP.  In such cases, alternate technologies
+such as HTTP CONNECT {{?HTTP-CONNECT=RFC7231, Section 4.3.6}}.
 
 
 ### Denial of Service {#dos}
