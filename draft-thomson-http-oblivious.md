@@ -931,7 +931,7 @@ resource, only that information about the client not be attached to forwarded
 requests.  As a consequence, application configurations wherein clients make
 policy decisions about target connections, e.g., to apply certificate pinning,
 are incompatible with Oblivious HTTP.  In such cases, alternative technologies
-such as HTTP CONNECT {{?HTTP-CONNECT=RFC7231, Section 4.3.6}} should be used.
+such as HTTP CONNECT ({{Section 9.3.6 of HTTP}}) should be used.
 
 
 ### Denial of Service {#dos}
