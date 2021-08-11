@@ -316,8 +316,9 @@ the message to be invalid; see {{Section 5.1 of HTTP}} for a definition of
 what is valid and {{invalid}} for handling of invalid messages.
 
 Field names and values MUST be constructed and validated according to the rules
-of {{Section 8.2.1 of H2}}.  A recipient MUST treat a message that HTTP/2
-regards as malformed by these rules as invalid; see {{invalid}}.
+of {{Section 8.2.1 of H2}}.  A recipient MUST treat a message that contains
+field values that would cause an HTTP/2 message to be malformed ({{Section 8.1.1
+of H2}}) as invalid; see {{invalid}}.
 
 The same field name can be repeated in multiple field lines; see {{Section 5.2 of
 HTTP}} for the semantics of repeated field names and rules for combining
