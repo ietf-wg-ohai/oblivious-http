@@ -875,6 +875,16 @@ Clients MUST ensure that the key configuration they select for generating
 encapsulated requests is integrity protected and authenticated so that it can
 be attributed to the oblivious request resource; see {{key-configuration}}.
 
+Since clients connect directly to the proxy instead of the target, application
+configurations wherein clients make policy decisions about target connections,
+e.g., to apply certificate pinning, are incompatible with Oblivious HTTP.  In
+such cases, alternative technologies such as HTTP CONNECT
+({{Section 9.3.6 of HTTP}}) can be used. Applications could implement related
+policies on key configurations and proxy connections, though these might not
+provide the same properties as policies enforced directly on target
+connections. When this difference is relevant, applications can instead connect
+directly to the target at the cost of either privacy or performance.
+
 Clients MUST NOT include identifying information in the request that is
 encapsulated. Identifying information includes cookies {{?COOKIES=RFC6265}},
 authentication credentials or tokens, and any information that might reveal
