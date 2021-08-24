@@ -72,6 +72,13 @@ informative:
       - fullname: Nick Sullivan
       - fullname: Christopher A. Wood
 
+  OHTTP-ANALYSIS:
+    title: "Tamarin Model of Oblivious HTTP"
+    date: 2021-08-23
+    target: https://github.com/cloudflare/ohttp-analysis
+    author:
+      - fullname: Jonathan Hoyland
+
 
 --- abstract
 
@@ -868,6 +875,23 @@ colocation of the oblivious request resource and oblivious target resource
 simplifies the interactions between those resources without affecting client
 privacy.
 
+As a consequence of this configuration, Oblivious HTTP prevents linkability
+described above. Informally, this means:
+
+1. Requests and responses are known only to clients and targets in possession
+   of the corresponding response encapsulation key and HPKE keying material.
+   In particular, the oblivious proxy knows the origin and destination of an
+   encapsulated request and response, yet does not know the decapsulated
+   contents. Likewise, targets know only the oblivious request origin, i.e.,
+   the proxy, and the decapsulated request. Only the client knows both the
+   plaintext request and response.
+1. Targets cannot link requests from the same client in the absence of unique
+   per-client keys.
+
+Traffic analysis that might affect these properties are outside the scope of this
+document; see {{ta}}.
+
+A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 ## Client Responsibilities
 
