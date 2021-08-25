@@ -298,14 +298,14 @@ of HTTP}}. The format of a field section depends on whether the message is
 known- or intermediate-length.
 
 Each field line includes a name and a value. Both the name and value are
-non-zero length sequences of bytes. The format of a field line is shown in
-{{format-field-line}}.
+sequences of bytes, with the name including at least one byte. The format of a
+field line is shown in {{format-field-line}}.
 
 ~~~ quic-format
 Field Line {
   Name Length (i) = 1..,
   Name (..),
-  Value Length (i) = 1..,
+  Value Length (i),
   Value (..),
 }
 ~~~
