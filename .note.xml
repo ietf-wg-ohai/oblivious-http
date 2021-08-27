@@ -1,7 +1,4 @@
 <note title="Discussion Venues" removeInRFC="true">
-<t>Discussion of this document takes place on the
-  HTTP Working Group mailing list (http@ietf.org),
-  which is archived at <eref target="https://mailarchive.ietf.org/arch/browse/http/"/>.</t>
 <t>Source for this draft and an issue tracker can be found at
   <eref target="https://github.com/unicorn-wg/oblivious-http"/>.</t>
 </note>
