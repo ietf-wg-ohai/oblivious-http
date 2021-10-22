@@ -192,7 +192,7 @@ resource without that resource having only a limited ability to correlate that
 request with the client IP or other requests that the client might make to that
 server.
 
-~~~
+~~~ aasvg
 +---------+       +----------+       +----------+    +----------+
 | Client  |       | Proxy    |       | Request  |    | Target   |
 |         |       | Resource |       | Resource |    | Resource |
