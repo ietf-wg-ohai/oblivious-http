@@ -1116,7 +1116,7 @@ maliciously construct key configurations to track individual clients. A specific
 method for a client to acquire key configurations is not included in this
 specification. Clients need to consider these tracking vectors when choosing a
 discovery method.  Applications using this design should provide accommodations
-to mitigate tracking use key configurations.
+to mitigate tracking using key configurations.
 
 
 # Operational and Deployment Considerations {#deployment}
