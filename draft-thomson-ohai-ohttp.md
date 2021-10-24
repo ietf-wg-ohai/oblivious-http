@@ -1,6 +1,6 @@
 ---
 title: "Oblivious HTTP"
-docname: draft-thomson-http-oblivious-latest
+docname: draft-thomson-ohai-ohttp-latest
 category: std
 ipr: trust200902
 area: ART
@@ -25,7 +25,7 @@ normative:
 
   BINARY:
     title: "Binary Representation of HTTP Messages"
-    date: {DATE}
+    date: {::date}
     seriesinfo:
       Internet-Draft: draft-thomson-http-binary-message-latest
     author:
