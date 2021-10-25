@@ -1093,9 +1093,13 @@ A server retains a secret key that might be used to remove protection from messa
 over much longer periods. A server compromise that provided access to the
 oblivious request resource secret key could allow an attacker to recover the
 plaintext of all requests sent toward affected keys and all of the responses
-that were generated. Accessing requests and responses also requires access to
-requests and responses, which implies either compromise of TLS connections or
-collusion with the oblivious proxy resource.
+that were generated.
+
+Even if server keys are compromised, an adversary cannot access messages
+exchanged by the client with the oblivious proxy resource as messages are
+protected by TLS.  Use of a compromised key also requires that the oblivious
+proxy resource cooperate with the attacker or that the attacker is able to
+compromise these TLS connections.
 
 The total number of affected messages affected by server key compromise can be
 limited by regular rotation of server keys.
