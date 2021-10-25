@@ -200,17 +200,17 @@ server.
      |                 |                  |               |
      | Encapsulated    |                  |               |
      | Request         |                  |               |
-     |---------------->| Encapsulated     |               |
+     +---------------->| Encapsulated     |               |
      |                 | Request          |               |
-     |                 |----------------->| Request       |
-     |                 |                  |-------------->|
+     |                 +----------------->| Request       |
+     |                 |                  +-------------->|
      |                 |                  |               |
      |                 |                  |      Response |
-     |                 |     Encapsulated |<--------------|
+     |                 |     Encapsulated |<--------------+
      |                 |         Response |               |
-     |    Encapsulated |<-----------------|               |
+     |    Encapsulated |<-----------------+               |
      |        Response |                  |               |
-     |<----------------|                  |               |
+     |<----------------+                  |               |
      |                 |                  |               |
 ~~~
 {: #fig-overview title="Overview of Oblivious HTTP"}
