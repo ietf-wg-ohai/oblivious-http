@@ -2,9 +2,9 @@
 
 This is the working area for the individual Internet-Draft, "Oblivious HTTP".
 
-* [Editor's Copy](https://unicorn-wg.github.io/oblivious-http/#go.draft-thomson-http-oblivious.html)
-* [Individual Draft](https://tools.ietf.org/html/draft-thomson-http-oblivious)
-* [Compare Editor's Copy to Individual Draft](https://unicorn-wg.github.io/oblivious-http/#go.draft-thomson-http-oblivious.diff)
+* [Editor's Copy](https://unicorn-wg.github.io/oblivious-http/#go.draft-thomson-ohai-ohttp.html)
+* [Individual Draft](https://tools.ietf.org/html/draft-thomson-ohai-ohttp)
+* [Compare Editor's Copy to Individual Draft](https://unicorn-wg.github.io/oblivious-http/#go.draft-thomson-ohai-ohttp.diff)
 
 There is also "Binary Representation of HTTP Messages".
 
