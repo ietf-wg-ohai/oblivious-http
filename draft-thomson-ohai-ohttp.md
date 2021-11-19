@@ -543,8 +543,8 @@ Encapsulated Request `enc_request`, a server:
 2. Compute an HPKE context using `skR` and the encapsulated key `enc`,
    yielding `context`.
 
-3. Construct additional associated data, `aad`, from `keyID`, `kdfID`, and
-   `aeadID` or as the first five bytes of `enc_request`.
+3. Construct additional associated data, `aad`, from `keyID`, `kemID`, `kdfID`,
+   and `aeadID` or as the first seven bytes of `enc_request`.
 
 4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
    on failure. If decryption fails, the server returns an error.
