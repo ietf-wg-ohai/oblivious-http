@@ -1,6 +1,6 @@
 ---
 title: "Oblivious HTTP"
-docname: draft-thomson-ohai-ohttp-latest
+docname: draft-ietf-ohai-ohttp-latest
 category: std
 ipr: trust200902
 area: ART
