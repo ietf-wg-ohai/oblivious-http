@@ -29,3 +29,63 @@ technical issues needs to occur on the mailing list.
 
 You might also like to familiarize yourself with other
 [working group documents](https://datatracker.ietf.org/wg/http/documents/).
+
+## Working Group Information
+
+Discussion of this work occurs on the [Oblivious HTTP Application Intermediation
+Working Group mailing list](mailto:ohai@ietf.org)
+([archive](https://mailarchive.ietf.org/arch/browse/ohai/),
+[subscribe](https://www.ietf.org/mailman/listinfo/ohai)).
+In addition to contributions in GitHub, you are encouraged to participate in
+discussions there.
+
+**Note**: Some working groups adopt a policy whereby substantive discussion of
+technical issues needs to occur on the mailing list.
+
+You might also like to familiarize yourself with other
+[Working Group documents](https://datatracker.ietf.org/wg/ohai/documents/).
+
+## Working Group Information
+
+Discussion of this work occurs on the [Oblivious HTTP Application Intermediation
+Working Group mailing list](mailto:ohai@ietf.org)
+([archive](https://mailarchive.ietf.org/arch/browse/ohai/),
+[subscribe](https://www.ietf.org/mailman/listinfo/ohai)).
+In addition to contributions in GitHub, you are encouraged to participate in
+discussions there.
+
+**Note**: Some working groups adopt a policy whereby substantive discussion of
+technical issues needs to occur on the mailing list.
+
+You might also like to familiarize yourself with other
+[Working Group documents](https://datatracker.ietf.org/wg/ohai/documents/).
+
+## Working Group Information
+
+Discussion of this work occurs on the [Oblivious HTTP Application Intermediation
+Working Group mailing list](mailto:ohai@ietf.org)
+([archive](https://mailarchive.ietf.org/arch/browse/ohai/),
+[subscribe](https://www.ietf.org/mailman/listinfo/ohai)).
+In addition to contributions in GitHub, you are encouraged to participate in
+discussions there.
+
+**Note**: Some working groups adopt a policy whereby substantive discussion of
+technical issues needs to occur on the mailing list.
+
+You might also like to familiarize yourself with other
+[Working Group documents](https://datatracker.ietf.org/wg/ohai/documents/).
+
+## Working Group Information
+
+Discussion of this work occurs on the [Oblivious HTTP Application Intermediation
+Working Group mailing list](mailto:ohai@ietf.org)
+([archive](https://mailarchive.ietf.org/arch/browse/ohai/),
+[subscribe](https://www.ietf.org/mailman/listinfo/ohai)).
+In addition to contributions in GitHub, you are encouraged to participate in
+discussions there.
+
+**Note**: Some working groups adopt a policy whereby substantive discussion of
+technical issues needs to occur on the mailing list.
+
+You might also like to familiarize yourself with other
+[Working Group documents](https://datatracker.ietf.org/wg/ohai/documents/).
