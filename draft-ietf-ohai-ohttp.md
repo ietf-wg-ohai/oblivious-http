@@ -30,17 +30,7 @@ author:
 
 normative:
 
-  BINARY:
-    title: "Binary Representation of HTTP Messages"
-    date: {::date}
-    seriesinfo:
-      Internet-Draft: draft-thomson-http-binary-message-latest
-    author:
-      -
-        ins: M.Thomson
-        name: Martin Thomson
-        org: Mozilla
-
+  BINARY: I-D.ietf-httpbis-binary-message
   HTTP: I-D.ietf-httpbis-semantics
   QUIC: RFC9000
   TLS: RFC8446
