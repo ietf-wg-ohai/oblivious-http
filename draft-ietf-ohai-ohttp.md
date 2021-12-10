@@ -432,22 +432,9 @@ Change controller:
 
 # HPKE Encapsulation
 
-HTTP message encapsulation uses HPKE for request and response encryption.
-An encapsulated HTTP message includes the following values:
-
-1. A binary-encoded HTTP message; see {{BINARY}}.
-2. Padding of arbitrary length which MUST contain all zeroes.
-
-The encoding of an HTTP message is as follows:
-
-~~~
-Plaintext Message {
-  Message Length (i),
-  Message (..),
-  Padding Length (i),
-  Padding (..),
-}
-~~~
+HTTP message encapsulation uses HPKE for request and response encryption.  An
+encapsulated HTTP message includes a binary-encoded HTTP message and no other
+content; see {{BINARY}}.
 
 An Encapsulated Request is comprised of a length-prefixed key identifier and a
 HPKE-protected request message. HPKE protection includes an encapsulated KEM
@@ -997,6 +984,8 @@ overall time clients take to receive a response, which might not be what some
 clients want.
 
 A proxy can use padding to reduce the effectiveness of traffic analysis.
+Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
+BINARY}}.
 
 A proxy that forwards large volumes of exchanges can provide better privacy by
 providing larger sets of messages that need to be matched.
