@@ -3,8 +3,15 @@ title: "Oblivious HTTP"
 docname: draft-ietf-ohai-ohttp-latest
 category: std
 ipr: trust200902
-area: ART
-workgroup: HTTPBIS
+area: "Security"
+workgroup: "Oblivious HTTP Application Intermediation"
+venue:
+  group: "Oblivious HTTP Application Intermediation"
+  type: "Working Group"
+  mail: "ohai@ietf.org"
+  arch: "https://mailarchive.ietf.org/arch/browse/ohai/"
+  github: "ietf-wg-ohai/oblivious-http"
+  latest: "https://ietf-wg-ohai.github.io/oblivious-http/draft-ietf-ohai-ohttp.html"
 
 stand_alone: yes
 pi: [toc, sortrefs, symrefs, docmapping]
