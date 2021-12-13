@@ -1072,8 +1072,8 @@ signals that no processing occurred.
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
 applicable to oblivious HTTP requests. The encapsulated keying material (or
 `enc`) can be used in place of a nonce to uniquely identify a request.  This
-value is a high-entropy value that is freshly generated for every request, so it
-is virtually impossible for two valid requests to have the same value.
+value is a high-entropy value that is freshly generated for every request, so 
+two valid requests will have different values with overwhelming probability.
 
 The mechanism used in TLS for managing differences in client and server clocks
 cannot be used as it depends on being able to observe previous interactions.
@@ -1110,8 +1110,7 @@ is the same as one that was previously answered within that time window, which
 might use the `enc` value.  The server also rejects requests if the timestamp is
 outside of the chosen time window.  For real-time operation, servers should
 allow for the time it takes requests to arrive from the client, with a time
-window that is large enough to allow for differences in the clock of clients and
-servers.
+window that is large enough to allow for differences between client and server clocks.
 
 How large a time window is needed could depend on the population of clients that
 the server needs to serve.  Unlike anti-replay protections in TLS (see {{Section
@@ -1119,7 +1118,11 @@ the server needs to serve.  Unlike anti-replay protections in TLS (see {{Section
 server clocks, no system is provided to automatically account for differences in
 the absolute value of client and server clocks.  This means that servers might
 might need to accept and track requests over larger time windows than would be
-used for TLS.
+used for TLS. Indeed, in practice, client clock skew can be as large as a day {{?CLOCKSKEW=DOI.10.1145/3133956.3134007}} for a non-negligible amount of clients.
+
+Servers MUST NOT treat the time window as secret information. An attacker can actively
+probe the server with specially crafted request timestamps to determine the time window
+over which the server will accept responses. 
 
 The 32-bit timestamp in seconds could represent multiple times that are
 approximately 136 years apart.  If a server accepts requests with the same key
