@@ -1015,6 +1015,13 @@ A server can also use a 422 status code if the server has a key that
 corresponds to the key identifier, but the encapsulated request cannot be
 successfully decrypted using the key.
 
+A server MUST ensure that the HPKE keys it uses are not valid for any other
+protocol that uses HPKE with the "ohttp request" label.  Designers of other
+protocols, especially new versions of this protocol, can ensure key diversity by
+choosing a different label in their use of HPKE.  The "ohttp response" label was
+chosen for symmetry only as it provides key diversity only within the HPKE
+context created using the "ohttp request" label.
+
 
 ## Replay Attacks
 
