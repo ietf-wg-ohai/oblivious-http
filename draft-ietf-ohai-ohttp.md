@@ -1114,6 +1114,10 @@ client, with a time window that is large enough to allow for differences in the
 clock of clients and servers.  How large a time window is needed could depend on
 the population of clients that the server needs to serve.
 
+Servers MUST NOT treat the time window as secret information. An attacker can
+actively probe the server with specially crafted request timestamps to determine
+the time window over which the server will accept responses.
+
 {{?REQUEST-DATE=I-D.thomson-httpapi-request-date}} contains further
 considerations for the use of the `Date` request header field.  This includes
 the way in which clients might correct for clock skew and the privacy
