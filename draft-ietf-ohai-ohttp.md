@@ -1117,15 +1117,18 @@ A server can maintain state for requests for a small window of time over which
 it wishes to accept requests.  The server then rejects requests if the request
 is the same as one that was previously answered within that time window.
 Servers can identify duplicate requests using the `enc` value.  The server can
-reject requests if the Date request header ffield is outside of the chosen time
+reject requests if the Date request header field is outside of the chosen time
 window.  Servers SHOULD allow for the time it takes requests to arrive from the
 client, with a time window that is large enough to allow for differences in the
 clock of clients and servers.  How large a time window is needed could depend on
 the population of clients that the server needs to serve.
 
 {{?REQUEST-DATE=I-D.thomson-httpapi-request-date}} contains further
-considerations for the use of dates.  This includes the way in which clients might
-correct for clock skew and the privacy considerations arising from that usage.
+considerations for the use of the `Date` request header field.  This includes
+the way in which clients might correct for clock skew and the privacy
+considerations arising from that usage.  Servers that reject requests on the
+basis of the `Date` request header field SHOULD implement the feedback mechanism
+in {{Section 4 of !REQUEST-DATE}} to support clock correction by clients.
 
 
 ## Post-Compromise Security
