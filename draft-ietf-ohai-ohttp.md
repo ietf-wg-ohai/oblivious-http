@@ -451,8 +451,6 @@ Encapsulated Request {
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
 
-The Nenc parameter corresponding to the HpkeKdfId can be found in {{!HPKE}}.
-
 Responses are bound to responses and so consist only of AEAD-protected content.
 {{response}} describes the process for constructing and processing an
 Encapsulated Response.
@@ -465,8 +463,10 @@ Encapsulated Response {
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
 
-The size of the Nonce field in an Encapsulated Response corresponds to the
-size of an AEAD key for the corresponding HPKE ciphersuite.
+
+The Nenc and Nk parameters corresponding to the HpkeKdfId can be found in
+{{!HPKE}}.  Nenc refers to the size of the encapsulated KEM shared secret, in
+bytes; Nk refers to the size of the AEAD key for the HPKE ciphersuite, in bits.
 
 
 ## Encapsulation of Requests {#request}
