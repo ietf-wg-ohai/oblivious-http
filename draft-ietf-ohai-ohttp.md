@@ -483,8 +483,8 @@ Clients encapsulate a request `request` using values from a key configuration:
 
 The client then constructs an encapsulated request, `enc_request`, as follows:
 
-1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation
-   key `enc`.
+1. Compute an HPKE context using `pkR` and a label of "ohttp request", yielding
+   `context` and encapsulation key `enc`.
 
 2. Construct associated data, `aad`, by concatenating the values of `keyID`,
    `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
@@ -502,7 +502,7 @@ structure.
 In pseudocode, this procedure is as follows:
 
 ~~~
-enc, context = SetupBaseS(pkR, "request")
+enc, context = SetupBaseS(pkR, "ohttp request")
 aad = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
@@ -524,8 +524,8 @@ Encapsulated Request `enc_request`, a server:
    b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
       server is unwilling to use with `skR`, the server returns an error.
 
-2. Compute an HPKE context using `skR` and the encapsulated key `enc`,
-   yielding `context`.
+2. Compute an HPKE context using `skR`, a label of "ohttp request", and the
+   encapsulated key `enc`, yielding `context`.
 
 3. Construct additional associated data, `aad`, from `keyID`, `kemID`, `kdfID`,
    and `aeadID` or as the first seven bytes of `enc_request`.
@@ -541,7 +541,7 @@ aad = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
              encode(2, aeadID))
-context = SetupBaseR(enc, skR, "request")
+context = SetupBaseR(enc, skR, "ohttp request")
 request, error = context.Open(aad, ct)
 ~~~
 
@@ -552,9 +552,9 @@ Given an HPKE context `context`, a request message `request`, and a response
 `response`, servers generate an Encapsulated Response `enc_response` as
 follows:
 
-1. Export a secret `secret` from `context`, using the string "response" as context.
-   The length of this secret is `max(Nn, Nk)`, where `Nn` and `Nk` are the length
-   of AEAD key and nonce associated with `context`.
+1. Export a secret `secret` from `context`, using the string "ohttp response" as
+   context.  The length of this secret is `max(Nn, Nk)`, where `Nn` and `Nk` are
+   the length of AEAD key and nonce associated with `context`.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called `response_nonce`.
 
@@ -581,7 +581,7 @@ follows:
 In pseudocode, this procedure is as follows:
 
 ~~~
-secret = context.Export("response", Nk)
+secret = context.Export("ohttp response", Nk)
 response_nonce = random(max(Nn, Nk))
 salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
