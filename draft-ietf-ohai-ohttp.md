@@ -1072,7 +1072,7 @@ signals that no processing occurred.
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
 applicable to oblivious HTTP requests. The encapsulated keying material (or
 `enc`) can be used in place of a nonce to uniquely identify a request.  This
-value is a high-entropy value that is freshly generated for every request, so 
+value is a high-entropy value that is freshly generated for every request, so
 two valid requests will have different values with overwhelming probability.
 
 The mechanism used in TLS for managing differences in client and server clocks
@@ -1114,11 +1114,13 @@ the server needs to serve.  Unlike anti-replay protections in TLS (see {{Section
 server clocks, no system is provided to automatically account for differences in
 the absolute value of client and server clocks.  This means that servers might
 might need to accept and track requests over larger time windows than would be
-used for TLS. Indeed, in practice, client clock skew can be as large as a day {{?CLOCKSKEW=DOI.10.1145/3133956.3134007}} for a non-negligible amount of clients.
+used for TLS. Indeed, in practice, client clock skew can be as large as a day
+{{?CLOCKSKEW=DOI.10.1145/3133956.3134007}} for a non-negligible amount of
+clients.
 
-Servers MUST NOT treat the time window as secret information. An attacker can actively
-probe the server with specially crafted request timestamps to determine the time window
-over which the server will accept responses. 
+Servers MUST NOT treat the time window as secret information.  An attacker can
+actively probe the server with specially crafted request timestamps to determine
+the time window over which the server will accept responses.
 
 The 32-bit timestamp in seconds could represent multiple times that are
 approximately 136 years apart.  If a server accepts requests with the same key
