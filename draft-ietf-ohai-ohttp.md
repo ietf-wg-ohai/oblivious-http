@@ -1111,8 +1111,15 @@ might use the `enc` value.  The server also rejects requests if the timestamp is
 outside of the chosen time window.  For real-time operation, servers should
 allow for the time it takes requests to arrive from the client, with a time
 window that is large enough to allow for differences in the clock of clients and
-servers.  How large a time window is needed could depend on the population of
-clients that the server needs to serve.
+servers.
+
+How large a time window is needed could depend on the population of clients that
+the server needs to serve.  Unlike anti-replay protections in TLS (see {{Section
+8 of TLS}}), which correct for differences in the absolute value of client and
+server clocks, no system is provided to automatically account for differences in
+the absolute value of client and server clocks.  This means that servers might
+might need to accept and track requests over larger time windows than would be
+used for TLS.
 
 The 32-bit timestamp in seconds could represent multiple times that are
 approximately 136 years apart.  If a server accepts requests with the same key
