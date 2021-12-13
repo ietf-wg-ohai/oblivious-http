@@ -1156,15 +1156,15 @@ chooses DHKEM(X25519, HKDF-SHA256) and generates an X25519 key pair
 {{?X25519=RFC7748}}. The X25519 secret key is:
 
 ~~~ hex-dump
-cb14d538a70d8a74d47fb7e3ac5052a086da127c678d3585dcad72f98e3bff83
+2cc26e76a82722479f9e10aadee67ed353ad3cfe8fe9a9c0361076e514c09a5a
 ~~~
 
 The oblivious request resource constructs a key configuration that includes the
 corresponding public key as follows:
 
 ~~~ hex-dump
-01002012a45279412ea6ef11e9f839bb5a422fc1262b5c023d787e4e636e70ae
-d3d56e00080001000100010003
+0100206172ef04d6eca5c0b08788bdae6573e3facf13b2d163ccec22db8296eb
+fa5c0200080001000100010003
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
@@ -1181,22 +1181,22 @@ HKDF-SHA256 and AES-128-GCM. The client then generates an HPKE context that
 uses the server public key. This results in the following encapsulated key:
 
 ~~~ hex-dump
-cd7786fd75143f12e03398dbe2bcfa8e01a8132e7b66050674db72730623ca3b
+2409889737d29c62a2305c6de20fdee48dadc8f8c493b3f7593b98954d003361
 ~~~
 
 The corresponding private key is:
 
 ~~~ hex-dump
-c20afd33a2f2663faf023acf5d56fc08fddd38aada29b21b3b96e16f4326ccf7
+ca48c18abae5d0ba1682acff470a20f5892817d2e2ea029d9bd1c8e481bac248
 ~~~
 
 Applying the Seal operation from the HPKE context produces an encrypted
 message, allowing the client to construct the following encapsulated request:
 
 ~~~ hex-dump
-01002000010001cd7786fd75143f12e03398dbe2bcfa8e01a8132e7b66050674
-db72730623ca3b68b9e75a0576745da12c4fa5053b7ec06d7f625197564a6087
-ec299f8d6fffa2a8addfc1c0f64b4b05
+010020000100012409889737d29c62a2305c6de20fdee48dadc8f8c493b3f759
+3b98954d0033610e2ef032df7364ac38434e7f93eb950a2cbb2369ec74a50ec1
+022bebbd8cce43633c9e5552bf45e6b5
 ~~~
 
 The client then sends this to the oblivious proxy resource in a POST request,
@@ -1238,44 +1238,44 @@ code) as follows:
 The response is constructed by extracting a secret from the HPKE context:
 
 ~~~ hex-dump
-9c0b96b577b9fc7a5beef536e0ff3a64
+a77f6907d4177d83609f79c92c21b14d
 ~~~
 
 The key derivation for the encapsulated response uses both the encapsulated KEM
 key from the request and a randomly selected nonce. This produces a salt of:
 
 ~~~ hex-dump
-cd7786fd75143f12e03398dbe2bcfa8e01a8132e7b66050674db72730623ca3b
-061d62d5df5832c6c9fa4617ceb848a7
+2409889737d29c62a2305c6de20fdee48dadc8f8c493b3f7593b98954d003361
+ae8a1ab6a3f20480517aead6ad412f80
 ~~~
 
 The salt and secret are both passed to the Extract function of the selected KDF
 (HKDF-SHA256) to produce a pseudorandom key of:
 
 ~~~ hex-dump
-a0ab55d3b1811694943bb72c386f59bd030e1278692a3db2f30d8aac2f89a5fc
+c6a4facfb586576bd949f8814ca340b4d8e97dc3c8109b3c051d5ff019edc93b
 ~~~
 
 The pseudorandom key is used with the Expand function of the KDF and an info
 field of "key" to produce a 16-byte key for the selected AEAD (AES-128-GCM):
 
 ~~~ hex-dump
-1dae9d7fe263d23e51a768bcaf310aa5
+d02439f2fe12376d0892e6b4ab68dc1f
 ~~~
 
 With the same KDF and pseudorandom key, an info field of "nonce" is used to
 generate a 12-byte nonce:
 
 ~~~ hex-dump
-e520beec147740e4f8a3b553
+2ed52cefb0ef60226acd52a5
 ~~~
 
 The AEAD Seal function is then used to encrypt the response, which is added
 to the randomized nonce value to produce the encapsulated response:
 
 ~~~ hex-dump
-061d62d5df5832c6c9fa4617ceb848a7a6f694da45accc3c32ad576cb204f7cd
-3bf23e
+ae8a1ab6a3f20480517aead6ad412f8079f01d7c5a946783d3efed6355fcfdb3
+37d52c
 ~~~
 
 The oblivious request resource then constructs a response:
