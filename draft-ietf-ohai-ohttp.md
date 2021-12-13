@@ -429,9 +429,21 @@ Change controller:
 
 # HPKE Encapsulation
 
-HTTP message encapsulation uses HPKE for request and response encryption.  An
-encapsulated HTTP message includes a binary-encoded HTTP message and no other
-content; see {{BINARY}}.
+HTTP message encapsulation uses HPKE for request and response encryption.
+
+An encapsulated HTTP request includes a timestamp and a binary-encoded HTTP
+message {{BINARY}}; see {{fig-req-pt}}.
+
+~~~
+Request {
+  Timestamp (32),
+  Binary HTTP Message (..),
+}
+~~~
+{: #fig-req-pt title="Plaintext Request Content"}
+
+The Timestamp field contains the least significant 32 bits of the time in
+seconds since 1970-01-01T00:00:00Z {{?RFC3339}}.
 
 An Encapsulated Request is comprised of a length-prefixed key identifier and a
 HPKE-protected request message. HPKE protection includes an encapsulated KEM
@@ -452,6 +464,16 @@ Encapsulated Request {
 {: #fig-enc-request title="Encapsulated Request"}
 
 The Nenc parameter corresponding to the HpkeKdfId can be found in {{!HPKE}}.
+
+An encapsulated HTTP response includes a binary-encoded HTTP message {{BINARY}}
+and no other content; see {{fig-res-pt}}.
+
+~~~
+Response {
+  Binary HTTP Message (..),
+}
+~~~
+{: #fig-res-pt title="Plaintext Response Content"}
 
 Responses are bound to responses and so consist only of AEAD-protected content.
 {{response}} describes the process for constructing and processing an
@@ -486,14 +508,17 @@ The client then constructs an encapsulated request, `enc_request`, as follows:
 1. Compute an HPKE context using `pkR`, yielding `context` and encapsulation
    key `enc`.
 
-2. Construct associated data, `aad`, by concatenating the values of `keyID`,
+2. Construct plaintext as the current time in seconds since Jan 1, 1970, modulo
+   2<sup>32</sup> concatenated with the binary encoded HTTP message.
+
+3. Construct associated data, `aad`, by concatenating the values of `keyID`,
    `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
    integers, respectively, each in network byte order.
 
-3. Encrypt (seal) `request` with `aad` as associated data using `context`,
+4. Encrypt (seal) `request` with `aad` as associated data using `context`,
    yielding ciphertext `ct`.
 
-4. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encapsulated
+5. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encapsulated
    Request `enc_request`.
 
 Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
@@ -503,11 +528,12 @@ In pseudocode, this procedure is as follows:
 
 ~~~
 enc, context = SetupBaseS(pkR, "request")
+pt = encode(4, timestamp) || request
 aad = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
              encode(2, aeadID))
-ct = context.Seal(aad, request)
+ct = context.Seal(aad, pt)
 enc_request = concat(aad, enc, ct)
 ~~~
 
@@ -530,8 +556,11 @@ Encapsulated Request `enc_request`, a server:
 3. Construct additional associated data, `aad`, from `keyID`, `kemID`, `kdfID`,
    and `aeadID` or as the first seven bytes of `enc_request`.
 
-4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
+4. Decrypt `ct` using `aad` as associated data, yielding `pt` or an error
    on failure. If decryption fails, the server returns an error.
+
+5. Decode the first 4 bytes of `pt` as a timestamp and the remainder as a binary
+   HTTP message.
 
 In pseudocode, this procedure is as follows:
 
@@ -542,7 +571,8 @@ aad = concat(encode(1, keyID),
              encode(2, kdfID),
              encode(2, aeadID))
 context = SetupBaseR(enc, skR, "request")
-request, error = context.Open(aad, ct)
+pt, error = context.Open(aad, ct)
+time, request = decode(4, pt[..4]), pt[4..]
 ~~~
 
 
@@ -1015,8 +1045,12 @@ A server can also use a 422 status code if the server has a key that
 corresponds to the key identifier, but the encapsulated request cannot be
 successfully decrypted using the key.
 
+A server is responsible for either rejecting replayed request or ensuring that
+the effect of replays does not adversely affect clients or resources; see
+{{replay}}.
 
-## Replay Attacks
+
+## Replay Attacks {#replay}
 
 Encapsulated requests can be copied and replayed by the oblivious proxy
 resource. The design of oblivious HTTP does not assume that the oblivious proxy
@@ -1036,17 +1070,14 @@ processing occurred. Connection failures or interruptions are not sufficient
 signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
-applicable to oblivious HTTP requests. Servers can use the encapsulated keying
-material as a unique key for identifying potential replays. This depends on
-clients generating a new HPKE context for every request.
+applicable to oblivious HTTP requests. The encapsulated keying material (or
+`enc`) can be used in place of a nonce to uniquely identify a request.  This
+value is a high-entropy value that is freshly generated for every request, so it
+is virtually impossible for two valid requests to have the same value.
 
 The mechanism used in TLS for managing differences in client and server clocks
 cannot be used as it depends on being able to observe previous interactions.
 Oblivious HTTP explicitly prevents such linkability.
-Applications can still include an explicit indication of time to limit the span
-of time over which a server might need to track accepted requests. Clock
-information could be used for client identification, so reduction in precision
-or obfuscation might be necessary.
 
 The considerations in {{!RFC8470}} as they relate to managing the risk of
 replay also apply, though there is no option to delay the processing of a
@@ -1058,20 +1089,51 @@ server. The use of idempotent methods might be of some use in managing replay
 risk, though it is important to recognize that different idempotent requests
 can be combined to be not idempotent.
 
-Idempotent actions with a narrow scope based on the value of a protected nonce
-could enable data submission with limited replay exposure. A nonce might be
-added as an explicit part of a request, or, if the oblivious request and target
-resources are co-located, the encapsulated keying material can be used to
-produce a nonce.
+Idempotent actions with a narrow scope based on the value of an
+application-provided nonce could enable data submission with limited replay
+protection.
 
-The server-chosen `response_nonce` field ensures that responses have unique
-AEAD keys and nonces even when requests are replayed.
+Even without strong replay prevention, the server-chosen `response_nonce` field
+ensures that responses have unique AEAD keys and nonces even when requests are
+replayed.
+
+
+### Use of Timestamps for Anti-Replay
+
+Request messages include a timestamp from the client.  This value allows a
+server to limit the amount of requests it needs to track when preventing
+replays.
+
+A server can maintain state for requests for a small window of time over which
+it wishes to accept requests.  The server then rejects requests if the request
+is the same as one that was previously answered within that time window, which
+might use the `enc` value.  The server also rejects requests if the timestamp is
+outside of the chosen time window.  For real-time operation, servers should
+allow for the time it takes requests to arrive from the client, with a time
+window that is large enough to allow for differences in the clock of clients and
+servers.  How large a time window is needed could depend on the population of
+clients that the server needs to serve.
+
+The 32-bit timestamp in seconds could represent multiple times that are
+approximately 136 years apart.  If a server accepts requests with the same key
+for longer than this time, it exposes itself to replay attacks.  Use of this
+specification over that time period is unlikely, but to avoid this problem
+servers that depend on the timestamp for anti-replay MUST NOT use the same key
+for more than 2<sup>32</sup> seconds.
+
+Clock information provides a small amount of information about the clock at the
+client that could be used to link activity from the same client.  Clients MAY
+randomize the value that they provide the server to obscure the true value of
+their clock and prevent linking of requests over time.  However, this increases
+the risk that a server will reject a request due to it being outside of the time
+window over which it is tracking request.
 
 
 ## Post-Compromise Security
 
-This design does not provide post-compromise security for responses. A client
-only needs to retain keying material that might be used compromise the
+This design does not provide post-compromise security for responses.
+
+A client only needs to retain keying material that might be used compromise the
 confidentiality and integrity of a response until that response is consumed, so
 there is negligible risk associated with a client compromise.
 
