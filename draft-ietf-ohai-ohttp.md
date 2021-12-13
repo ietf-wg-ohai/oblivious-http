@@ -429,9 +429,17 @@ Change controller:
 
 # HPKE Encapsulation
 
-HTTP message encapsulation uses HPKE for request and response encryption.  An
-encapsulated HTTP message includes a binary-encoded HTTP message and no other
-content; see {{BINARY}}.
+HTTP message encapsulation uses HPKE for request and response encryption.
+
+An encapsulated HTTP request includes a timestamp and a binary-encoded HTTP
+message {{BINARY}} and no other content; see {{fig-req-pt}}.
+
+~~~
+Request {
+  Binary HTTP Message (..),
+}
+~~~
+{: #fig-req-pt title="Plaintext Request Content"}
 
 An Encapsulated Request is comprised of a length-prefixed key identifier and a
 HPKE-protected request message. HPKE protection includes an encapsulated KEM
@@ -450,6 +458,18 @@ Encapsulated Request {
 }
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
+
+The Nenc parameter corresponding to the HpkeKdfId can be found in {{!HPKE}}.
+
+An encapsulated HTTP response includes a binary-encoded HTTP message {{BINARY}}
+and no other content; see {{fig-res-pt}}.
+
+~~~
+Response {
+  Binary HTTP Message (..),
+}
+~~~
+{: #fig-res-pt title="Plaintext Response Content"}
 
 Responses are bound to responses and so consist only of AEAD-protected content.
 {{response}} describes the process for constructing and processing an
@@ -481,7 +501,8 @@ Clients encapsulate a request `request` using values from a key configuration:
 * a selected combination of KDF, identified by `kdfID`, and AEAD, identified by
   `aeadID`.
 
-The client then constructs an encapsulated request, `enc_request`, as follows:
+The client then constructs an encapsulated request, `enc_request`, from a binary
+encoded HTTP request, `request`, as follows:
 
 1. Compute an HPKE context using `pkR` and a label of "message/bhttp request", yielding
    `context` and encapsulation key `enc`.
@@ -1016,14 +1037,19 @@ corresponds to the key identifier, but the encapsulated request cannot be
 successfully decrypted using the key.
 
 A server MUST ensure that the HPKE keys it uses are not valid for any other
-protocol that uses HPKE with the "message/bhttp request" label.  Designers of other
-protocols, especially new versions of this protocol, can ensure key diversity by
-choosing a different label in their use of HPKE.  The "message/bhttp response" label was
-chosen for symmetry only as it provides key diversity only within the HPKE
-context created using the "message/bhttp request" label.
+protocol that uses HPKE with the "message/bhttp request" label.  Designers of
+other protocols, especially new versions of this protocol, can ensure key
+diversity by choosing a different label in their use of HPKE.  The
+"message/bhttp response" label was chosen for symmetry only as it provides key
+diversity only within the HPKE context created using the "message/bhttp request"
+label.
+
+A server is responsible for either rejecting replayed request or ensuring that
+the effect of replays does not adversely affect clients or resources; see
+{{replay}}.
 
 
-## Replay Attacks
+## Replay Attacks {#replay}
 
 Encapsulated requests can be copied and replayed by the oblivious proxy
 resource. The design of oblivious HTTP does not assume that the oblivious proxy
@@ -1043,17 +1069,14 @@ processing occurred. Connection failures or interruptions are not sufficient
 signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
-applicable to oblivious HTTP requests. Servers can use the encapsulated keying
-material as a unique key for identifying potential replays. This depends on
-clients generating a new HPKE context for every request.
+applicable to oblivious HTTP requests. The encapsulated keying material (or
+`enc`) can be used in place of a nonce to uniquely identify a request.  This
+value is a high-entropy value that is freshly generated for every request, so
+two valid requests will have different values with overwhelming probability.
 
 The mechanism used in TLS for managing differences in client and server clocks
 cannot be used as it depends on being able to observe previous interactions.
 Oblivious HTTP explicitly prevents such linkability.
-Applications can still include an explicit indication of time to limit the span
-of time over which a server might need to track accepted requests. Clock
-information could be used for client identification, so reduction in precision
-or obfuscation might be necessary.
 
 The considerations in {{!RFC8470}} as they relate to managing the risk of
 replay also apply, though there is no option to delay the processing of a
@@ -1065,20 +1088,42 @@ server. The use of idempotent methods might be of some use in managing replay
 risk, though it is important to recognize that different idempotent requests
 can be combined to be not idempotent.
 
-Idempotent actions with a narrow scope based on the value of a protected nonce
-could enable data submission with limited replay exposure. A nonce might be
-added as an explicit part of a request, or, if the oblivious request and target
-resources are co-located, the encapsulated keying material can be used to
-produce a nonce.
+Idempotent actions with a narrow scope based on the value of an
+application-provided nonce could enable data submission with limited replay
+protection.
 
-The server-chosen `response_nonce` field ensures that responses have unique
-AEAD keys and nonces even when requests are replayed.
+Even without strong replay prevention, the server-chosen `response_nonce` field
+ensures that responses have unique AEAD keys and nonces even when requests are
+replayed.
+
+
+### Use of Date for Anti-Replay
+
+Clients SHOULD include a `Date` header field in requests.  Though HTTP requests
+often do not include a `Date` header field, the value of this field might be
+used by a server to limit the amount of requests it needs to track when
+preventing replays.
+
+A server can maintain state for requests for a small window of time over which
+it wishes to accept requests.  The server then rejects requests if the request
+is the same as one that was previously answered within that time window.
+Servers can identify duplicate requests using the `enc` value.  The server can
+reject requests if the Date request header ffield is outside of the chosen time
+window.  Servers SHOULD allow for the time it takes requests to arrive from the
+client, with a time window that is large enough to allow for differences in the
+clock of clients and servers.  How large a time window is needed could depend on
+the population of clients that the server needs to serve.
+
+{{?REQUEST-DATE=I-D.thomson-httpapi-request-date}} contains further
+considerations for the use of dates.  This includes the way in which clients might
+correct for clock skew and the privacy considerations arising from that usage.
 
 
 ## Post-Compromise Security
 
-This design does not provide post-compromise security for responses. A client
-only needs to retain keying material that might be used compromise the
+This design does not provide post-compromise security for responses.
+
+A client only needs to retain keying material that might be used compromise the
 confidentiality and integrity of a response until that response is consumed, so
 there is negligible risk associated with a client compromise.
 
