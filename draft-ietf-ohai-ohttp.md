@@ -1097,10 +1097,6 @@ server. The use of idempotent methods might be of some use in managing replay
 risk, though it is important to recognize that different idempotent requests
 can be combined to be not idempotent.
 
-Idempotent actions with a narrow scope based on the value of an
-application-provided nonce could enable data submission with limited replay
-protection.
-
 Even without strong replay prevention, the server-chosen `response_nonce` field
 ensures that responses have unique AEAD keys and nonces even when requests are
 replayed.
