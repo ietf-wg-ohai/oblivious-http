@@ -1167,7 +1167,7 @@ information in {{media-types}} for the media types "message/ohttp-req",
 # Complete Example of a Request and Response
 
 <!-- Generated using ohttp (https://github.com/martinthomson/ohttp):
-RUST_LOG=ohttp cargo test --features rust-hpke,client,server --no-default-features -p ohttp -\-lib -\- -\-nocapture request_response
+RUST_LOG=ohttp cargo test -\-features rust-hpke,client,server -\-no-default-features -p ohttp -\-lib -\- -\-nocapture request_response
 -->
 
 A single request and response exchange is shown here. Binary values (key
