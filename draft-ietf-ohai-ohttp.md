@@ -483,7 +483,7 @@ Clients encapsulate a request `request` using values from a key configuration:
 
 The client then constructs an encapsulated request, `enc_request`, as follows:
 
-1. Compute an HPKE context using `pkR` and a label of "ohttp request", yielding
+1. Compute an HPKE context using `pkR` and a label of "message/bhttp request", yielding
    `context` and encapsulation key `enc`.
 
 2. Construct associated data, `aad`, by concatenating the values of `keyID`,
@@ -502,7 +502,7 @@ structure.
 In pseudocode, this procedure is as follows:
 
 ~~~
-enc, context = SetupBaseS(pkR, "ohttp request")
+enc, context = SetupBaseS(pkR, "message/bhttp request")
 aad = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
@@ -524,7 +524,7 @@ Encapsulated Request `enc_request`, a server:
    b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
       server is unwilling to use with `skR`, the server returns an error.
 
-2. Compute an HPKE context using `skR`, a label of "ohttp request", and the
+2. Compute an HPKE context using `skR`, a label of "message/bhttp request", and the
    encapsulated key `enc`, yielding `context`.
 
 3. Construct additional associated data, `aad`, from `keyID`, `kemID`, `kdfID`,
@@ -541,7 +541,7 @@ aad = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
              encode(2, aeadID))
-context = SetupBaseR(enc, skR, "ohttp request")
+context = SetupBaseR(enc, skR, "message/bhttp request")
 request, error = context.Open(aad, ct)
 ~~~
 
@@ -552,7 +552,7 @@ Given an HPKE context `context`, a request message `request`, and a response
 `response`, servers generate an Encapsulated Response `enc_response` as
 follows:
 
-1. Export a secret `secret` from `context`, using the string "ohttp response" as
+1. Export a secret `secret` from `context`, using the string "message/bhttp response" as
    context.  The length of this secret is `max(Nn, Nk)`, where `Nn` and `Nk` are
    the length of AEAD key and nonce associated with `context`.
 
@@ -581,7 +581,7 @@ follows:
 In pseudocode, this procedure is as follows:
 
 ~~~
-secret = context.Export("ohttp response", Nk)
+secret = context.Export("message/bhttp response", Nk)
 response_nonce = random(max(Nn, Nk))
 salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
@@ -1016,11 +1016,11 @@ corresponds to the key identifier, but the encapsulated request cannot be
 successfully decrypted using the key.
 
 A server MUST ensure that the HPKE keys it uses are not valid for any other
-protocol that uses HPKE with the "ohttp request" label.  Designers of other
+protocol that uses HPKE with the "message/bhttp request" label.  Designers of other
 protocols, especially new versions of this protocol, can ensure key diversity by
-choosing a different label in their use of HPKE.  The "ohttp response" label was
+choosing a different label in their use of HPKE.  The "message/bhttp response" label was
 chosen for symmetry only as it provides key diversity only within the HPKE
-context created using the "ohttp request" label.
+context created using the "message/bhttp request" label.
 
 
 ## Replay Attacks
@@ -1136,6 +1136,23 @@ interception might choose to disable Oblivious HTTP in order to ensure that
 content is accessible to middleboxes.
 
 
+# Repurposing the Encapsulation Format
+
+The encapsulated payload of an OHTTP request and response is a binary HTTP message
+{{BINARY}}. Client and target agree on this encapsulated payload type by specifying
+the media type "message/bhttp" in the HPKE encapsulation info string and HPKE export
+context string for request and response encapsulation, respectively.
+
+Future specifications may repurpose the encapsulation mechanism described
+in {{hpke-encapsulation}}, provided that the content type of the encapsulated
+payload is appropriately reflected in the HPKE info and context strings. For
+example, if a future specification were to use the encapsulation mechanism in this
+specification for DNS messages, identified by the "application/dns-message"
+media type, then the HPKE info string SHOULD be "application/dns-message request"
+for request encapsulation, and the HPKE export context string should be
+"application/dns-message response" for response encapsulation.
+
+
 # IANA Considerations
 
 Please update the "Media Types" registry at
@@ -1149,8 +1166,8 @@ information in {{media-types}} for the media types "message/ohttp-req",
 
 # Complete Example of a Request and Response
 
-<!-- Generated using ohttp:
-RUST_LOG=ohttp cargo test -p ohttp -\-lib -\- -\-nocapture request_response
+<!-- Generated using ohttp (https://github.com/martinthomson/ohttp):
+RUST_LOG=ohttp cargo test --features rust-hpke,client,server --no-default-features -p ohttp -\-lib -\- -\-nocapture request_response
 -->
 
 A single request and response exchange is shown here. Binary values (key
@@ -1163,15 +1180,15 @@ chooses DHKEM(X25519, HKDF-SHA256) and generates an X25519 key pair
 {{?X25519=RFC7748}}. The X25519 secret key is:
 
 ~~~ hex-dump
-2cc26e76a82722479f9e10aadee67ed353ad3cfe8fe9a9c0361076e514c09a5a
+b8f3cea0da634e6b8271f5b8f931d266decdd04c8e09b80cb9878ea90086ed4a
 ~~~
 
 The oblivious request resource constructs a key configuration that includes the
 corresponding public key as follows:
 
 ~~~ hex-dump
-0100206172ef04d6eca5c0b08788bdae6573e3facf13b2d163ccec22db8296eb
-fa5c0200080001000100010003
+01002076eae6d5a6c1549a3343d31c0b9b9582470c72ca11607d47f005f8c16b
+e3304a00080001000100010003
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
@@ -1185,25 +1202,26 @@ constructs the following binary HTTP message:
 The client then reads the oblivious request resource key configuration and
 selects a mutually supported KDF and AEAD. In this example, the client selects
 HKDF-SHA256 and AES-128-GCM. The client then generates an HPKE context that
-uses the server public key. This results in the following encapsulated key:
+uses the server public key. This context is constructed from the following
+ephemeral public key:
 
 ~~~ hex-dump
-2409889737d29c62a2305c6de20fdee48dadc8f8c493b3f7593b98954d003361
+25845c6ed6802abfd09628b5c677842b10dd53a3aad5775aa3c20cbae1c0cb65
 ~~~
 
 The corresponding private key is:
 
 ~~~ hex-dump
-ca48c18abae5d0ba1682acff470a20f5892817d2e2ea029d9bd1c8e481bac248
+88894d1fb4e76e215d9d9c87c44d9e0a6053c1c84c836a4106ea547344504658
 ~~~
 
 Applying the Seal operation from the HPKE context produces an encrypted
 message, allowing the client to construct the following encapsulated request:
 
 ~~~ hex-dump
-010020000100012409889737d29c62a2305c6de20fdee48dadc8f8c493b3f759
-3b98954d0033610e2ef032df7364ac38434e7f93eb950a2cbb2369ec74a50ec1
-022bebbd8cce43633c9e5552bf45e6b5
+010020000100012485c2eee03135aac82e572d51639b2e141102c431d544e346
+0a0784a908b41b676943ae0b3ed8eff581ee8be5f47303a314de092e2e27e3f0
+2a03b9357de1d414cadacabaa1621cf9
 ~~~
 
 The client then sends this to the oblivious proxy resource in a POST request,
@@ -1245,44 +1263,44 @@ code) as follows:
 The response is constructed by extracting a secret from the HPKE context:
 
 ~~~ hex-dump
-a77f6907d4177d83609f79c92c21b14d
+50030a0eacaa9c020e60390c573c4f80
 ~~~
 
 The key derivation for the encapsulated response uses both the encapsulated KEM
 key from the request and a randomly selected nonce. This produces a salt of:
 
 ~~~ hex-dump
-2409889737d29c62a2305c6de20fdee48dadc8f8c493b3f7593b98954d003361
-ae8a1ab6a3f20480517aead6ad412f80
+2485c2eee03135aac82e572d51639b2e141102c431d544e3460a0784a908b41b
+e29f9834fd61ffa27f494dfea94d9ed5
 ~~~
 
 The salt and secret are both passed to the Extract function of the selected KDF
 (HKDF-SHA256) to produce a pseudorandom key of:
 
 ~~~ hex-dump
-c6a4facfb586576bd949f8814ca340b4d8e97dc3c8109b3c051d5ff019edc93b
+4fd8939221446411c785dc9dc51a196df43646a7791919248d0c7624c9410e5b
 ~~~
 
 The pseudorandom key is used with the Expand function of the KDF and an info
 field of "key" to produce a 16-byte key for the selected AEAD (AES-128-GCM):
 
 ~~~ hex-dump
-d02439f2fe12376d0892e6b4ab68dc1f
+a0cd40e2e68cd500bfd14275b290f337
 ~~~
 
 With the same KDF and pseudorandom key, an info field of "nonce" is used to
 generate a 12-byte nonce:
 
 ~~~ hex-dump
-2ed52cefb0ef60226acd52a5
+86883bbe97a380ec2fa656f7
 ~~~
 
 The AEAD Seal function is then used to encrypt the response, which is added
 to the randomized nonce value to produce the encapsulated response:
 
 ~~~ hex-dump
-ae8a1ab6a3f20480517aead6ad412f8079f01d7c5a946783d3efed6355fcfdb3
-37d52c
+e29f9834fd61ffa27f494dfea94d9ed543d89abe34977e7d6d5e1d8051e7b3ba
+4ff234
 ~~~
 
 The oblivious request resource then constructs a response:
