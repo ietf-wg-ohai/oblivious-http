@@ -1143,7 +1143,7 @@ the Oblivious Proxy Resource being used as a generic proxy for unknown Oblivious
 Request Resources. The proxy will only forward for Oblivious Request Resources
 that it has explicitly configured and allowed.
 
-It is possible for an Oblivious Proxy to be configured with multiple Oblivious
+It is possible for a server to be configured with multiple Oblivious
 Proxy Resources, each for a different Oblivious Request Resource as needed.
 As a consequence, the amount of state required for these mappings is linear
 in the number of Oblivious Proxy Resources supported.
