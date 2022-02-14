@@ -1135,13 +1135,14 @@ proxies close to servers was most effective in minimizing additional latency.
 
 ## Resource Mappings {#proxy-state}
 
-This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy Resource and 
-the Oblivious Request Resource. This means that any encapsulated request sent to the Oblivious
-Proxy Resource will always be forwarded to the Oblivious Request Resource.
-This constraint was imposed to simplify proxy configuration and mitigate against
-the Oblivious Proxy Resource being used as a generic proxy for unknown Oblivious
-Request Resources. The proxy will only forward for Oblivious Request Resources
-that it has explicitly configured and allowed.
+This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy 
+Resource and the Oblivious Request Resource. This means that any encapsulated 
+request sent to the Oblivious Proxy Resource will always be forwarded to the 
+Oblivious Request Resource. This constraint was imposed to simplify proxy 
+configuration and mitigate against the Oblivious Proxy Resource being used as 
+a generic proxy for unknown Oblivious Request Resources. The proxy will only 
+forward for Oblivious Request Resources that it has explicitly configured and 
+allowed.
 
 It is possible for a server to be configured with multiple Oblivious
 Proxy Resources, each for a different Oblivious Request Resource as needed.
