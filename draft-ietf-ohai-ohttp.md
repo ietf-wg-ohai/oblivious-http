@@ -182,7 +182,9 @@ A client learns the following:
   used with that key.
 
 * The identity of an oblivious proxy resource that will forward encapsulated
-  requests and responses to the oblivious request resource.
+  requests and responses to a single oblivious request resource. See {{proxy-state}}
+  for more information about the mapping between oblivious proxy and oblivious
+  request resources.
 
 This information allows the client to make a request of an oblivious target
 resource without that resource having only a limited ability to correlate that
@@ -1127,11 +1129,33 @@ for ensuring the key configurations are consistent between different clients.
 
 # Operational and Deployment Considerations {#deployment}
 
+This section discusses various operational and deployment considerations.
+
+## Performance Overhead
+
 Using Oblivious HTTP adds both cryptographic and latency to requests relative to
 a simple HTTP request-response exchange.  Deploying proxy services that are on
 path between clients and servers avoids adding significant additional delay due
 to network topology.  A study of a similar system {{ODoH}} found that deploying
 proxies close to servers was most effective in minimizing additional latency.
+
+
+## Resource Mappings {#proxy-state}
+
+This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy 
+Resource and the Oblivious Request Resource. This means that any encapsulated 
+request sent to the Oblivious Proxy Resource will always be forwarded to the 
+Oblivious Request Resource. This constraint was imposed to simplify proxy 
+configuration and mitigate against the Oblivious Proxy Resource being used as 
+a generic proxy for unknown Oblivious Request Resources. The proxy will only 
+forward for Oblivious Request Resources that it has explicitly configured and 
+allowed.
+
+It is possible for a server to be configured with multiple Oblivious
+Proxy Resources, each for a different Oblivious Request Resource as needed.
+
+
+## Network Management
 
 Oblivious HTTP might be incompatible with network interception regimes, such as
 those that rely on configuring clients with trust anchors and intercepting TLS
