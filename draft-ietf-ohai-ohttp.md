@@ -431,8 +431,8 @@ Change controller:
 
 HTTP message encapsulation uses HPKE for request and response encryption.
 
-An encapsulated HTTP request includes a timestamp and a binary-encoded HTTP
-message {{BINARY}} and no other content; see {{fig-req-pt}}.
+An encapsulated HTTP request contains a binary-encoded HTTP message {{BINARY}}
+and no other fields; see {{fig-req-pt}}.
 
 ~~~
 Request {
