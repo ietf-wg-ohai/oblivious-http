@@ -282,6 +282,13 @@ include:
   their developers might use oblivious HTTP for some types of moderately
   sensitive data.
 
+These are examples of requests where there is information in a request that - if
+it were connected to the identity of the user - might allow a server to learn
+something about that user even if the identity of the user is pseudonymous.
+Other examples include the submission of anonymous surveys, making search
+queries, or requesting location-specific content (such as retrieving tiles of a
+map display).
+
 
 # Key Configuration {#key-configuration}
 
