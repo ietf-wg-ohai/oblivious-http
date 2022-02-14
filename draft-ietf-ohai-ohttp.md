@@ -178,8 +178,8 @@ A client learns the following:
   resource supports.
 
 * The details of an HPKE public key that the oblivious request resource accepts,
-  including an identifier for that key and the HPKE algorithms that are
-  used with that key.
+  including an identifier for that key and the HPKE algorithms that are used
+  with that key.
 
 * The identity of an oblivious proxy resource that will forward encapsulated
   requests and responses to the oblivious request resource.
@@ -257,7 +257,8 @@ Oblivious HTTP is primarily useful where privacy risks associated with possible
 stateful treatment of requests are sufficiently negative that the cost of
 deploying this protocol can be justified.  Oblivious HTTP is simpler and less
 costly than more robust systems, like Prio ({{PRIO}}) or Tor
-({{Dingledine2004}}), which can provide stronger guarantees at higher operational costs.
+({{Dingledine2004}}), which can provide stronger guarantees at higher
+operational costs.
 
 Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
@@ -459,7 +460,8 @@ Encapsulated Request {
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
 
-The Nenc parameter corresponding to the HpkeKdfId can be found in {{Section 7.1 of !HPKE}}.
+The Nenc parameter corresponding to the HpkeKdfId can be found in {{Section 7.1
+of !HPKE}}.
 
 An encapsulated HTTP response includes a binary-encoded HTTP message {{BINARY}}
 and no other content; see {{fig-res-pt}}.
@@ -504,8 +506,8 @@ Clients encapsulate a request `request` using values from a key configuration:
 The client then constructs an encapsulated request, `enc_request`, from a binary
 encoded HTTP request, `request`, as follows:
 
-1. Compute an HPKE context using `pkR` and a label of "message/bhttp request", yielding
-   `context` and encapsulation key `enc`.
+1. Compute an HPKE context using `pkR` and a label of "message/bhttp request",
+   yielding `context` and encapsulation key `enc`.
 
 2. Construct associated data, `aad`, by concatenating the values of `keyID`,
    `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
@@ -535,18 +537,18 @@ enc_request = concat(aad, enc, ct)
 Servers decrypt an Encapsulated Request by reversing this process. Given an
 Encapsulated Request `enc_request`, a server:
 
-1. Parses `enc_request` into `keyID`, `kemID`, `kdfID`, `aeadID`, `enc`, and `ct`
-   (indicated using the function `parse()` in pseudocode). The server is then
-   able to find the HPKE private key, `skR`, corresponding to `keyID`.
+1. Parses `enc_request` into `keyID`, `kemID`, `kdfID`, `aeadID`, `enc`, and
+   `ct` (indicated using the function `parse()` in pseudocode). The server is
+   then able to find the HPKE private key, `skR`, corresponding to `keyID`.
 
-   a. If `keyID` does not identify a key matching the type of `kemID`, the server
-      returns an error.
+   a. If `keyID` does not identify a key matching the type of `kemID`, the
+      server returns an error.
 
    b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
       server is unwilling to use with `skR`, the server returns an error.
 
-2. Compute an HPKE context using `skR`, a label of "message/bhttp request", and the
-   encapsulated key `enc`, yielding `context`.
+2. Compute an HPKE context using `skR`, a label of "message/bhttp request", and
+   the encapsulated key `enc`, yielding `context`.
 
 3. Construct additional associated data, `aad`, from `keyID`, `kemID`, `kdfID`,
    and `aeadID` or as the first seven bytes of `enc_request`.
@@ -573,11 +575,12 @@ Given an HPKE context `context`, a request message `request`, and a response
 `response`, servers generate an Encapsulated Response `enc_response` as
 follows:
 
-1. Export a secret `secret` from `context`, using the string "message/bhttp response" as
-   context.  The length of this secret is `max(Nn, Nk)`, where `Nn` and `Nk` are
-   the length of AEAD key and nonce associated with `context`.
+1. Export a secret `secret` from `context`, using the string "message/bhttp
+   response" as context.  The length of this secret is `max(Nn, Nk)`, where `Nn`
+   and `Nk` are the length of AEAD key and nonce associated with `context`.
 
-2. Generate a random value of length `max(Nn, Nk)` bytes, called `response_nonce`.
+2. Generate a random value of length `max(Nn, Nk)` bytes, called
+   `response_nonce`.
 
 3. Extract a pseudorandom key `prk` using the `Extract` function provided by
    the KDF algorithm associated with `context`. The `ikm` input to this
@@ -893,8 +896,8 @@ described above. Informally, this means:
 1. Targets cannot link requests from the same client in the absence of unique
    per-client keys.
 
-Traffic analysis that might affect these properties are outside the scope of this
-document; see {{ta}}.
+Traffic analysis that might affect these properties are outside the scope of
+this document; see {{ta}}.
 
 A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
@@ -965,9 +968,9 @@ encapsulated response.
 A proxy MUST NOT add information about the client identity when forwarding
 requests. This includes the Via field, the Forwarded field
 {{?FORWARDED=RFC7239}}, and any similar information.  A client does not depend
-on the proxy using an authenticated and encrypted connection to the oblivious request
-resource, only that information about the client not be attached to forwarded
-requests.
+on the proxy using an authenticated and encrypted connection to the oblivious
+request resource, only that information about the client not be attached to
+forwarded requests.
 
 
 ### Denial of Service {#dos}
@@ -1015,34 +1018,34 @@ A server that operates both oblivious request and oblivious target resources is
 responsible for removing request encapsulation, generating a response the
 encapsulated request, and encapsulating the response.
 
-Servers should account for traffic analysis based on response size or generation time.
-Techniques such as padding or timing delays can help protect against such attacks;
-see {{ta}}.
+Servers should account for traffic analysis based on response size or generation
+time.  Techniques such as padding or timing delays can help protect against such
+attacks; see {{ta}}.
 
-If separate entities provide the oblivious request resource and oblivious
-target resource, these entities might need an arrangement similar to that
-between server and proxy for managing denial of service; see {{dos}}. It is
-also necessary to provide confidentiality protection for the unprotected
-requests and responses, plus protections for traffic analysis; see {{ta}}.
+If separate entities provide the oblivious request resource and oblivious target
+resource, these entities might need an arrangement similar to that between
+server and proxy for managing denial of service; see {{dos}}. It is also
+necessary to provide confidentiality protection for the unprotected requests and
+responses, plus protections for traffic analysis; see {{ta}}.
 
 An oblivious request resource needs to have a plan for replacing keys. This
 might include regular replacement of keys, which can be assigned new key
-identifiers. If an oblivious request resource receives a request that contains
-a key identifier that it does not understand or that corresponds to a key that
-has been replaced, the server can respond with an HTTP 422 (Unprocessable
-Content) status code.
+identifiers. If an oblivious request resource receives a request that contains a
+key identifier that it does not understand or that corresponds to a key that has
+been replaced, the server can respond with an HTTP 422 (Unprocessable Content)
+status code.
 
-A server can also use a 422 status code if the server has a key that
-corresponds to the key identifier, but the encapsulated request cannot be
-successfully decrypted using the key.
+A server can also use a 422 status code if the server has a key that corresponds
+to the key identifier, but the encapsulated request cannot be successfully
+decrypted using the key.
 
 A server MUST ensure that the HPKE keys it uses are not valid for any other
 protocol that uses HPKE with the "message/bhttp request" label.  Designers of
-protocols that reuse this encapsulation format, especially new versions of this protocol, can ensure key
-diversity by choosing a different label in their use of HPKE.  The
-"message/bhttp response" label was chosen for symmetry only as it provides key
-diversity only within the HPKE context created using the "message/bhttp request"
-label; see {{repurposing-the-encapsulation-format}}.
+protocols that reuse this encapsulation format, especially new versions of this
+protocol, can ensure key diversity by choosing a different label in their use of
+HPKE.  The "message/bhttp response" label was chosen for symmetry only as it
+provides key diversity only within the HPKE context created using the
+"message/bhttp request" label; see {{repurposing-the-encapsulation-format}}.
 
 A server is responsible for either rejecting replayed requests or ensuring that
 the effect of replays does not adversely affect clients or resources; see
@@ -1095,22 +1098,22 @@ replayed.
 
 ### Use of Date for Anti-Replay
 
-Clients SHOULD include a `Date` header field in encapsulated requests.  Though HTTP requests
-often do not include a `Date` header field, the value of this field might be
-used by a server to limit the amount of requests it needs to track when
-preventing replays.
+Clients SHOULD include a `Date` header field in encapsulated requests.  Though
+HTTP requests often do not include a `Date` header field, the value of this
+field might be used by a server to limit the amount of requests it needs to
+track when preventing replays.
 
 A server can maintain state for requests for a small window of time over which
 it wishes to accept requests.  The server then rejects requests if the request
-is the same as one that was previously answered within that time window.  Servers can reject
-requests outside of this window and signal that clients might retry with a different `Date`
-header field; see {{Section 4 of !REQUEST-DATE}}.
-Servers can identify duplicate requests using the encapsulation `enc` value.  The server can
-reject requests if the Date request header field is outside of the chosen time
-window.  Servers SHOULD allow for the time it takes requests to arrive from the
-client, with a time window that is large enough to allow for differences in the
-clock of clients and servers.  How large a time window is needed could depend on
-the population of clients that the server needs to serve.
+is the same as one that was previously answered within that time window.
+Servers can reject requests outside of this window and signal that clients might
+retry with a different `Date` header field; see {{Section 4 of !REQUEST-DATE}}.
+Servers can identify duplicate requests using the encapsulation (`enc`) value.
+
+Servers SHOULD allow for the time it takes requests to arrive from the client,
+with a time window that is large enough to allow for differences in the clock of
+clients and servers.  How large a time window is needed could depend on the
+population of clients that the server needs to serve.
 
 Servers MUST NOT treat the time window as secret information. An attacker can
 actively probe the server with specially crafted request timestamps to determine
@@ -1132,9 +1135,9 @@ A client only needs to retain keying material that might be used compromise the
 confidentiality and integrity of a response until that response is consumed, so
 there is negligible risk associated with a client compromise.
 
-A server retains a secret key that might be used to remove protection from messages
-over much longer periods. A server compromise that provided access to the
-oblivious request resource secret key could allow an attacker to recover the
+A server retains a secret key that might be used to remove protection from
+messages over much longer periods. A server compromise that provided access to
+the oblivious request resource secret key could allow an attacker to recover the
 plaintext of all requests sent toward affected keys and all of the responses
 that were generated.
 
@@ -1150,8 +1153,8 @@ limited by regular rotation of server keys.
 
 # Privacy Considerations {#privacy}
 
-One goal of this design is that independent client requests are only linkable
-by the chosen key configuration. The oblivious proxy and request resources can link
+One goal of this design is that independent client requests are only linkable by
+the chosen key configuration. The oblivious proxy and request resources can link
 requests using the same key configuration by matching KeyConfig.key\_id, or, if
 the oblivious target resource is willing to use trial decryption, a limited set
 of key configurations that share an identifier. An oblivious proxy can link
@@ -1188,27 +1191,28 @@ content is accessible to middleboxes.
 
 # Repurposing the Encapsulation Format
 
-The encapsulated payload of an OHTTP request and response is a binary HTTP message
-{{BINARY}}. Client and target agree on this encapsulated payload type by specifying
-the media type "message/bhttp" in the HPKE encapsulation info string and HPKE export
-context string for request and response encapsulation, respectively.
+The encapsulated payload of an OHTTP request and response is a binary HTTP
+message {{BINARY}}. Client and target agree on this encapsulated payload type by
+specifying the media type "message/bhttp" in the HPKE encapsulation info string
+and HPKE export context string for request and response encapsulation,
+respectively.
 
-Future specifications may repurpose the encapsulation mechanism described
-in {{hpke-encapsulation}}, provided that the content type of the encapsulated
+Future specifications may repurpose the encapsulation mechanism described in
+{{hpke-encapsulation}}, provided that the content type of the encapsulated
 payload is appropriately reflected in the HPKE info and context strings. For
-example, if a future specification were to use the encapsulation mechanism in this
-specification for DNS messages, identified by the "application/dns-message"
-media type, then the HPKE info string SHOULD be "application/dns-message request"
-for request encapsulation, and the HPKE export context string should be
+example, if a future specification were to use the encapsulation mechanism in
+this specification for DNS messages, identified by the "application/dns-message"
+media type, then the HPKE info string SHOULD be "application/dns-message
+request" for request encapsulation, and the HPKE export context string should be
 "application/dns-message response" for response encapsulation.
 
 
 # IANA Considerations
 
 Please update the "Media Types" registry at
-<https://www.iana.org/assignments/media-types> with the registration
-information in {{media-types}} for the media types "message/ohttp-req",
-"message/ohttp-res", and "application/ohttp-keys".
+<https://www.iana.org/assignments/media-types> with the registration information
+in {{media-types}} for the media types "message/ohttp-req", "message/ohttp-res",
+and "application/ohttp-keys".
 
 
 --- back
