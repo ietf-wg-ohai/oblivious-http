@@ -1133,7 +1133,7 @@ to network topology.  A study of a similar system {{ODoH}} found that deploying
 proxies close to servers was most effective in minimizing additional latency.
 
 
-## Oblivious Proxy State {#proxy-state}
+## Resource Mappings {#proxy-state}
 
 The Oblivious Proxy Resource is a fixed mapping between URI and the Oblivious
 Request Resource. This means that any encapsulated request sent to the Oblivious
