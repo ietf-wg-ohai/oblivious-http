@@ -1114,6 +1114,8 @@ method for a client to acquire key configurations is not included in this
 specification. Clients need to consider these tracking vectors when choosing a
 discovery method.  Applications using this design should provide accommodations
 to mitigate tracking using key configurations.
+{{?CONSISTENCY=I-D.wood-key-consistency}} provides an analysis of the options
+for ensuring the key configurations are consistent between different clients.
 
 
 # Operational and Deployment Considerations {#deployment}
