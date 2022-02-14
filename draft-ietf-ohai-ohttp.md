@@ -459,7 +459,7 @@ Encapsulated Request {
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
 
-The Nenc parameter corresponding to the HpkeKdfId can be found in {{!HPKE}}.
+The Nenc parameter corresponding to the HpkeKdfId can be found in {{Section 7.1 of !HPKE}}.
 
 An encapsulated HTTP response includes a binary-encoded HTTP message {{BINARY}}
 and no other content; see {{fig-res-pt}}.
@@ -1038,13 +1038,13 @@ successfully decrypted using the key.
 
 A server MUST ensure that the HPKE keys it uses are not valid for any other
 protocol that uses HPKE with the "message/bhttp request" label.  Designers of
-other protocols, especially new versions of this protocol, can ensure key
+protocols that reuse this encapsulation format, especially new versions of this protocol, can ensure key
 diversity by choosing a different label in their use of HPKE.  The
 "message/bhttp response" label was chosen for symmetry only as it provides key
 diversity only within the HPKE context created using the "message/bhttp request"
-label.
+label; see {{repurposing-the-encapsulation-format}}.
 
-A server is responsible for either rejecting replayed request or ensuring that
+A server is responsible for either rejecting replayed requests or ensuring that
 the effect of replays does not adversely affect clients or resources; see
 {{replay}}.
 
@@ -1088,22 +1088,24 @@ server. The use of idempotent methods might be of some use in managing replay
 risk, though it is important to recognize that different idempotent requests
 can be combined to be not idempotent.
 
-Even without strong replay prevention, the server-chosen `response_nonce` field
+Even without replay prevention, the server-chosen `response_nonce` field
 ensures that responses have unique AEAD keys and nonces even when requests are
 replayed.
 
 
 ### Use of Date for Anti-Replay
 
-Clients SHOULD include a `Date` header field in requests.  Though HTTP requests
+Clients SHOULD include a `Date` header field in encapsulated requests.  Though HTTP requests
 often do not include a `Date` header field, the value of this field might be
 used by a server to limit the amount of requests it needs to track when
 preventing replays.
 
 A server can maintain state for requests for a small window of time over which
 it wishes to accept requests.  The server then rejects requests if the request
-is the same as one that was previously answered within that time window.
-Servers can identify duplicate requests using the `enc` value.  The server can
+is the same as one that was previously answered within that time window.  Servers can reject
+requests outside of this window and signal that clients might retry with a different `Date`
+header field; see {{Section 4 of !REQUEST-DATE}}.
+Servers can identify duplicate requests using the encapsulation `enc` value.  The server can
 reject requests if the Date request header field is outside of the chosen time
 window.  Servers SHOULD allow for the time it takes requests to arrive from the
 client, with a time window that is large enough to allow for differences in the
