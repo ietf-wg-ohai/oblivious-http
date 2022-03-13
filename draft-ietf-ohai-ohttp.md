@@ -451,11 +451,11 @@ Request {
 ~~~
 {: #fig-req-pt title="Plaintext Request Content"}
 
-An Encapsulated Request is comprised of a length-prefixed key identifier and a
-HPKE-protected request message. HPKE protection includes an encapsulated KEM
-shared secret (or `enc`), plus the AEAD-protected request message. An
-Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes the
-process for constructing and processing an Encapsulated Request.
+An Encapsulated Request is comprised of a key identifier and a HPKE-protected
+request message. HPKE protection includes an encapsulated KEM shared secret (or
+`enc`), plus the AEAD-protected request message. An Encapsulated Request is
+shown in {{fig-enc-request}}. {{request}} describes the process for constructing
+and processing an Encapsulated Request.
 
 ~~~
 Encapsulated Request {
