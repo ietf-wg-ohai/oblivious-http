@@ -652,10 +652,10 @@ fields that are listed in the Connection header field.
 The oblivious proxy resource interacts with the oblivious request resource by
 constructing a request using the same restrictions as the client request, except
 that the target URI is the oblivious request resource.  The content of this
-request is copied from the client.  The oblivious proxy resource SHOULD NOT add
-information about the client to this request, though some deployments or
-application use cases may warrant additional information; see
-{{proxy-responsibilities}} for more information.
+request is copied from the client.  The oblivious proxy resource MUST NOT
+add information about the client to this request without agreement from the
+client; exceptions to this requirement are discussed {{proxy-responsibilities}}
+for more information.
 
 When a response is received from the oblivious request resource, the oblivious
 proxy resource forwards the response according to the rules of an HTTP proxy;
@@ -976,33 +976,23 @@ examine the content of a request (other than to observe the choice of key
 identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
 encapsulated response.
 
-A proxy SHOULD NOT add information about the client identity when forwarding
-requests. For example, including the Via field, the Forwarded field
+A proxy MUST NOT reveal information about the client identity when forwarding
+requests without agreement from the client, with one exception (described
+below). For example, including the Via field, the Forwarded field
 {{?FORWARDED=RFC7239}}, or similar information may reveal information about the
-client that the proxy is intended to hide from the target.  In general, a client
+client that the proxy is intended to hide from the target. In general, a client
 does not depend on the proxy using an authenticated and encrypted connection to
 the oblivious request resource, only that information about the client not be
-attached to forwarded requests. However, some applications or use cases can
-benefit additional client metadata attached to forwarded request. Some example
-HTTP headers that the proxy might include are as follows:
+attached to forwarded requests.
 
-- Flag indicating whether or not the client is deemed malicious. If a client
-  request orignates from an abusive or otherwise harmful IP address with a bad
-  reputation, the proxy might attached a flag indicating this to the target. The
-  target could use this flag to shadowban clients or other alter whether how
-  the client encapuslated request is processed.
-- Convey coarse geographic information about the client. Some applications, such
-  as telemetry, may benefit from approximate geographic information about a
-  client request. Clients could of course provide such information in their
-  encapsulated request, but proxies ultimately have a more authoritative view
-  of the client request origin and its geographic location by virtue of being
-  on path between the client and target. As such, for these applications, it
-  would be reasonable for proxies to supply coarse geographic information about
-  individual client requests.
-
-Servers that enter into an agreement with a proxy are expected to agree upon the
-types of client metadata that proxies provide, if any. Clients need to consider
-this information when choosing a proxy discovery method.
+The only exception to this requirement is that a proxy MAY add at most a single
+bit of information to each forwarded client request without the client's agreement.
+This bit may be used to indicate if the request request originated from an abusive
+or otherwise harmful IP address with a bad reputation. the proxy might attached a
+flag indicating this to the target. The target could use this flag to shadowban
+clients or other alter whether how the client encapuslated request is processed.
+Clients SHOULD take this into consideration when evaluating the fingerprinting
+surface of any encapsulated request.
 
 
 ### Denial of Service {#dos}
