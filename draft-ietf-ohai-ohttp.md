@@ -987,9 +987,9 @@ attached to forwarded requests.
 
 The only exception to this requirement is that a proxy MAY add at most a single
 bit of information to each forwarded client request without the client's agreement.
-This bit may be used to indicate if the request request originated from an abusive
-or otherwise harmful IP address with a bad reputation. the proxy might attached a
-flag indicating this to the target. The target could use this flag to shadowban
+This bit may be used to indicate if the request request originated from a source
+that is considered abusive or otherwise has a bad reputation. The proxy could attach
+a flag indicating this to the target. The target could use this flag to shadowban
 clients or other alter whether how the client encapuslated request is processed.
 Clients SHOULD take this into consideration when evaluating the fingerprinting
 surface of any encapsulated request.
