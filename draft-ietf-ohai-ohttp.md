@@ -992,9 +992,9 @@ that is considered abusive or otherwise has a bad reputation. The proxy could at
 a flag indicating this to the target. The target could use this flag to alter
 how the client encapuslated request is processed. For example, the target could
 use this flag to shadowban client requests, which is a process by which requests
-are silently ignored without an explicit notification to the client. Clients SHOULD
-take this into consideration when evaluating the fingerprinting surface of any
-encapsulated request.
+are silently ignored without an explicit notification to the client. Clients need
+to be aware that this bit can reduce the size of the client anonymity set behind
+the proxy by one.
 
 
 ### Denial of Service {#dos}
