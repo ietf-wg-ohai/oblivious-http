@@ -994,7 +994,7 @@ how the client encapuslated request is processed. For example, the target could
 use this flag to shadowban client requests, which is a process by which requests
 are silently ignored without an explicit notification to the client. Clients need
 to be aware that this bit can reduce the size of the client anonymity set behind
-the proxy by one.
+the proxy by half.
 
 
 ### Denial of Service {#dos}
