@@ -171,10 +171,10 @@ Formats are described using notation from {{Section 1.3 of QUIC}}.
 
 # Overview
 
-A client learns the following:
+A client must initially know the following:
 
 * The identity of an oblivious request resource.  This might include some
-  information about oblivious target resources that the oblivious request
+  information about what oblivious target resources the oblivious request
   resource supports.
 
 * The details of an HPKE public key that the oblivious request resource accepts,
@@ -187,7 +187,7 @@ A client learns the following:
   request resources.
 
 This information allows the client to make a request of an oblivious target
-resource without that resource having only a limited ability to correlate that
+resource with that resource having only a limited ability to correlate that
 request with the client IP or other requests that the client might make to that
 server.
 
@@ -249,14 +249,15 @@ occur, as shown in {{fig-overview}}:
 
 ## Applicability
 
-Oblivious HTTP has limited applicability.  Many uses of HTTP benefit from being
-able to carry state between requests, such as with cookies ({{?RFC6265}}),
-authentication ({{Section 11 of HTTP}}), or even alternative services
-({{?RFC7838}}).  Oblivious HTTP seeks to prevent this sort of linkage, which
-requires that applications not carry state between requests.
+Oblivious HTTP has limited applicability.  Many uses of HTTP benefit
+from being able to carry state between requests, such as with cookies
+({{?RFC6265}}), authentication ({{Section 11 of HTTP}}), or even
+alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
+at the transport layer, must be used in conjunction with applications
+that do not carry state between requests.
 
 Oblivious HTTP is primarily useful where privacy risks associated with possible
-stateful treatment of requests are sufficiently negative that the cost of
+stateful treatment of requests are sufficiently large that the cost of
 deploying this protocol can be justified.  Oblivious HTTP is simpler and less
 costly than more robust systems, like Prio ({{PRIO}}) or Tor
 ({{Dingledine2004}}), which can provide stronger guarantees at higher
@@ -297,21 +298,19 @@ map display).
 
 A client needs to acquire information about the key configuration of the
 oblivious request resource in order to send encapsulated requests.
-
 In order to ensure that clients do not encapsulate messages that other entities
 can intercept, the key configuration MUST be authenticated and have integrity
 protection.
 
-This document describes the "application/ohttp-keys" media type; see
-{{ohttp-keys}}.  This media type might be used, for example with HTTPS, as part
-of a system for configuring or discovering key configurations.  Note however
-that such a system needs to consider the potential for key configuration to be
+This document does not define how that acquisition occurs. However, in
+order to help facilitate interoperability, it does specify a format
+for the keys. This an encapsulated request ensures that different
+client implementations can be configured in the same way and also
+enables advertising key configurations in a consistent format.  This
+format might be used, for example with HTTPS, as part of a system for
+configuring or discovering key configurations.  Note however that such
+a system needs to consider the potential for key configuration to be
 used to compromise client privacy; see {{privacy}}.
-
-Specifying a format for expressing the information a client needs to construct
-an encapsulated request ensures that different client implementations can be
-configured in the same way. This also enables advertising key configurations in
-a consistent format.
 
 A client might have multiple key configurations to select from when
 encapsulating a request. Clients are responsible for selecting a preferred key
@@ -319,10 +318,6 @@ configuration from those it supports. Clients need to consider both the key
 encapsulation method (KEM) and the combinations of key derivation function
 (KDF) and authenticated encryption with associated data (AEAD) in this
 decision.
-
-Evolution of the key configuration format is supported through the definition
-of new formats that are identified by new media types.
-
 
 ## Key Configuration Encoding {#key-config}
 
@@ -363,9 +358,11 @@ corresponding to the HpkeKdfId can be found in {{!HPKE}}.
 ## Key Configuration Media Type {#ohttp-keys}
 
 The "application/ohttp-keys" format is a media type that identifies a
-serialized collection of key configurations. The content of this media type
-comprises one or more key configuration encodings (see {{key-config}}) that are
-concatenated.
+serialized collection of key configurations. The content of this media
+type comprises one or more key configuration encodings (see
+{{key-config}}) that are concatenated. Evolution of the key
+configuration format is supported through the definition of new
+formats that are identified by new media types.
 
 Type name:
 
@@ -874,10 +871,10 @@ request without linking that request with either:
 2. Any other request the client might have made in the past or might make in
    the future.
 
-In order to ensure this, the client selects a proxy (that serves the oblivious
-proxy resource) that it trusts will protect this information by forwarding the
-encapsulated request and response without passing the server (that serves the
-oblivious request resource).
+In order to ensure this, the client selects a proxy (that serves the
+oblivious proxy resource) that it trusts will protect this information
+by forwarding the encapsulated request and response without passing it
+to the server (that serves the oblivious request resource).
 
 In this section, a deployment where there are three entities is considered:
 
