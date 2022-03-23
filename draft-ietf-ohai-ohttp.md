@@ -253,7 +253,7 @@ Oblivious HTTP has limited applicability.  Many uses of HTTP benefit
 from being able to carry state between requests, such as with cookies
 ({{?RFC6265}}), authentication ({{Section 11 of HTTP}}), or even
 alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
-at the transport layer, must be used in conjunction with applications
+at the transport layer, which must be used in conjunction with applications
 that do not carry state between requests.
 
 Oblivious HTTP is primarily useful where privacy risks associated with possible
@@ -304,7 +304,7 @@ protection.
 
 This document does not define how that acquisition occurs. However, in
 order to help facilitate interoperability, it does specify a format
-for the keys. This an encapsulated request ensures that different
+for the keys. This ensures that different
 client implementations can be configured in the same way and also
 enables advertising key configurations in a consistent format.  This
 format might be used, for example with HTTPS, as part of a system for
@@ -360,7 +360,9 @@ corresponding to the HpkeKdfId can be found in {{!HPKE}}.
 The "application/ohttp-keys" format is a media type that identifies a
 serialized collection of key configurations. The content of this media
 type comprises one or more key configuration encodings (see
-{{key-config}}) that are concatenated. Evolution of the key
+{{key-config}}) that are concatenated.
+
+Evolution of the key
 configuration format is supported through the definition of new
 formats that are identified by new media types.
 
