@@ -464,7 +464,7 @@ Encapsulated Request {
   KDF Identifier (16),
   AEAD Identifier (16),
   Encapsulated KEM Shared Secret (8*Nenc),
-  AEAD-Protected Request (..),
+  AEAD-Protected Request Data (..),
 }
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
@@ -489,7 +489,7 @@ Encapsulated Response.
 ~~~
 Encapsulated Response {
   Nonce (Nk),
-  AEAD-Protected Response (..),
+  AEAD-Protected Response Data (..),
 }
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
@@ -498,6 +498,97 @@ Encapsulated Response {
 The Nenc and Nk parameters corresponding to the HpkeKdfId can be found in
 {{!HPKE}}.  Nenc refers to the size of the encapsulated KEM shared secret, in
 bytes; Nk refers to the size of the AEAD key for the HPKE ciphersuite, in bits.
+
+
+## Streaming
+
+Requests and responses can be encrypted and decrypted in chunks, allowing for
+incremental encryption or decryption and processing.
+
+Each chunk is preceded by a length field that describes the length of the chunk
+in bytes, which is encoded using the variable-length encoding from {{Section 16
+of QUIC}}.  The final chunk is preceded by a length prefix with a value of 0;
+this does not indicate that the final chunk is zero-length - the length is
+determined by the protocol in which the message is carried - but instead signals
+the end of the message.
+
+~~~
+AEAD-Protected Message Data {
+  Non-Final Chunk (..),
+  Final Chunk Indicator (i) = 0,
+  AEAD-Protected Final Chunk (..),
+}
+
+Non-Final Chunk {
+  Length (i) = 1..,
+  AEAD-Protected Chunk (..),
+}
+~~~
+{: #fig-chunks title="AEAD-Protected Message Data"}
+
+For a request, each chunk is protected in sequence with the ContextS.Seal
+function from HPKE.  Non-final chunks have Additional Authenticated Data
+(AAD) that includes the key identifier and HPKE metadata, plus the length of the
+chunk as encoded.  The final chunk omits the length of the chunk from the AAD,
+distinguishing this chunk as the end of the message.
+
+Responses use a similar construction to requests, though these omit the metadata
+from the AAD, only including the length in non-final chunks.  The final chunk
+includes a zero-length AAD.
+
+Responses also need additional handling for nonce, which for requests is managed
+by the HPKE context.
+
+To construct the nonce for each chunk of a response, a counter is maintained.
+This counter starts at zero and is incremented by one after each chunk is
+protected.  The value of the counter is encoded as an integer of the same size
+as the nonce in network byte order.  This encoded counter is combined with the
+base nonce value using exclusive or to produce the nonce that is used to encrypt
+or decrypt (Seal or Open) the chunk.
+
+In pseudocode, enciphering chunks follows a process equivalent to:
+
+~~~ pseudocode
+def seal_chunks(aad_base, chunks, seal_function):
+    sealed = []
+
+    last = len(chunks) - 1
+    for chunk in chunks[0..last]:
+        len = varint_encode(len(chunk))
+        aad = concat(aad_base, len)
+        sealed_chunk = seal_function(aad, chunk)
+        sealed = concat(sealed, len, sealed_chunk)
+
+    len = varint_encode(0)
+    last_chunk = seal_function(meta, chunks[last])
+    sealed = concat(sealed, len, last_chunk)
+    return sealed
+~~~
+
+In pseudocode, deciphering chunks follows a process equivalent to:
+
+~~~ pseudocode
+def open_chunks(aad_base, ct, open_function):
+    opened = []
+
+    # split_len splits off an encoded length
+    # int(len) converts those bytes as an integer
+    len, ct = split_len(ct)
+    while int(len) > 0:
+        sealed_chunk = ct[..int(len)]
+        ct = ct[int(len)..]
+        aad = concat(aad_base, len)
+        chunk, error = open_function(aad, sealed_chunk)
+        if error: return nil, error
+        opened = concat(opened, chunk)
+
+        len, ct = split_len(ct)
+
+    chunk, error = open_function(aad_base, ct)
+    if error: return nil, error
+
+    return concat(opened, chunk), nil
+~~~
 
 
 ## Encapsulation of Requests {#request}
@@ -518,37 +609,48 @@ encoded HTTP request, `request`, as follows:
 1. Compute an HPKE context using `pkR` and a label of "message/bhttp request",
    yielding `context` and encapsulation key `enc`.
 
-2. Construct associated data, `aad`, by concatenating the values of `keyID`,
-   `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
-   integers, respectively, each in network byte order.
+2. Construct metadata, `meta`, by concatenating the values of `keyID`, `kemID`,
+   `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit integers,
+   respectively, each in network byte order.
 
-3. Encrypt (seal) `request` with `aad` as associated data using `context`,
-   yielding ciphertext `ct`.
+3. Assemble the plaintext of the message into one or more chunks and for each
+   chunk:
 
-4. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encapsulated
-   Request `enc_request`.
+   a. Encode the length of the chunk, plus the expansion factor of the AEAD, as
+      a variable length integer, `len`.
+
+   b. Construct associated data, `aad`, starting with the value of `meta`.  For
+      non-final chunks, append the encoded `len`; for the final chunk append
+      nothing.
+
+   c. Encrypt (seal) `request` with `aad` as associated data using `context`,
+      yielding ciphertext `ct`.
+
+4. Concatenate the values of `meta`, `enc`, and all values of `len` and `ct`,
+   yielding an Encapsulated Request `enc_request`.
 
 Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
 structure.
 
 In pseudocode, this procedure is as follows:
 
-~~~
+~~~ pseudocode
 enc, context = SetupBaseS(pkR, "message/bhttp request")
-aad = concat(encode(1, keyID),
-             encode(2, kemID),
-             encode(2, kdfID),
-             encode(2, aeadID))
-ct = context.Seal(aad, request)
-enc_request = concat(aad, enc, ct)
+meta = concat(encode(1, keyID),
+              encode(2, kemID),
+              encode(2, kdfID),
+              encode(2, aeadID))
+sealed = seal_chunks(meta, chunks, context.Seal)
+enc_request = concat(meta, enc, sealed)
 ~~~
 
 Servers decrypt an Encapsulated Request by reversing this process. Given an
 Encapsulated Request `enc_request`, a server:
 
-1. Parses `enc_request` into `keyID`, `kemID`, `kdfID`, `aeadID`, `enc`, and
-   `ct` (indicated using the function `parse()` in pseudocode). The server is
-   then able to find the HPKE private key, `skR`, corresponding to `keyID`.
+1. Parses metadata from `enc_request` into `keyID`, `kemID`, `kdfID`, `aeadID`,
+   and `enc` (indicated using the function `parse_metadata()` in
+   pseudocode). The server is then able to find the HPKE private key, `skR`,
+   corresponding to `keyID`.
 
    a. If `keyID` does not identify a key matching the type of `kemID`, the
       server returns an error.
@@ -559,22 +661,36 @@ Encapsulated Request `enc_request`, a server:
 2. Compute an HPKE context using `skR`, a label of "message/bhttp request", and
    the encapsulated key `enc`, yielding `context`.
 
-3. Construct additional associated data, `aad`, from `keyID`, `kemID`, `kdfID`,
-   and `aeadID` or as the first seven bytes of `enc_request`.
+3. Construct metadata, `meta`, from `keyID`, `kemID`, `kdfID`, and `aeadID` or
+   as the first seven bytes of `enc_request`.
 
-4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
-   on failure. If decryption fails, the server returns an error.
+4. Parse a variable-length integer, `len`, from the remainder of the message.
+
+   a. If `len` is non-zero, this is a non-final chunk.  Construct associated
+      data, `aad`, by concatenating `meta` and `len`.  Read `len` bytes from the
+      message as `ct`.
+
+   b. If `len` is zero, this is the final chunk.  Set associated data, `aad` to
+      `meta` and read the remainder of the message as `ct`.
+
+5. Decrypt `ct` using `aad` as associated data, yielding a chunk of the request,
+   `chunk`, or an error on failure.
+
+6. If `len` was non-zero, return to step 4.
+
+7. If `len` is zero, concatenate all of the decrypted chunks (`chunk`) to
+   produce the request (`request`).
 
 In pseudocode, this procedure is as follows:
 
 ~~~
-keyID, kemID, kdfID, aeadID, enc, ct = parse(enc_request)
-aad = concat(encode(1, keyID),
-             encode(2, kemID),
-             encode(2, kdfID),
-             encode(2, aeadID))
+keyID, kemID, kdfID, aeadID, enc, ct = parse_metadata(enc_request)
+meta = concat(encode(1, keyID),
+              encode(2, kemID),
+              encode(2, kdfID),
+              encode(2, aeadID))
 context = SetupBaseR(enc, skR, "message/bhttp request")
-request, error = context.Open(aad, ct)
+request, error = open_chunks(meta, ct, context.Open)
 ~~~
 
 
@@ -589,50 +705,83 @@ follows:
    and `Nk` are the length of AEAD key and nonce associated with `context`.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called
+   `response_nonce`.  Initialize `enc_response` to the value of
    `response_nonce`.
 
 3. Extract a pseudorandom key `prk` using the `Extract` function provided by
    the KDF algorithm associated with `context`. The `ikm` input to this
    function is `secret`; the `salt` input is the concatenation of `enc` (from
-   `enc_request`) and `response_nonce`
+   `enc_request`) and `response_nonce`.
 
 4. Use the `Expand` function provided by the same KDF to extract an AEAD key
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
    with `context`. Generating `key` uses a label of "key".
 
-5. Use the same `Expand` function to extract a nonce `nonce` of length `Nn` -
-   the length of the nonce used by the AEAD. Generating `nonce` uses a label of
-   "nonce".
+5. Use the same `Expand` function to extract a base nonce, `nonce`, of length `Nn`
+   - the length of the nonce used by the AEAD. Generating `nonce` uses a label
+   of "nonce".
 
-6. Encrypt `response`, passing the AEAD function Seal the values of `key`,
-   `nonce`, empty `aad`, and a `pt` input of `request`, which yields `ct`.
+6. Initialize a counter, `counter`, with a value of 0.
 
-7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
-   `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
-   ambiguity in parsing either `response_nonce` or `ct`.
+7. Split `response` into chunks and encrypt each chunk, `chunk`, as follows:
 
-In pseudocode, this procedure is as follows:
+   a. Encode the length of the chunk as a variable-length integer, `len`.
+
+   b. For all chunks aside from the last, set `aad` to `len`; for the last
+      chunk, set `aad` to be empty.
+
+   c. Pass the AEAD function Seal the values of `key`, `nonce`, `aad`, and a
+      `pt` input of `request`, which yields `ct`.
+
+   d. Append `len` and `ct` to `enc_response`.
+
+After the final chunk is appended, `enc_response` contains a complete
+Encapsulated Request.  Note that `response_nonce` is of fixed-length, so there
+is no ambiguity in parsing either `response_nonce` or `ct`.
+
+In pseudocode, key derivation is as follows:
 
 ~~~
 secret = context.Export("message/bhttp response", Nk)
 response_nonce = random(max(Nn, Nk))
+enc_response = response_nonce
 salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
 aead_key = Expand(prk, "key", Nk)
 aead_nonce = Expand(prk, "nonce", Nn)
-ct = Seal(aead_key, aead_nonce, "", response)
-enc_response = concat(response_nonce, ct)
 ~~~
 
-Clients decrypt an Encapsulated Request by reversing this process. That is,
-they first parse `enc_response` into `response_nonce` and `ct`. They then
-follow the same process to derive values for `aead_key` and `aead_nonce`.
-
-The client uses these values to decrypt `ct` using the Open function provided by
-the AEAD. Decrypting might produce an error, as follows:
+Using these values, values a response can be encapsulated as follows:
 
 ~~~
-reponse, error = Open(aead_key, aead_nonce, "", ct)
+counter = 0
+# seal_aead is a closure over counter, aead_key, and aead_nonce
+def seal_aead(aad, pt):
+    nonce = aead_nonce XOR encode(Nn, counter)
+    counter += 1
+    return Seal(aead_key, nonce, aad, pt)
+
+ct = seal_chunks([], response, seal_aead)
+enc_response = concat(enc_response, ct)
+~~~
+
+Clients decrypt an Encapsulated Request by reversing this process. That is, they
+first parse `enc_response` into `response_nonce` and `ct`. They then follow the
+same process to derive values for `aead_key` and `aead_nonce`.
+
+The client uses the same values from key derivation to decrypt `ct` using the
+Open function provided by the AEAD.  Decrypting might produce an error, as
+follows:
+
+~~~
+counter = 0
+# open_aead is a closure over counter, aead_key, and aead_nonce
+def open_aead(aad, ct):
+    nonce = aead_nonce XOR encode(Nn, counter)
+    counter += 1
+    return Open(aead_key, nonce, aad, ct)
+
+reponse, error = open_chunks([], ct, open_aead)
 ~~~
 
 
@@ -643,7 +792,7 @@ encapsulated request.  This encapsulated request is included as the content of a
 POST request to the oblivious proxy resource.  This request MUST only contain
 those fields necessary to carry the encapsulated request: a method of POST, a
 target URI of the oblivious proxy resource, a header field containing
-the content type (see ({{media-types}}), and the encapsulated request as the
+the content type (see {{media-types}}), and the encapsulated request as the
 request content.  Clients MAY include fields that do not reveal information
 about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}, or
 information that it trusts the oblivious proxy resource to remove, such as
