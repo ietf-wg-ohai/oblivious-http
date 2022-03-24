@@ -1136,6 +1136,13 @@ basis of the `Date` request header field SHOULD implement the feedback mechanism
 in {{Section 4 of !REQUEST-DATE}} to support clock correction by clients.
 
 
+## Forward Secrecy
+
+This document does not provide forward secrecy for either requests or
+responses during the lifetime of the key configuration. A measure of
+forward secrecy can be provided by generating a new key configuration
+then deleting the old keys after a suitable period.
+
 ## Post-Compromise Security
 
 This design does not provide post-compromise security for responses.
