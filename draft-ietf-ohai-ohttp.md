@@ -1011,8 +1011,8 @@ rate might choose to authenticate the proxy to enable the higher rate.
 ### Linkability Through Traffic Analysis {#ta}
 
 This document assumes that all communication between different entities is
-protected by HTTPS.  This protects information about which resources are being
-interacted with and prevents a network observer from being able to trivially
+protected by HTTPS.  This protects information about which resources are the
+subject of request and prevents a network observer from being able to trivially
 correlate messages on either side of a proxy.
 
 As the time at which encapsulated request or response messages are sent can
