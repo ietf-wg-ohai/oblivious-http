@@ -976,7 +976,7 @@ needed to ensure that client privacy is maintained.
 
 Firstly, a generic implementation will forward unknown fields.  For oblivious
 HTTP, a proxy SHOULD NOT forward unknown fields.  Though clients are not
-expected to include fields that might contain identifying information, a
+expected to include fields that might contain identifying information,
 removing unknown fields removes this privacy risk.
 
 Secondly, generic implementations are often configured to augment requests with
