@@ -1055,9 +1055,9 @@ the effect of replays does not adversely affect clients or resources; see
 ## Replay Attacks {#replay}
 
 Encapsulated requests can be copied and replayed by the oblivious proxy
-resource. The design of oblivious HTTP does not assume that the oblivious proxy
-resource will not replay requests. In addition, if a client sends an
-encapsulated request in TLS early data (see {{Section 8 of TLS}} and
+resource. The threat model for oblivious HTTP allows the possibility that an
+oblivious proxy resource might replay requests. Furthermore, if a client sends
+an encapsulated request in TLS early data (see {{Section 8 of TLS}} and
 {{!RFC8470}}), a network-based adversary might be able to cause the request to
 be replayed. In both cases, the effect of a replay attack and the mitigations
 that might be employed are similar to TLS early data.
