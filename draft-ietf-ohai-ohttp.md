@@ -1062,6 +1062,11 @@ an encapsulated request in TLS early data (see {{Section 8 of TLS}} and
 be replayed. In both cases, the effect of a replay attack and the mitigations
 that might be employed are similar to TLS early data.
 
+It is the responsibility of the application that uses oblivious HTTP to either
+reject replayed requests or to ensure that replayed requests have no adverse
+affects on their operation.  This section describes some approaches that are
+universally applicable and suggestions for more targeted techniques.
+
 A client or oblivious proxy resource MUST NOT automatically attempt to retry a
 failed request unless it receives a positive signal indicating that the request
 was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code (Section
@@ -1101,7 +1106,7 @@ replayed.
 Clients SHOULD include a `Date` header field in encapsulated requests.  Though
 HTTP requests often do not include a `Date` header field, the value of this
 field might be used by a server to limit the amount of requests it needs to
-track when preventing replays.
+track if it needs to prevent replay attacks.
 
 A server can maintain state for requests for a small window of time over which
 it wishes to accept requests.  The server then rejects requests if the request
