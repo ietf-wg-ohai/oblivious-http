@@ -127,47 +127,6 @@ one request in each connection. With limited trust placed in the proxy (see
 {{security}}), clients are assured that requests are not uniquely attributed to
 them or linked to other requests.
 
-# Conventions and Definitions
-
-{::boilerplate bcp14}
-
-Encapsulated Request:
-
-: An HTTP request that is encapsulated in an HPKE-encrypted message; see
-  {{request}}.
-
-Encapsulated Response:
-
-: An HTTP response that is encapsulated in an HPKE-encrypted message; see
-  {{response}}.
-
-Oblivious Proxy Resource:
-
-: An intermediary that forwards requests and responses between clients and a
-  single oblivious request resource.
-
-Oblivious Request Resource:
-
-: A resource that can receive an encapsulated request, extract the contents of
-  that request, forward it to an oblivious target resource, receive a response,
-  encapsulate that response, then return that response.
-
-Oblivious Target Resource:
-
-: The resource that is the target of an encapsulated request.  This resource
-  logically handles only regular HTTP requests and responses and so might be
-  ignorant of the use of oblivious HTTP to reach it.
-
-This draft includes pseudocode that uses the functions and conventions defined
-in {{!HPKE}}.
-
-Encoding an integer to a sequence of bytes in network byte order is described
-using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
-the integer value. The function `len()` returns the length of a sequence of
-bytes.
-
-Formats are described using notation from {{Section 1.3 of QUIC}}.
-
 
 # Overview
 
@@ -293,6 +252,48 @@ queries, or requesting location-specific content (such as retrieving tiles of a
 map display).
 
 
+## Conventions and Definitions
+
+{::boilerplate bcp14}
+
+Encapsulated Request:
+
+: An HTTP request that is encapsulated in an HPKE-encrypted message; see
+  {{request}}.
+
+Encapsulated Response:
+
+: An HTTP response that is encapsulated in an HPKE-encrypted message; see
+  {{response}}.
+
+Oblivious Proxy Resource:
+
+: An intermediary that forwards requests and responses between clients and a
+  single oblivious request resource.
+
+Oblivious Request Resource:
+
+: A resource that can receive an encapsulated request, extract the contents of
+  that request, forward it to an oblivious target resource, receive a response,
+  encapsulate that response, then return that response.
+
+Oblivious Target Resource:
+
+: The resource that is the target of an encapsulated request.  This resource
+  logically handles only regular HTTP requests and responses and so might be
+  ignorant of the use of oblivious HTTP to reach it.
+
+This draft includes pseudocode that uses the functions and conventions defined
+in {{!HPKE}}.
+
+Encoding an integer to a sequence of bytes in network byte order is described
+using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
+the integer value. The function `len()` returns the length of a sequence of
+bytes.
+
+Formats are described using notation from {{Section 1.3 of QUIC}}.
+
+
 # Key Configuration {#key-configuration}
 
 A client needs to acquire information about the key configuration of the
@@ -331,33 +332,27 @@ identifier for the KEM that the public key uses, and a set HPKE symmetric
 algorithms. Each symmetric algorithm consists of an identifier for a KDF and an
 identifier for an AEAD.
 
-{{format-key-config}} shows a single key configuration, KeyConfig, that is
-expressed using the TLS syntax; see {{Section 3 of TLS}}.
+{{format-key-config}} shows a single key configuration.
 
 ~~~ tls-syntax
-opaque HpkePublicKey[Npk];
-uint16 HpkeKemId;
-uint16 HpkeKdfId;
-uint16 HpkeAeadId;
+HPKE Symmetric Algorithms {
+  HPKE KDF ID (16),
+  HPKE AEAD ID (16),
+}
 
-struct {
-  HpkeKdfId kdf_id;
-  HpkeAeadId aead_id;
-} HpkeSymmetricAlgorithms;
-
-struct {
-  uint8 key_id;
-  HpkeKemId kem_id;
-  HpkePublicKey public_key;
-  HpkeSymmetricAlgorithms cipher_suites<4..2^16-4>;
-} KeyConfig;
+OHTTP Key Config {
+  Key Identifier (8),
+  HPKE KEM ID (16),
+  HPKE Public Key (Npk * 8),
+  HPKE Symmetric Algorithms Length (16),
+  HPKE Symmetric Algorithms (32..262140),
+}
 ~~~
 {: #format-key-config title="A Single Key Configuration"}
 
-The types HpkeKemId, HpkeKdfId, and HpkeAeadId identify a KEM, KDF, and AEAD
-respectively. The definitions for these identifiers and the semantics of the
-algorithms they identify can be found in {{!HPKE}}. The Npk parameter
-corresponding to the HpkeKdfId can be found in {{!HPKE}}.
+The definitions for the identifiers used in HPKE and the semantics of the
+algorithms they identify can be found in {{!HPKE}}.  The `Npk` parameter is
+determined by the choice of HPKE KEM, which can also be found in {{!HPKE}}.
 
 
 ## Key Configuration Media Type {#ohttp-keys}
