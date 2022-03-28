@@ -647,7 +647,8 @@ The oblivious proxy resource interacts with the oblivious request resource by
 constructing a request using the same restrictions as the client request, except
 that the target URI is the oblivious request resource.  The content of this
 request is copied from the client.  The oblivious proxy resource MUST NOT add
-information about the client to this request.
+information about the client to this request without agreement from the client;
+see {{proxy-responsibilities}} for more information on proxy responsibilities.
 
 When a response is received from the oblivious request resource, the oblivious
 proxy resource forwards the response according to the rules of an HTTP proxy;
@@ -976,7 +977,11 @@ removing unknown fields removes this privacy risk.
 Secondly, generic implementations are often configured to augment requests with
 information about the client, such as the Via field or the Forwarded field
 {{?FORWARDED=RFC7239}}.  A proxy MUST NOT add information about the client
-identity when forwarding requests.
+identity when forwarding requests without agreement from the client.  In
+particular, a proxy can attach additional information about a client to each
+request, provided this behavior is known to the client.  Clients need to be
+aware any additional bit of information added by the proxy can reduce the size
+of the client anonymity set behind the proxy by half.
 
 A proxy can also generate responses, though it assumed to not be able to
 examine the content of a request (other than to observe the choice of key
