@@ -1211,8 +1211,11 @@ a generic proxy for unknown Oblivious Request Resources. The proxy will only
 forward for Oblivious Request Resources that it has explicitly configured and
 allowed.
 
-It is possible for a server to be configured with multiple Oblivious
-Proxy Resources, each for a different Oblivious Request Resource as needed.
+It is possible for a server to be configured with multiple Oblivious Proxy
+Resources, each for a different Oblivious Request Resource as needed.  If the
+goal is to support a large number of Oblivious Request Resources, clients might
+be provided with a URI template {{?TEMPLATE=RFC6570}}, from which multiple
+Oblivious Proxy Resources could be constructed.
 
 
 ## Network Management
