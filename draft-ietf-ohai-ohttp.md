@@ -182,7 +182,9 @@ A client learns the following:
   with that key.
 
 * The identity of an oblivious proxy resource that will forward encapsulated
-  requests and responses to the oblivious request resource.
+  requests and responses to a single oblivious request resource. See {{proxy-state}}
+  for more information about the mapping between oblivious proxy and oblivious
+  request resources.
 
 This information allows the client to make a request of an oblivious target
 resource without that resource having only a limited ability to correlate that
@@ -282,6 +284,13 @@ include:
 * Telemetry submission.  Applications that submit reports about their usage to
   their developers might use oblivious HTTP for some types of moderately
   sensitive data.
+
+These are examples of requests where there is information in a request that - if
+it were connected to the identity of the user - might allow a server to learn
+something about that user even if the identity of the user is pseudonymous.
+Other examples include the submission of anonymous surveys, making search
+queries, or requesting location-specific content (such as retrieving tiles of a
+map display).
 
 
 # Key Configuration {#key-configuration}
@@ -442,11 +451,11 @@ Request {
 ~~~
 {: #fig-req-pt title="Plaintext Request Content"}
 
-An Encapsulated Request is comprised of a length-prefixed key identifier and a
-HPKE-protected request message. HPKE protection includes an encapsulated KEM
-shared secret (or `enc`), plus the AEAD-protected request message. An
-Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes the
-process for constructing and processing an Encapsulated Request.
+An Encapsulated Request is comprised of a key identifier and a HPKE-protected
+request message. HPKE protection includes an encapsulated KEM shared secret (or
+`enc`), plus the AEAD-protected request message. An Encapsulated Request is
+shown in {{fig-enc-request}}. {{request}} describes the process for constructing
+and processing an Encapsulated Request.
 
 ~~~
 Encapsulated Request {
@@ -1132,6 +1141,13 @@ basis of the `Date` request header field SHOULD implement the feedback mechanism
 in {{Section 4 of !REQUEST-DATE}} to support clock correction by clients.
 
 
+## Forward Secrecy
+
+This document does not provide forward secrecy for either requests or
+responses during the lifetime of the key configuration. A measure of
+forward secrecy can be provided by generating a new key configuration
+then deleting the old keys after a suitable period.
+
 ## Post-Compromise Security
 
 This design does not provide post-compromise security for responses.
@@ -1172,15 +1188,39 @@ method for a client to acquire key configurations is not included in this
 specification. Clients need to consider these tracking vectors when choosing a
 discovery method.  Applications using this design should provide accommodations
 to mitigate tracking using key configurations.
+{{?CONSISTENCY=I-D.wood-key-consistency}} provides an analysis of the options
+for ensuring the key configurations are consistent between different clients.
 
 
 # Operational and Deployment Considerations {#deployment}
+
+This section discusses various operational and deployment considerations.
+
+## Performance Overhead
 
 Using Oblivious HTTP adds both cryptographic and latency to requests relative to
 a simple HTTP request-response exchange.  Deploying proxy services that are on
 path between clients and servers avoids adding significant additional delay due
 to network topology.  A study of a similar system {{ODoH}} found that deploying
 proxies close to servers was most effective in minimizing additional latency.
+
+
+## Resource Mappings {#proxy-state}
+
+This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy
+Resource and the Oblivious Request Resource. This means that any encapsulated
+request sent to the Oblivious Proxy Resource will always be forwarded to the
+Oblivious Request Resource. This constraint was imposed to simplify proxy
+configuration and mitigate against the Oblivious Proxy Resource being used as
+a generic proxy for unknown Oblivious Request Resources. The proxy will only
+forward for Oblivious Request Resources that it has explicitly configured and
+allowed.
+
+It is possible for a server to be configured with multiple Oblivious
+Proxy Resources, each for a different Oblivious Request Resource as needed.
+
+
+## Network Management
 
 Oblivious HTTP might be incompatible with network interception regimes, such as
 those that rely on configuring clients with trust anchors and intercepting TLS
