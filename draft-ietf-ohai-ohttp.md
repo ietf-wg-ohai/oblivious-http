@@ -127,47 +127,6 @@ one request in each connection. With limited trust placed in the proxy (see
 {{security}}), clients are assured that requests are not uniquely attributed to
 them or linked to other requests.
 
-# Conventions and Definitions
-
-{::boilerplate bcp14}
-
-Encapsulated Request:
-
-: An HTTP request that is encapsulated in an HPKE-encrypted message; see
-  {{request}}.
-
-Encapsulated Response:
-
-: An HTTP response that is encapsulated in an HPKE-encrypted message; see
-  {{response}}.
-
-Oblivious Proxy Resource:
-
-: An intermediary that forwards requests and responses between clients and a
-  single oblivious request resource.
-
-Oblivious Request Resource:
-
-: A resource that can receive an encapsulated request, extract the contents of
-  that request, forward it to an oblivious target resource, receive a response,
-  encapsulate that response, then return that response.
-
-Oblivious Target Resource:
-
-: The resource that is the target of an encapsulated request.  This resource
-  logically handles only regular HTTP requests and responses and so might be
-  ignorant of the use of oblivious HTTP to reach it.
-
-This draft includes pseudocode that uses the functions and conventions defined
-in {{!HPKE}}.
-
-Encoding an integer to a sequence of bytes in network byte order is described
-using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
-the integer value. The function `len()` returns the length of a sequence of
-bytes.
-
-Formats are described using notation from {{Section 1.3 of QUIC}}.
-
 
 # Overview
 
@@ -291,6 +250,48 @@ something about that user even if the identity of the user is pseudonymous.
 Other examples include the submission of anonymous surveys, making search
 queries, or requesting location-specific content (such as retrieving tiles of a
 map display).
+
+
+## Conventions and Definitions
+
+{::boilerplate bcp14}
+
+Encapsulated Request:
+
+: An HTTP request that is encapsulated in an HPKE-encrypted message; see
+  {{request}}.
+
+Encapsulated Response:
+
+: An HTTP response that is encapsulated in an HPKE-encrypted message; see
+  {{response}}.
+
+Oblivious Proxy Resource:
+
+: An intermediary that forwards requests and responses between clients and a
+  single oblivious request resource.
+
+Oblivious Request Resource:
+
+: A resource that can receive an encapsulated request, extract the contents of
+  that request, forward it to an oblivious target resource, receive a response,
+  encapsulate that response, then return that response.
+
+Oblivious Target Resource:
+
+: The resource that is the target of an encapsulated request.  This resource
+  logically handles only regular HTTP requests and responses and so might be
+  ignorant of the use of oblivious HTTP to reach it.
+
+This draft includes pseudocode that uses the functions and conventions defined
+in {{!HPKE}}.
+
+Encoding an integer to a sequence of bytes in network byte order is described
+using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
+the integer value. The function `len()` returns the length of a sequence of
+bytes.
+
+Formats are described using notation from {{Section 1.3 of QUIC}}.
 
 
 # Key Configuration {#key-configuration}
