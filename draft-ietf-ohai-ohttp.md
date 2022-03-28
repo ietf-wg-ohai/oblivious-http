@@ -904,6 +904,7 @@ this document; see {{ta}}.
 
 A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
+
 ## Client Responsibilities
 
 Clients MUST ensure that the key configuration they select for generating
@@ -960,20 +961,27 @@ The proxy that serves the oblivious proxy resource has a very simple function
 to perform. For each request it receives, it makes a request of the oblivious
 request resource that includes the same content. When it receives a response,
 it sends a response to the client that includes the content of the response
-from the oblivious request resource. When generating a request, the proxy MUST
-follow the forwarding rules in {{Section 7.6 of HTTP}}.
+from the oblivious request resource.
+
+When forwarding a request, the proxy MUST follow the forwarding rules in
+{{Section 7.6 of HTTP}}.  A generic HTTP intermediary implementation is suitable
+for the purposes of serving an oblivious proxy resource, but additional care is
+needed to ensure that client privacy is maintained.
+
+Firstly, a generic implementation will forward unknown fields.  For oblivious
+HTTP, a proxy SHOULD NOT forward unknown fields.  Though clients are not
+expected to include fields that might contain identifying information,
+removing unknown fields removes this privacy risk.
+
+Secondly, generic implementations are often configured to augment requests with
+information about the client, such as the Via field or the Forwarded field
+{{?FORWARDED=RFC7239}}.  A proxy MUST NOT add information about the client
+identity when forwarding requests.
 
 A proxy can also generate responses, though it assumed to not be able to
 examine the content of a request (other than to observe the choice of key
 identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
 encapsulated response.
-
-A proxy MUST NOT add information about the client identity when forwarding
-requests. This includes the Via field, the Forwarded field
-{{?FORWARDED=RFC7239}}, and any similar information.  A client does not depend
-on the proxy using an authenticated and encrypted connection to the oblivious
-request resource, only that information about the client not be attached to
-forwarded requests.
 
 
 ### Denial of Service {#dos}
@@ -995,6 +1003,11 @@ rate might choose to authenticate the proxy to enable the higher rate.
 
 
 ### Linkability Through Traffic Analysis {#ta}
+
+This document assumes that all communication between different entities is
+protected by HTTPS.  This protects information about which resources are the
+subject of request and prevents a network observer from being able to trivially
+correlate messages on either side of a proxy.
 
 As the time at which encapsulated request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
