@@ -257,6 +257,13 @@ map display).
 
 {::boilerplate bcp14}
 
+Client:
+
+: This document uses its own definition of client.  When referring to the HTTP
+  definition of client ({{Section 3.3 of HTTP}}), the term "HTTP client" is
+  used.  The Client role in this protocol acts as an HTTP client, but so does
+  the Oblivious Proxy Resource and the Oblivious Request Resource.
+
 Encapsulated Request:
 
 : An HTTP request that is encapsulated in an HPKE-encrypted message; see
@@ -643,11 +650,11 @@ about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}, or
 information that it trusts the oblivious proxy resource to remove, such as
 fields that are listed in the Connection header field.
 
-The oblivious proxy resource interacts with the oblivious request resource by
-constructing a request using the same restrictions as the client request, except
-that the target URI is the oblivious request resource.  The content of this
-request is copied from the client.  The oblivious proxy resource MUST NOT add
-information about the client to this request.
+The oblivious proxy resource interacts with the oblivious request resource as an
+HTTP client by constructing a request using the same restrictions as the client
+request, except that the target URI is the oblivious request resource.  The
+content of this request is copied from the client.  The oblivious proxy resource
+MUST NOT add information about the client to this request.
 
 When a response is received from the oblivious request resource, the oblivious
 proxy resource forwards the response according to the rules of an HTTP proxy;
