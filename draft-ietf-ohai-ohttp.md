@@ -130,10 +130,10 @@ them or linked to other requests.
 
 # Overview
 
-A client learns the following:
+A client must initially know the following:
 
 * The identity of an oblivious request resource.  This might include some
-  information about oblivious target resources that the oblivious request
+  information about what oblivious target resources the oblivious request
   resource supports.
 
 * The details of an HPKE public key that the oblivious request resource accepts,
@@ -146,7 +146,7 @@ A client learns the following:
   request resources.
 
 This information allows the client to make a request of an oblivious target
-resource without that resource having only a limited ability to correlate that
+resource with that resource having only a limited ability to correlate that
 request with the client IP or other requests that the client might make to that
 server.
 
@@ -208,14 +208,15 @@ occur, as shown in {{fig-overview}}:
 
 ## Applicability
 
-Oblivious HTTP has limited applicability.  Many uses of HTTP benefit from being
-able to carry state between requests, such as with cookies ({{?RFC6265}}),
-authentication ({{Section 11 of HTTP}}), or even alternative services
-({{?RFC7838}}).  Oblivious HTTP seeks to prevent this sort of linkage, which
-requires that applications not carry state between requests.
+Oblivious HTTP has limited applicability.  Many uses of HTTP benefit
+from being able to carry state between requests, such as with cookies
+({{?RFC6265}}), authentication ({{Section 11 of HTTP}}), or even
+alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
+at the transport layer, which must be used in conjunction with applications
+that do not carry state between requests.
 
 Oblivious HTTP is primarily useful where privacy risks associated with possible
-stateful treatment of requests are sufficiently negative that the cost of
+stateful treatment of requests are sufficiently large that the cost of
 deploying this protocol can be justified.  Oblivious HTTP is simpler and less
 costly than more robust systems, like Prio ({{PRIO}}) or Tor
 ({{Dingledine2004}}), which can provide stronger guarantees at higher
@@ -255,6 +256,12 @@ map display).
 ## Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
+
+Client:
+
+: This document uses its own definition of client.  When referring to the HTTP
+  definition of client ({{Section 3.3 of HTTP}}), the term "HTTP client" is
+  used; see {{http-usage}}.
 
 Encapsulated Request:
 
@@ -298,21 +305,19 @@ Formats are described using notation from {{Section 1.3 of QUIC}}.
 
 A client needs to acquire information about the key configuration of the
 oblivious request resource in order to send encapsulated requests.
-
 In order to ensure that clients do not encapsulate messages that other entities
 can intercept, the key configuration MUST be authenticated and have integrity
 protection.
 
-This document describes the "application/ohttp-keys" media type; see
-{{ohttp-keys}}.  This media type might be used, for example with HTTPS, as part
-of a system for configuring or discovering key configurations.  Note however
-that such a system needs to consider the potential for key configuration to be
+This document does not define how that acquisition occurs. However, in
+order to help facilitate interoperability, it does specify a format
+for the keys. This ensures that different
+client implementations can be configured in the same way and also
+enables advertising key configurations in a consistent format.  This
+format might be used, for example with HTTPS, as part of a system for
+configuring or discovering key configurations.  Note however that such
+a system needs to consider the potential for key configuration to be
 used to compromise client privacy; see {{privacy}}.
-
-Specifying a format for expressing the information a client needs to construct
-an encapsulated request ensures that different client implementations can be
-configured in the same way. This also enables advertising key configurations in
-a consistent format.
 
 A client might have multiple key configurations to select from when
 encapsulating a request. Clients are responsible for selecting a preferred key
@@ -321,10 +326,6 @@ encapsulation method (KEM) and the combinations of key derivation function
 (KDF) and authenticated encryption with associated data (AEAD) in this
 decision.
 
-Evolution of the key configuration format is supported through the definition
-of new formats that are identified by new media types.
-
-
 ## Key Configuration Encoding {#key-config}
 
 A single key configuration consists of a key identifier, a public key, an
@@ -332,41 +333,39 @@ identifier for the KEM that the public key uses, and a set HPKE symmetric
 algorithms. Each symmetric algorithm consists of an identifier for a KDF and an
 identifier for an AEAD.
 
-{{format-key-config}} shows a single key configuration, KeyConfig, that is
-expressed using the TLS syntax; see {{Section 3 of TLS}}.
+{{format-key-config}} shows a single key configuration.
 
 ~~~ tls-syntax
-opaque HpkePublicKey[Npk];
-uint16 HpkeKemId;
-uint16 HpkeKdfId;
-uint16 HpkeAeadId;
+HPKE Symmetric Algorithms {
+  HPKE KDF ID (16),
+  HPKE AEAD ID (16),
+}
 
-struct {
-  HpkeKdfId kdf_id;
-  HpkeAeadId aead_id;
-} HpkeSymmetricAlgorithms;
-
-struct {
-  uint8 key_id;
-  HpkeKemId kem_id;
-  HpkePublicKey public_key;
-  HpkeSymmetricAlgorithms cipher_suites<4..2^16-4>;
-} KeyConfig;
+OHTTP Key Config {
+  Key Identifier (8),
+  HPKE KEM ID (16),
+  HPKE Public Key (Npk * 8),
+  HPKE Symmetric Algorithms Length (16),
+  HPKE Symmetric Algorithms (32..262140),
+}
 ~~~
 {: #format-key-config title="A Single Key Configuration"}
 
-The types HpkeKemId, HpkeKdfId, and HpkeAeadId identify a KEM, KDF, and AEAD
-respectively. The definitions for these identifiers and the semantics of the
-algorithms they identify can be found in {{!HPKE}}. The Npk parameter
-corresponding to the HpkeKdfId can be found in {{!HPKE}}.
+The definitions for the identifiers used in HPKE and the semantics of the
+algorithms they identify can be found in {{!HPKE}}.  The `Npk` parameter is
+determined by the choice of HPKE KEM, which can also be found in {{!HPKE}}.
 
 
 ## Key Configuration Media Type {#ohttp-keys}
 
 The "application/ohttp-keys" format is a media type that identifies a
-serialized collection of key configurations. The content of this media type
-comprises one or more key configuration encodings (see {{key-config}}) that are
-concatenated.
+serialized collection of key configurations. The content of this media
+type comprises one or more key configuration encodings (see
+{{key-config}}) that are concatenated.
+
+Evolution of the key
+configuration format is supported through the definition of new
+formats that are identified by new media types.
 
 Type name:
 
@@ -650,11 +649,20 @@ about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}, or
 information that it trusts the oblivious proxy resource to remove, such as
 fields that are listed in the Connection header field.
 
-The oblivious proxy resource interacts with the oblivious request resource by
-constructing a request using the same restrictions as the client request, except
-that the target URI is the oblivious request resource.  The content of this
-request is copied from the client.  The oblivious proxy resource MUST NOT add
-information about the client to this request.
+The client role in this protocol acts as an HTTP client both with respect to the
+oblivious proxy resource and the oblivious target resource.  For the request the
+clients makes to the oblivious target resource, this diverges from typical HTTP
+assumptions about the use of a connection (see {{Section 3.3 of HTTP}}) in that
+the request and response are encapsulated rather than sent over a connection.
+The oblivious proxy resource and the oblivious request resource also act as HTTP
+clients toward the oblivious request resource and oblivious target resource
+respectively.
+
+The oblivious proxy resource interacts with the oblivious request resource as an
+HTTP client by constructing a request using the same restrictions as the client
+request, except that the target URI is the oblivious request resource.  The
+content of this request is copied from the client.  The oblivious proxy resource
+MUST NOT add information about the client to this request.
 
 When a response is received from the oblivious request resource, the oblivious
 proxy resource forwards the response according to the rules of an HTTP proxy;
@@ -875,10 +883,10 @@ request without linking that request with either:
 2. Any other request the client might have made in the past or might make in
    the future.
 
-In order to ensure this, the client selects a proxy (that serves the oblivious
-proxy resource) that it trusts will protect this information by forwarding the
-encapsulated request and response without passing the server (that serves the
-oblivious request resource).
+In order to ensure this, the client selects a proxy (that serves the
+oblivious proxy resource) that it trusts will protect this information
+by forwarding the encapsulated request and response without passing it
+to the server (that serves the oblivious request resource).
 
 In this section, a deployment where there are three entities is considered:
 
@@ -910,6 +918,7 @@ Traffic analysis that might affect these properties are outside the scope of
 this document; see {{ta}}.
 
 A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
+
 
 ## Client Responsibilities
 
@@ -967,20 +976,27 @@ The proxy that serves the oblivious proxy resource has a very simple function
 to perform. For each request it receives, it makes a request of the oblivious
 request resource that includes the same content. When it receives a response,
 it sends a response to the client that includes the content of the response
-from the oblivious request resource. When generating a request, the proxy MUST
-follow the forwarding rules in {{Section 7.6 of HTTP}}.
+from the oblivious request resource.
+
+When forwarding a request, the proxy MUST follow the forwarding rules in
+{{Section 7.6 of HTTP}}.  A generic HTTP intermediary implementation is suitable
+for the purposes of serving an oblivious proxy resource, but additional care is
+needed to ensure that client privacy is maintained.
+
+Firstly, a generic implementation will forward unknown fields.  For oblivious
+HTTP, a proxy SHOULD NOT forward unknown fields.  Though clients are not
+expected to include fields that might contain identifying information,
+removing unknown fields removes this privacy risk.
+
+Secondly, generic implementations are often configured to augment requests with
+information about the client, such as the Via field or the Forwarded field
+{{?FORWARDED=RFC7239}}.  A proxy MUST NOT add information about the client
+identity when forwarding requests.
 
 A proxy can also generate responses, though it assumed to not be able to
 examine the content of a request (other than to observe the choice of key
 identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
 encapsulated response.
-
-A proxy MUST NOT add information about the client identity when forwarding
-requests. This includes the Via field, the Forwarded field
-{{?FORWARDED=RFC7239}}, and any similar information.  A client does not depend
-on the proxy using an authenticated and encrypted connection to the oblivious
-request resource, only that information about the client not be attached to
-forwarded requests.
 
 
 ### Denial of Service {#dos}
@@ -1002,6 +1018,11 @@ rate might choose to authenticate the proxy to enable the higher rate.
 
 
 ### Linkability Through Traffic Analysis {#ta}
+
+This document assumes that all communication between different entities is
+protected by HTTPS.  This protects information about which resources are the
+subject of request and prevents a network observer from being able to trivially
+correlate messages on either side of a proxy.
 
 As the time at which encapsulated request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
@@ -1217,8 +1238,11 @@ a generic proxy for unknown Oblivious Request Resources. The proxy will only
 forward for Oblivious Request Resources that it has explicitly configured and
 allowed.
 
-It is possible for a server to be configured with multiple Oblivious
-Proxy Resources, each for a different Oblivious Request Resource as needed.
+It is possible for a server to be configured with multiple Oblivious Proxy
+Resources, each for a different Oblivious Request Resource as needed.  If the
+goal is to support a large number of Oblivious Request Resources, clients might
+be provided with a URI template {{?TEMPLATE=RFC6570}}, from which multiple
+Oblivious Proxy Resources could be constructed.
 
 
 ## Network Management
