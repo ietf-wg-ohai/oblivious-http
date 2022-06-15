@@ -255,7 +255,13 @@ map display).
 
 ## Conventions and Definitions
 
-{::boilerplate bcp14}
+{::boilerplate bcp14-tagged}
+
+Client:
+
+: This document uses its own definition of client.  When referring to the HTTP
+  definition of client ({{Section 3.3 of HTTP}}), the term "HTTP client" is
+  used; see {{http-usage}}.
 
 Encapsulated Request:
 
@@ -643,12 +649,21 @@ about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}, or
 information that it trusts the oblivious proxy resource to remove, such as
 fields that are listed in the Connection header field.
 
-The oblivious proxy resource interacts with the oblivious request resource by
-constructing a request using the same restrictions as the client request, except
-that the target URI is the oblivious request resource.  The content of this
-request is copied from the client.  The oblivious proxy resource MUST NOT add
-information about the client to this request without agreement from the client;
-see {{proxy-responsibilities}} for more information on proxy responsibilities.
+The client role in this protocol acts as an HTTP client both with respect to the
+oblivious proxy resource and the oblivious target resource.  For the request the
+clients makes to the oblivious target resource, this diverges from typical HTTP
+assumptions about the use of a connection (see {{Section 3.3 of HTTP}}) in that
+the request and response are encapsulated rather than sent over a connection.
+The oblivious proxy resource and the oblivious request resource also act as HTTP
+clients toward the oblivious request resource and oblivious target resource
+respectively.
+
+The oblivious proxy resource interacts with the oblivious request resource as an
+HTTP client by constructing a request using the same restrictions as the client
+request, except that the target URI is the oblivious request resource.  The
+content of this request is copied from the client.  The oblivious proxy resource
+MUST NOT add information about the client to this request; see
+{{proxy-responsibilities}} for more information on proxy responsibilities.
 
 When a response is received from the oblivious request resource, the oblivious
 proxy resource forwards the response according to the rules of an HTTP proxy;
