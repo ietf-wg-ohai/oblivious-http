@@ -1296,12 +1296,17 @@ RUST_LOG=ohttp cargo test -\-features rust-hpke,client,server -\-no-default-feat
 
 A single request and response exchange is shown here. Binary values (key
 configuration, secret keys, the content of messages, and intermediate values)
-are shown in hexadecimal. The request and response here are absolutely minimal;
+are shown in hexadecimal. The request and response here are minimal;
 the purpose of this example is to show the cryptographic operations.
+In this example, the client is configured with the oblivious proxy URI
+of `https://proxy.example.org/request.example.net/proxy`, and the proxy
+is configured to map this requests to this URI to the oblivious request URI
+`https://example.com/oblivious/request`. The oblivious target URI, i.e.,
+the resource the client ultimately wishes to fetch, is `https://example.com`.
 
-The oblivious request resource generates a key pair. In this example the server
-chooses DHKEM(X25519, HKDF-SHA256) and generates an X25519 key pair
-{{?X25519=RFC7748}}. The X25519 secret key is:
+To begin the process, the oblivious request resource generates a key pair.
+In this example the server chooses DHKEM(X25519, HKDF-SHA256) and generates
+an X25519 key pair {{?X25519=RFC7748}}. The X25519 secret key is:
 
 ~~~ hex-dump
 b8f3cea0da634e6b8271f5b8f931d266decdd04c8e09b80cb9878ea90086ed4a
@@ -1316,8 +1321,8 @@ e3304a00080001000100010003
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
-wishes to send an HTTP request of a GET request to `https://example.com`, it
-constructs the following binary HTTP message:
+wishes to send an HTTP request of a GET request to the target `https://example.com`,
+it constructs the following binary HTTP message:
 
 ~~~ hex-dump
 00034745540568747470730b6578616d706c652e636f6d012f
