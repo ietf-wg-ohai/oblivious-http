@@ -998,7 +998,7 @@ information that a client is aware of.
 A proxy MAY add information to requests if the client is aware of the nature of
 the information that could be added.  The client does not need to be aware of
 the exact value added for each request, but needs to know the range of possible
-values the proxy might use.  Clients need to be aware any information added by
+values the proxy might use.  Clients need to be aware that any information added by
 the proxy can reduce the size of the anonymity set of clients at a server.
 
 A proxy can also generate responses, though it assumed to not be able to
