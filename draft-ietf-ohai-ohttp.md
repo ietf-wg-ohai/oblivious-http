@@ -976,7 +976,9 @@ removing unknown fields removes this privacy risk.
 
 Secondly, generic implementations are often configured to augment requests with
 information about the client, such as the Via field or the Forwarded field
-{{?FORWARDED=RFC7239}}.  A proxy MUST NOT add information about the client
+{{?FORWARDED=RFC7239}}.  A proxy MUST NOT add information when forwarding
+requests that might be used to identify clients, with the exception of
+information that a client is aware of.
 identity when forwarding requests without agreement from the client.  In
 particular, a proxy can attach additional information about a client to each
 request, provided this behavior is known to the client.  Clients need to be
