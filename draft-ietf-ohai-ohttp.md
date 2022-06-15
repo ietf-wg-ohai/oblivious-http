@@ -979,11 +979,12 @@ information about the client, such as the Via field or the Forwarded field
 {{?FORWARDED=RFC7239}}.  A proxy MUST NOT add information when forwarding
 requests that might be used to identify clients, with the exception of
 information that a client is aware of.
-identity when forwarding requests without agreement from the client.  In
-particular, a proxy can attach additional information about a client to each
-request, provided this behavior is known to the client.  Clients need to be
-aware any additional bit of information added by the proxy can reduce the size
-of the client anonymity set behind the proxy by half.
+
+A proxy MAY add information to requests if the client is aware of the nature of
+the information that could be added.  The client does not need to be aware of
+the exact value added for each request, but needs to know the range of possible
+values the proxy might use.  Clients need to be aware any information added by
+the proxy can reduce the size of the anonymity set of clients at a server.
 
 A proxy can also generate responses, though it assumed to not be able to
 examine the content of a request (other than to observe the choice of key
