@@ -645,8 +645,8 @@ those fields necessary to carry the encapsulated request: a method of POST, a
 target URI of the oblivious proxy resource, a header field containing
 the content type (see ({{media-types}}), and the encapsulated request as the
 request content.  Clients MAY include fields that do not reveal information
-about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}, or
-information that it trusts the oblivious proxy resource to remove, such as
+about the content of the request, such as Proxy-Authorization {{?SEMANTICS=RFC9110}},
+or information that it trusts the oblivious proxy resource to remove, such as
 fields that are listed in the Connection header field.
 
 The client role in this protocol acts as an HTTP client both with respect to the
