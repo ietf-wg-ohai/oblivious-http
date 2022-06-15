@@ -1300,7 +1300,7 @@ are shown in hexadecimal. The request and response here are minimal;
 the purpose of this example is to show the cryptographic operations.
 In this example, the client is configured with the oblivious proxy URI
 of `https://proxy.example.org/request.example.net/proxy`, and the proxy
-is configured to map this requests to this URI to the oblivious request URI
+is configured to map requests to this URI to the oblivious request URI
 `https://example.com/oblivious/request`. The oblivious target URI, i.e.,
 the resource the client ultimately wishes to fetch, is `https://example.com`.
 
