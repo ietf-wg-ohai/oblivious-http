@@ -662,7 +662,8 @@ The oblivious proxy resource interacts with the oblivious request resource as an
 HTTP client by constructing a request using the same restrictions as the client
 request, except that the target URI is the oblivious request resource.  The
 content of this request is copied from the client.  The oblivious proxy resource
-MUST NOT add information about the client to this request; see
+MUST NOT add information to the request without the client being aware of
+the type of information that might be added; see
 {{proxy-responsibilities}} for more information on proxy responsibilities.
 
 When a response is received from the oblivious request resource, the oblivious
