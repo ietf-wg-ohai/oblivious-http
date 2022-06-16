@@ -645,11 +645,11 @@ those fields necessary to carry the encapsulated request: a method of POST, a
 target URI of the oblivious proxy resource, a header field containing
 the content type (see ({{media-types}}), and the encapsulated request as the
 request content.  Clients MAY include fields that are independent of the
-content of the request and the oblivious proxy resource will remove before
-forwarding the request towards the target, such as the Connection or
+request and the oblivious proxy resource will remove before forwarding
+the encapsulated request towards the target, such as the Connection or
 Proxy-Authorization header fields {{?SEMANTICS=RFC9110}}. Content-Length
-is an exceptional header that clients MAY include in requests to the
-oblivious proxy since it does not reveal any new information to the proxy.
+is an exceptional header that clients MAY include in encapsulated requests
+to the oblivious proxy since it does not reveal any new information to the proxy.
 
 The client role in this protocol acts as an HTTP client both with respect to the
 oblivious proxy resource and the oblivious target resource.  For the request the
