@@ -644,10 +644,11 @@ POST request to the oblivious proxy resource.  This request MUST only contain
 those fields necessary to carry the encapsulated request: a method of POST, a
 target URI of the oblivious proxy resource, a header field containing
 the content type (see ({{media-types}}), and the encapsulated request as the
-request content.  Clients MAY include fields that do not reveal information
-about the content of the request, such as Alt-Used {{?ALT-SVC=RFC7838}}, or
-information that it trusts the oblivious proxy resource to remove, such as
-fields that are listed in the Connection header field.
+request content. In the request to the oblivious proxy resource, clients MAY
+include additional fields. However, those fields MUST be independent of the
+encapsulated request and MUST be fields that the oblivious proxy resource will
+remove before forwarding the encapsulated request towards the target, such as the
+Connection or Proxy-Authorization header fields {{?SEMANTICS=RFC9110}}.
 
 The client role in this protocol acts as an HTTP client both with respect to the
 oblivious proxy resource and the oblivious target resource.  For the request the
