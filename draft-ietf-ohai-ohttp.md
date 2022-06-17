@@ -649,8 +649,6 @@ include additional fields. However, those fields MUST be independent of the
 encapsulated request and MUST be fields that the oblivious proxy resource will
 remove before forwarding the encapsulated request towards the target, such as the
 Connection or Proxy-Authorization header fields {{?SEMANTICS=RFC9110}}.
-Content-Length is an exceptional header that clients MAY include in requests
-to the oblivious proxy since it does not reveal any new information to the proxy.
 
 The client role in this protocol acts as an HTTP client both with respect to the
 oblivious proxy resource and the oblivious target resource.  For the request the
