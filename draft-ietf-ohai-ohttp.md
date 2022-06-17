@@ -31,7 +31,7 @@ author:
 normative:
 
   BINARY: I-D.ietf-httpbis-binary-message
-  HTTP: I-D.ietf-httpbis-semantics
+  HTTP: RFC9110
   QUIC: RFC9000
   TLS: RFC8446
 
