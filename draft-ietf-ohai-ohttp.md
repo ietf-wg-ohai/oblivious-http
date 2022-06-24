@@ -1440,7 +1440,8 @@ The AEAD Seal function is then used to encrypt the response, which is added
 to the randomized nonce value to produce the encapsulated response:
 
 ~~~ hex-dump
-cce12ceb52ef5e0cb3c320f9dc1fb4bf199174868a0b2eecc13205c2ce40c5d57fd9ff
+cce12ceb52ef5e0cb3c320f9dc1fb4bf199174868a0b2eecc13205c2ce40c5d5
+7fd9ff
 ~~~
 
 The oblivious request resource then constructs a response:
