@@ -159,16 +159,24 @@ server.
      |                |                    |                   |
      | Proxy          |                    |                   |
      | Request        |                    |                   |
+     | [+ Encrypted   |                    |                   |
+     |    Request ]   |                    |                   |
      +--------------->| Encapsulated       |                   |
      |                | Request            |                   |
+     |                | [+ Encrypted       |
+     |                |    Request ]       |
      |                +------------------->| Request           |
      |                |                    +------------------>|
      |                |                    |                   |
      |                |                    |          Response |
      |                |       Encapsulated |<------------------+
      |                |           Response |                   |
+     |                |      [+ Encrypted  |                   |
+     |                |         Response ] |                   |
      |          Proxy |<-------------------+                   |
      |       Response |                    |                   |
+     |  [+ Encrypted  |                    |                   |
+     |     Response ] |                    |                   |
      |<---------------+                    |                   |
      |                |                    |                   |
 ~~~
@@ -180,10 +188,10 @@ occur, as shown in {{fig-overview}}:
 1. The client constructs an HTTP request for an oblivious target resource.
 
 2. The client encodes the HTTP request in a binary HTTP message and then
-   encapsulates that message using HPKE and the process from {{request}}.
+   encrypts that message using HPKE and the process from {{request}}.
 
 3. The client sends a POST request to the oblivious proxy resource with the
-   encapsulated request as the content of that message.
+   encrypted request as the content of that message.
 
 4. The oblivious proxy resource forwards this request to the oblivious encapsulation
    resource.
@@ -197,13 +205,13 @@ occur, as shown in {{fig-overview}}:
 7. The oblivious target resource answers this HTTP request with an HTTP
    response.
 
-8. The oblivious encapsulation resource encapsulates the HTTP response following the
+8. The oblivious encapsulation resource encrypts the HTTP response following the
    process in {{response}} and sends this in response to the request from the
    oblivious proxy resource.
 
 9. The oblivious proxy resource forwards this response to the client.
 
-10. The client removes the encapsulation to obtain the response to the original
+10. The client removes the encryption to obtain the response to the original
     request.
 
 
@@ -460,14 +468,14 @@ Request {
 ~~~
 {: #fig-req-pt title="Plaintext Request Content"}
 
-An Encapsulated Request is comprised of a key identifier and a HPKE-protected
+An Encrypted Request is comprised of a key identifier and a HPKE-protected
 request message. HPKE protection includes an encapsulated KEM shared secret (or
-`enc`), plus the AEAD-protected request message. An Encapsulated Request is
+`enc`), plus the AEAD-protected request message. An Encrypted Request is
 shown in {{fig-enc-request}}. {{request}} describes the process for constructing
-and processing an Encapsulated Request.
+and processing an Encrypted Request.
 
 ~~~
-Encapsulated Request {
+Encrypted Request {
   Key Identifier (8),
   KEM Identifier (16),
   KDF Identifier (16),
@@ -476,12 +484,12 @@ Encapsulated Request {
   AEAD-Protected Request (..),
 }
 ~~~
-{: #fig-enc-request title="Encapsulated Request"}
+{: #fig-enc-request title="Encrypted Request"}
 
 The Nenc parameter corresponding to the HpkeKdfId can be found in {{Section 7.1
 of !HPKE}}.
 
-An encapsulated HTTP response includes a binary-encoded HTTP message {{BINARY}}
+An encrypted HTTP response includes a binary-encoded HTTP message {{BINARY}}
 and no other content; see {{fig-res-pt}}.
 
 ~~~
@@ -493,15 +501,15 @@ Response {
 
 Responses are bound to responses and so consist only of AEAD-protected content.
 {{response}} describes the process for constructing and processing an
-Encapsulated Response.
+Encrypted Response.
 
 ~~~
-Encapsulated Response {
+Encrypted Response {
   Nonce (Nk),
   AEAD-Protected Response (..),
 }
 ~~~
-{: #fig-enc-response title="Encapsulated Response"}
+{: #fig-enc-response title="Encrypted Response"}
 
 
 The Nenc and Nk parameters corresponding to the HpkeKdfId can be found in
@@ -509,9 +517,9 @@ The Nenc and Nk parameters corresponding to the HpkeKdfId can be found in
 bytes; Nk refers to the size of the AEAD key for the HPKE ciphersuite, in bits.
 
 
-## Encapsulation of Requests {#request}
+## Request Encryption {#request}
 
-Clients encapsulate a request `request` using values from a key configuration:
+Clients encrypt a request `request` using values from a key configuration:
 
 * the key identifier from the configuration, `keyID`, with the corresponding KEM
   identified by `kemID`,
@@ -521,7 +529,7 @@ Clients encapsulate a request `request` using values from a key configuration:
 * a selected combination of KDF, identified by `kdfID`, and AEAD, identified by
   `aeadID`.
 
-The client then constructs an encapsulated request, `enc_request`, from a binary
+The client then constructs an Encrypted Request, `enc_request`, from a binary
 encoded HTTP request, `request`, as follows:
 
 1. Compute an HPKE context using `pkR` and a label of "message/bhttp request",
@@ -534,7 +542,7 @@ encoded HTTP request, `request`, as follows:
 3. Encrypt (seal) `request` with `aad` as associated data using `context`,
    yielding ciphertext `ct`.
 
-4. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encapsulated
+4. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encrypted
    Request `enc_request`.
 
 Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
@@ -552,8 +560,8 @@ ct = context.Seal(aad, request)
 enc_request = concat(aad, enc, ct)
 ~~~
 
-Servers decrypt an Encapsulated Request by reversing this process. Given an
-Encapsulated Request `enc_request`, a server:
+Servers decrypt an Encrypted Request by reversing this process. Given an
+Encrypted Request `enc_request`, a server:
 
 1. Parses `enc_request` into `keyID`, `kemID`, `kdfID`, `aeadID`, `enc`, and
    `ct` (indicated using the function `parse()` in pseudocode). The server is
@@ -587,10 +595,10 @@ request, error = context.Open(aad, ct)
 ~~~
 
 
-## Encapsulation of Responses {#response}
+## Response Encryption {#response}
 
 Given an HPKE context `context`, a request message `request`, and a response
-`response`, servers generate an Encapsulated Response `enc_response` as
+`response`, servers generate an Encrypted Response `enc_response` as
 follows:
 
 1. Export a secret `secret` from `context`, using the string "message/bhttp
@@ -616,7 +624,7 @@ follows:
 6. Encrypt `response`, passing the AEAD function Seal the values of `key`,
    `nonce`, empty `aad`, and a `pt` input of `request`, which yields `ct`.
 
-7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
+7. Concatenate `response_nonce` and `ct`, yielding an Encrypted Response
    `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
    ambiguity in parsing either `response_nonce` or `ct`.
 
@@ -633,7 +641,7 @@ ct = Seal(aead_key, aead_nonce, "", response)
 enc_response = concat(response_nonce, ct)
 ~~~
 
-Clients decrypt an Encapsulated Request by reversing this process. That is,
+Clients decrypt an Encrypted Response by reversing this process. That is,
 they first parse `enc_response` into `response_nonce` and `ct`. They then
 follow the same process to derive values for `aead_key` and `aead_nonce`.
 
@@ -648,22 +656,22 @@ reponse, error = Open(aead_key, aead_nonce, "", ct)
 # HTTP Usage {#http-usage}
 
 A client interacts with the oblivious proxy resource by constructing an
-encapsulated request.  This encapsulated request is included as the content of a
+encrypted request.  This encrypted request is included as the content of a
 POST request to the oblivious proxy resource.  This request MUST only contain
-those fields necessary to carry the encapsulated request: a method of POST, a
+those fields necessary to carry the encrypted request: a method of POST, a
 target URI of the oblivious proxy resource, a header field containing
-the content type (see ({{media-types}}), and the encapsulated request as the
+the content type (see ({{media-types}}), and the encrypted request as the
 request content. In the request to the oblivious proxy resource, clients MAY
 include additional fields. However, those fields MUST be independent of the
-encapsulated request and MUST be fields that the oblivious proxy resource will
-remove before forwarding the encapsulated request towards the target, such as the
+encrypted request and MUST be fields that the oblivious proxy resource will
+remove before forwarding the encrypted request towards the target, such as the
 Connection or Proxy-Authorization header fields {{?SEMANTICS=RFC9110}}.
 
 The client role in this protocol acts as an HTTP client both with respect to the
 oblivious proxy resource and the oblivious target resource.  For the request the
 clients makes to the oblivious target resource, this diverges from typical HTTP
 assumptions about the use of a connection (see {{Section 3.3 of HTTP}}) in that
-the request and response are encapsulated rather than sent over a connection.
+the request and response are encrypted rather than sent over a connection.
 The oblivious proxy resource and the oblivious encapsulation resource also act as HTTP
 clients toward the oblivious encapsulation resource and oblivious target resource
 respectively.
@@ -716,25 +724,25 @@ response with a 4xx status code.
 
 Errors detected by the oblivious proxy resource and errors detected by the
 oblivious encapsulation resource before removing protection (including being unable to
-remove encapsulation for any reason) result in the status code being sent
+remove encryption for any reason) result in the status code being sent
 without protection in response to the POST request made to that resource.
 
 Errors detected by the oblivious encapsulation resource after successfully removing
-encapsulation and errors detected by the oblivious target resource MUST be sent
-in an encapsulated response.
+encryption and errors detected by the oblivious target resource MUST be sent
+in an encrypted response.
 
 
 # Media Types {#media-types}
 
-Media types are used to identify encapsulated requests and responses.
+Media types are used to identify encrypted requests and responses.
 
-Evolution of the format of encapsulated requests and responses is supported
+Evolution of the format of encrypted requests and responses is supported
 through the definition of new formats that are identified by new media types.
 
 
 ## message/ohttp-req Media Type
 
-The "message/ohttp-req" identifies an encapsulated binary HTTP request.  This
+The "message/ohttp-req" identifies an encrypted binary HTTP request.  This
 is a binary format that is defined in {{request}}.
 
 Type name:
@@ -809,7 +817,7 @@ Change controller:
 
 ## message/ohttp-res Media Type
 
-The "message/ohttp-res" identifies an encapsulated binary HTTP response. This
+The "message/ohttp-res" identifies an encrypted binary HTTP response. This
 is a binary format that is defined in {{response}}.
 
 Type name:
@@ -897,7 +905,7 @@ request without linking that request with either:
 
 In order to ensure this, the client selects a proxy (that serves the
 oblivious proxy resource) that it trusts will protect this information
-by forwarding the encapsulated request and response without passing it
+by forwarding the encrypted request and response without passing it
 to the server (that serves the oblivious encapsulation resource).
 
 In this section, a deployment where there are three entities is considered:
@@ -919,9 +927,9 @@ described above. Informally, this means:
 1. Requests and responses are known only to clients and targets in possession
    of the corresponding response encapsulation key and HPKE keying material.
    In particular, the oblivious proxy knows the origin and destination of an
-   encapsulated request and response, yet does not know the decapsulated
+   encrypted request and response, yet does not know the decrypted
    contents. Likewise, targets know only the oblivious encapsulation origin, i.e.,
-   the proxy, and the decapsulated request. Only the client knows both the
+   the proxy, and the decrypted request. Only the client knows both the
    plaintext request and response.
 1. Targets cannot link requests from the same client in the absence of unique
    per-client keys.
@@ -935,7 +943,7 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 ## Client Responsibilities
 
 Clients MUST ensure that the key configuration they select for generating
-encapsulated requests is integrity protected and authenticated so that it can
+encrypted requests is integrity protected and authenticated so that it can
 be attributed to the oblivious encapsulation resource; see {{key-configuration}}.
 
 Since clients connect directly to the proxy instead of the target, application
@@ -949,7 +957,7 @@ connections. When this difference is relevant, applications can instead connect
 directly to the target at the cost of either privacy or performance.
 
 Clients MUST NOT include identifying information in the request that is
-encapsulated. Identifying information includes cookies {{?COOKIES=RFC6265}},
+encrypted. Identifying information includes cookies {{?COOKIES=RFC6265}},
 authentication credentials or tokens, and any information that might reveal
 client-specific information such as account credentials.
 
@@ -969,7 +977,7 @@ proxy.
 
 The request the client sends to the oblivious proxy resource only requires
 minimal information; see {{http-usage}}. The request that carries the
-encapsulated request and is sent to the oblivious proxy resource MUST NOT
+encrypted request and is sent to the oblivious proxy resource MUST NOT
 include identifying information unless the client ensures that this information
 is removed by the proxy. A client MAY include information only for the
 oblivious proxy resource in header fields identified by the Connection header
@@ -977,9 +985,9 @@ field if it trusts the proxy to remove these as required by Section 7.6.1 of
 {{HTTP}}. The client needs to trust that the proxy does not replicate the
 source addressing information in the request it forwards.
 
-Clients rely on the oblivious proxy resource to forward encapsulated requests
+Clients rely on the oblivious proxy resource to forward encrypted requests
 and responses. However, the proxy can only refuse to forward messages, it
-cannot inspect or modify the contents of encapsulated requests or responses.
+cannot inspect or modify the contents of encrypted requests or responses.
 
 
 ## Proxy Responsibilities
@@ -1015,7 +1023,7 @@ the proxy can reduce the size of the anonymity set of clients at a server.
 A proxy can also generate responses, though it assumed to not be able to
 examine the content of a request (other than to observe the choice of key
 identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
-encapsulated response.
+encrypted response.
 
 
 ### Denial of Service {#dos}
@@ -1043,7 +1051,7 @@ protected by HTTPS.  This protects information about which resources are the
 subject of request and prevents a network observer from being able to trivially
 correlate messages on either side of a proxy.
 
-As the time at which encapsulated request or response messages are sent can
+As the time at which encrypted request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
 oblivious proxy resource and the oblivious encapsulation resource might be sent in a
 single connection, traffic analysis could be used to match messages that are
@@ -1065,8 +1073,8 @@ providing larger sets of messages that need to be matched.
 ## Server Responsibilities
 
 A server that operates both oblivious encapsulation and oblivious target resources is
-responsible for removing request encapsulation, generating a response the
-encapsulated request, and encapsulating the response.
+responsible for removing request encryption, generating a response to the
+encrypted request, and encrypting the response.
 
 Servers should account for traffic analysis based on response size or generation
 time.  Techniques such as padding or timing delays can help protect against such
@@ -1086,12 +1094,12 @@ been replaced, the server can respond with an HTTP 422 (Unprocessable Content)
 status code.
 
 A server can also use a 422 status code if the server has a key that corresponds
-to the key identifier, but the encapsulated request cannot be successfully
+to the key identifier, but the encrypted request cannot be successfully
 decrypted using the key.
 
 A server MUST ensure that the HPKE keys it uses are not valid for any other
 protocol that uses HPKE with the "message/bhttp request" label.  Designers of
-protocols that reuse this encapsulation format, especially new versions of this
+protocols that reuse this encryption format, especially new versions of this
 protocol, can ensure key diversity by choosing a different label in their use of
 HPKE.  The "message/bhttp response" label was chosen for symmetry only as it
 provides key diversity only within the HPKE context created using the
@@ -1104,10 +1112,10 @@ the effect of replays does not adversely affect clients or resources; see
 
 ## Replay Attacks {#replay}
 
-Encapsulated requests can be copied and replayed by the oblivious proxy
+Encrypted requests can be copied and replayed by the oblivious proxy
 resource. The threat model for oblivious HTTP allows the possibility that an
 oblivious proxy resource might replay requests. Furthermore, if a client sends
-an encapsulated request in TLS early data (see {{Section 8 of TLS}} and
+an encrypted request in TLS early data (see {{Section 8 of TLS}} and
 {{!RFC8470}}), a network-based adversary might be able to cause the request to
 be replayed. In both cases, the effect of a replay attack and the mitigations
 that might be employed are similar to TLS early data.
@@ -1153,7 +1161,7 @@ replayed.
 
 ### Use of Date for Anti-Replay
 
-Clients SHOULD include a `Date` header field in encapsulated requests.  Though
+Clients SHOULD include a `Date` header field in encrypted requests.  Though
 HTTP requests often do not include a `Date` header field, the value of this
 field might be used by a server to limit the amount of requests it needs to
 track if it needs to prevent replay attacks.
@@ -1249,7 +1257,7 @@ proxies close to servers was most effective in minimizing additional latency.
 ## Resource Mappings {#proxy-state}
 
 This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy
-Resource and the Oblivious Encapsulation Resource. This means that any encapsulated
+Resource and the Oblivious Encapsulation Resource. This means that any encrypted
 request sent to the Oblivious Proxy Resource will always be forwarded to the
 Oblivious Encapsulation Resource. This constraint was imposed to simplify proxy
 configuration and mitigate against the Oblivious Proxy Resource being used as
@@ -1280,20 +1288,19 @@ content is accessible to middleboxes.
 
 # Repurposing the Encapsulation Format
 
-The encapsulated payload of an OHTTP request and response is a binary HTTP
-message {{BINARY}}. Client and target agree on this encapsulated payload type by
-specifying the media type "message/bhttp" in the HPKE encapsulation info string
-and HPKE export context string for request and response encapsulation,
-respectively.
+The encrypted payload of an OHTTP request and response is a binary HTTP
+message {{BINARY}}. Client and target agree on this encrypted payload type by
+specifying the media type "message/bhttp" in the HPKE info string and HPKE
+export context string for request and response encryption, respectively.
 
 Future specifications may repurpose the encapsulation mechanism described in
-{{hpke-encapsulation}}, provided that the content type of the encapsulated
+{{hpke-encapsulation}}, provided that the content type of the encrypted
 payload is appropriately reflected in the HPKE info and context strings. For
-example, if a future specification were to use the encapsulation mechanism in
+example, if a future specification were to use the encryption mechanism in
 this specification for DNS messages, identified by the "application/dns-message"
 media type, then the HPKE info string SHOULD be "application/dns-message
-request" for request encapsulation, and the HPKE export context string should be
-"application/dns-message response" for response encapsulation.
+request" for request encryption, and the HPKE export context string should be
+"application/dns-message response" for response encryption.
 
 
 # IANA Considerations
@@ -1365,7 +1372,7 @@ The corresponding private key is:
 ~~~
 
 Applying the Seal operation from the HPKE context produces an encrypted
-message, allowing the client to construct the following encapsulated request:
+message, allowing the client to construct the following encrypted request:
 
 ~~~ hex-dump
 01002000010001e23c23155374725580ec69fecead76afd9726fb4c47f301004
@@ -1382,7 +1389,7 @@ Host: proxy.example.org
 Content-Type: message/ohttp-req
 Content-Length: 78
 
-<content is the encapsulated request above>
+<content is the encrypted request above>
 ~~~
 
 The oblivious proxy resource receives this request and forwards it to the
@@ -1394,7 +1401,7 @@ Host: example.com
 Content-Type: message/ohttp-req
 Content-Length: 78
 
-<content is the encapsulated request above>
+<content is the encrypted request above>
 ~~~
 
 The oblivous request resource receives this request, selects the key it
@@ -1416,7 +1423,7 @@ The response is constructed by extracting a secret from the HPKE context:
 c08eab474f732914c39ca1b70fe25519
 ~~~
 
-The key derivation for the encapsulated response uses both the encapsulated KEM
+The key derivation for the encrypted response uses both the encapsulated KEM
 key from the request and a randomly selected nonce. This produces a salt of:
 
 ~~~ hex-dump
@@ -1446,7 +1453,7 @@ generate a 12-byte nonce:
 ~~~
 
 The AEAD Seal function is then used to encrypt the response, which is added
-to the randomized nonce value to produce the encapsulated response:
+to the randomized nonce value to produce the encrypted response:
 
 ~~~ hex-dump
 cce12ceb52ef5e0cb3c320f9dc1fb4bf199174868a0b2eecc13205c2ce40c5d5
@@ -1462,12 +1469,12 @@ Cache-Control: private, no-store
 Content-Type: message/ohttp-res
 Content-Length: 38
 
-<content is the encapsulated response>
+<content is the encrypted response>
 ~~~
 
 The same response might then be generated by the oblivious proxy resource which
 might change as little as the Date header. The client is then able to use the
-HPKE context it created and the nonce from the encapsulated response to
+HPKE context it created and the nonce from the encrypted response to
 construct the AEAD key and nonce and decrypt the response.
 
 
