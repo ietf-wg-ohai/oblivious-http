@@ -1301,7 +1301,8 @@ and "application/ohttp-keys".
 # Complete Example of a Request and Response
 
 <!-- Generated using ohttp (https://github.com/martinthomson/ohttp):
-RUST_LOG=ohttp cargo test -\-features rust-hpke,client,server -\-no-default-features -p ohttp -\-lib -\- -\-nocapture request_response
+RUST_LOG=ohttp cargo test -\-features nss,client,server -\-no-default-features -p ohttp -\-lib -\- -\-nocapture request_response
+Note: "rust-hpke" doesn't log the client/sender keying material.
 -->
 
 A single request and response exchange is shown here. Binary values (key
@@ -1319,15 +1320,15 @@ In this example the server chooses DHKEM(X25519, HKDF-SHA256) and generates
 an X25519 key pair {{?X25519=RFC7748}}. The X25519 secret key is:
 
 ~~~ hex-dump
-b8f3cea0da634e6b8271f5b8f931d266decdd04c8e09b80cb9878ea90086ed4a
+e7693e454a94d999836f25294518c687b6ed95c1fcf6b0b93c71202793182
 ~~~
 
 The oblivious request resource constructs a key configuration that includes the
 corresponding public key as follows:
 
 ~~~ hex-dump
-01002076eae6d5a6c1549a3343d31c0b9b9582470c72ca11607d47f005f8c16b
-e3304a00080001000100010003
+01002038dc043677aad03b401b5117141d956adb925e5f43904f638f00a8f155
+f0ff0000080001000100010003
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
@@ -1345,22 +1346,22 @@ uses the server public key. This context is constructed from the following
 ephemeral public key:
 
 ~~~ hex-dump
-25845c6ed6802abfd09628b5c677842b10dd53a3aad5775aa3c20cbae1c0cb65
+e23c23155374725580ec69fecead76afd9726fb4c47f30100400b363551ac737
 ~~~
 
 The corresponding private key is:
 
 ~~~ hex-dump
-88894d1fb4e76e215d9d9c87c44d9e0a6053c1c84c836a4106ea547344504658
+408b51d165226e9dbd1ba8c623ce9016e7cb9d0aebf80dc377201b1bc875f
 ~~~
 
 Applying the Seal operation from the HPKE context produces an encrypted
 message, allowing the client to construct the following encapsulated request:
 
 ~~~ hex-dump
-010020000100012485c2eee03135aac82e572d51639b2e141102c431d544e346
-0a0784a908b41b676943ae0b3ed8eff581ee8be5f47303a314de092e2e27e3f0
-2a03b9357de1d414cadacabaa1621cf9
+01002000010001e23c23155374725580ec69fecead76afd9726fb4c47f301004
+00b363551ac737f2eb724b1a4f6ab46efe0c109570054be8aa4a00360efc70d1
+d2145ae5c109f4ae3e16afdd9b2426b0
 ~~~
 
 The client then sends this to the oblivious proxy resource in a POST request,
@@ -1401,45 +1402,46 @@ code) as follows:
 
 The response is constructed by extracting a secret from the HPKE context:
 
+<!-- ikm for HKDF extract -->
 ~~~ hex-dump
-50030a0eacaa9c020e60390c573c4f80
+c08eab474f732914c39ca1b70fe25519
 ~~~
 
 The key derivation for the encapsulated response uses both the encapsulated KEM
 key from the request and a randomly selected nonce. This produces a salt of:
 
 ~~~ hex-dump
-2485c2eee03135aac82e572d51639b2e141102c431d544e3460a0784a908b41b
-e29f9834fd61ffa27f494dfea94d9ed5
+e23c23155374725580ec69fecead76afd9726fb4c47f30100400b363551ac737
+cce12ceb52ef5e0cb3c320f9dc1fb4bf
 ~~~
 
 The salt and secret are both passed to the Extract function of the selected KDF
 (HKDF-SHA256) to produce a pseudorandom key of:
 
 ~~~ hex-dump
-4fd8939221446411c785dc9dc51a196df43646a7791919248d0c7624c9410e5b
+ba1fa1ecf28b444645f6a8adb7bfa7c2c9fab59325e62315a55fe6c94848ef7c
 ~~~
 
 The pseudorandom key is used with the Expand function of the KDF and an info
 field of "key" to produce a 16-byte key for the selected AEAD (AES-128-GCM):
 
 ~~~ hex-dump
-a0cd40e2e68cd500bfd14275b290f337
+f02fc8f6530eb2d0074a95c68d8f74a4
 ~~~
 
 With the same KDF and pseudorandom key, an info field of "nonce" is used to
 generate a 12-byte nonce:
 
 ~~~ hex-dump
-86883bbe97a380ec2fa656f7
+60db9cb745ce3084957c2982
 ~~~
 
 The AEAD Seal function is then used to encrypt the response, which is added
 to the randomized nonce value to produce the encapsulated response:
 
 ~~~ hex-dump
-e29f9834fd61ffa27f494dfea94d9ed543d89abe34977e7d6d5e1d8051e7b3ba
-4ff234
+cce12ceb52ef5e0cb3c320f9dc1fb4bf199174868a0b2eecc13205c2ce40c5d5
+7fd9ff
 ~~~
 
 The oblivious request resource then constructs a response:
