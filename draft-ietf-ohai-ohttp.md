@@ -132,18 +132,19 @@ them or linked to other requests.
 
 A client must initially know the following:
 
-* The identity of an oblivious request resource.  This might include some
-  information about what oblivious target resources the oblivious request
+* The identity of an oblivious encapsulation resource.  This might include some
+  information about what oblivious target resources the oblivious encapsulation
   resource supports.
 
-* The details of an HPKE public key that the oblivious request resource accepts,
-  including an identifier for that key and the HPKE algorithms that are used
-  with that key.
+* The details of an HPKE public key that the oblivious encapsulation resource
+  accepts, including an identifier for that key and the HPKE algorithms that
+  are used with that key.
 
-* The identity of an oblivious proxy resource that will forward encapsulated
-  requests and responses to a single oblivious request resource. See {{proxy-state}}
-  for more information about the mapping between oblivious proxy and oblivious
-  request resources.
+* The identity of an oblivious proxy resource that will accept proxy requests
+  carrying an encapsulated request body and forward these request bodies to
+  a single oblivious encapsulation resource. See {{proxy-state}} for more
+  information about the mapping between oblivious proxy and oblivious
+  encapsulation resources.
 
 This information allows the client to make a request of an oblivious target
 resource with that resource having only a limited ability to correlate that
@@ -151,25 +152,25 @@ request with the client IP or other requests that the client might make to that
 server.
 
 ~~~ aasvg
-+---------+       +----------+       +----------+    +----------+
-| Client  |       | Proxy    |       | Request  |    | Target   |
-|         |       | Resource |       | Resource |    | Resource |
-+----+----+       +----+-----+       +----+-----+    +----+-----+
-     |                 |                  |               |
-     | Encapsulated    |                  |               |
-     | Request         |                  |               |
-     +---------------->| Encapsulated     |               |
-     |                 | Request          |               |
-     |                 +----------------->| Request       |
-     |                 |                  +-------------->|
-     |                 |                  |               |
-     |                 |                  |      Response |
-     |                 |     Encapsulated |<--------------+
-     |                 |         Response |               |
-     |    Encapsulated |<-----------------+               |
-     |        Response |                  |               |
-     |<----------------+                  |               |
-     |                 |                  |               |
++---------+      +----------+      +---------------+      +----------+
+| Client  |      | Proxy    |      | Encapsulation |      | Target   |
+|         |      | Resource |      | Resource      |      | Resource |
++----+----+      +----+-----+      +-------+-------+      +----+-----+
+     |                |                    |                   |
+     | Proxy          |                    |                   |
+     | Request        |                    |                   |
+     +--------------->| Encapsulated       |                   |
+     |                | Request            |                   |
+     |                +------------------->| Request           |
+     |                |                    +------------------>|
+     |                |                    |                   |
+     |                |                    |          Response |
+     |                |       Encapsulated |<------------------+
+     |                |           Response |                   |
+     |          Proxy |<-------------------+                   |
+     |       Response |                    |                   |
+     |<---------------+                    |                   |
+     |                |                    |                   |
 ~~~
 {: #fig-overview title="Overview of Oblivious HTTP"}
 
@@ -184,19 +185,19 @@ occur, as shown in {{fig-overview}}:
 3. The client sends a POST request to the oblivious proxy resource with the
    encapsulated request as the content of that message.
 
-4. The oblivious proxy resource forwards this request to the oblivious request
+4. The oblivious proxy resource forwards this request to the oblivious encapsulation
    resource.
 
-5. The oblivious request resource receives this request and removes
+5. The oblivious encapsulation resource receives this request and removes
    the HPKE protection to obtain an HTTP request.
 
-6. The oblivious request resource makes an HTTP request that includes the target
+6. The oblivious encapsulation resource makes an HTTP request that includes the target
    URI, method, fields, and content of the request it acquires.
 
 7. The oblivious target resource answers this HTTP request with an HTTP
    response.
 
-8. The oblivious request resource encapsulates the HTTP response following the
+8. The oblivious encapsulation resource encapsulates the HTTP response following the
    process in {{response}} and sends this in response to the request from the
    oblivious proxy resource.
 
@@ -226,7 +227,7 @@ Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
 several ways in which oblivious HTTP is more expensive than a direct request:
 
-* Each oblivious request requires at least two regular HTTP requests, which adds
+* Each oblivious encapsulation requires at least two regular HTTP requests, which adds
   latency.
 
 * Each request is expanded in size with additional HTTP fields,
@@ -273,12 +274,20 @@ Encapsulated Response:
 : An HTTP response that is encapsulated in an HPKE-encrypted message; see
   {{response}}.
 
+Proxy Request:
+
+: An HTTP request that contains an encapsulated request as its body.
+
+Proxy Response:
+
+: An HTTP response that contains an encapsulated response as its body.
+
 Oblivious Proxy Resource:
 
 : An intermediary that forwards requests and responses between clients and a
-  single oblivious request resource.
+  single oblivious encapsulation resource.
 
-Oblivious Request Resource:
+Oblivious Encapsulation Resource:
 
 : A resource that can receive an encapsulated request, extract the contents of
   that request, forward it to an oblivious target resource, receive a response,
@@ -304,7 +313,7 @@ Formats are described using notation from {{Section 1.3 of QUIC}}.
 # Key Configuration {#key-configuration}
 
 A client needs to acquire information about the key configuration of the
-oblivious request resource in order to send encapsulated requests.
+oblivious encapsulation resource in order to send encapsulated requests.
 In order to ensure that clients do not encapsulate messages that other entities
 can intercept, the key configuration MUST be authenticated and have integrity
 protection.
@@ -655,23 +664,23 @@ oblivious proxy resource and the oblivious target resource.  For the request the
 clients makes to the oblivious target resource, this diverges from typical HTTP
 assumptions about the use of a connection (see {{Section 3.3 of HTTP}}) in that
 the request and response are encapsulated rather than sent over a connection.
-The oblivious proxy resource and the oblivious request resource also act as HTTP
-clients toward the oblivious request resource and oblivious target resource
+The oblivious proxy resource and the oblivious encapsulation resource also act as HTTP
+clients toward the oblivious encapsulation resource and oblivious target resource
 respectively.
 
-The oblivious proxy resource interacts with the oblivious request resource as an
+The oblivious proxy resource interacts with the oblivious encapsulation resource as an
 HTTP client by constructing a request using the same restrictions as the client
-request, except that the target URI is the oblivious request resource.  The
+request, except that the target URI is the oblivious encapsulation resource.  The
 content of this request is copied from the client.  The oblivious proxy resource
 MUST NOT add information to the request without the client being aware of
 the type of information that might be added; see
 {{proxy-responsibilities}} for more information on proxy responsibilities.
 
-When a response is received from the oblivious request resource, the oblivious
-proxy resource forwards the response according to the rules of an HTTP proxy;
-see {{Section 7.6 of HTTP}}.
+When a response is received from the oblivious encapsulation resource, the
+oblivious proxy resource forwards the response according to the rules of an
+HTTP proxy; see {{Section 7.6 of HTTP}}.
 
-An oblivious request resource, if it receives any response from the oblivious
+An oblivious encapsulation resource, if it receives any response from the oblivious
 target resource, sends a single 200 response containing the encapsulated
 response.  Like the request from the client, this response MUST only contain
 those fields necessary to carry the encapsulated response: a 200 status code, a
@@ -679,7 +688,7 @@ header field indicating the content type, and the encapsulated response as the
 response content.  As with requests, additional fields MAY be used to convey
 information that does not reveal information about the encapsulated response.
 
-An oblivious request resource acts as a gateway for requests to the oblivious
+An oblivious encapsulation resource acts as a gateway for requests to the oblivious
 target resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
 responding to errors it detects before removing encapsulation of the request;
@@ -706,11 +715,11 @@ A server that receives an invalid message for any reason MUST generate an HTTP
 response with a 4xx status code.
 
 Errors detected by the oblivious proxy resource and errors detected by the
-oblivious request resource before removing protection (including being unable to
+oblivious encapsulation resource before removing protection (including being unable to
 remove encapsulation for any reason) result in the status code being sent
 without protection in response to the POST request made to that resource.
 
-Errors detected by the oblivious request resource after successfully removing
+Errors detected by the oblivious encapsulation resource after successfully removing
 encapsulation and errors detected by the oblivious target resource MUST be sent
 in an encapsulated response.
 
@@ -889,18 +898,18 @@ request without linking that request with either:
 In order to ensure this, the client selects a proxy (that serves the
 oblivious proxy resource) that it trusts will protect this information
 by forwarding the encapsulated request and response without passing it
-to the server (that serves the oblivious request resource).
+to the server (that serves the oblivious encapsulation resource).
 
 In this section, a deployment where there are three entities is considered:
 
 * A client makes requests and receives responses
 * A proxy operates the oblivious proxy resource
-* A server operates both the oblivious request resource and the oblivious
+* A server operates both the oblivious encapsulation resource and the oblivious
   target resource
 
 To achieve the stated privacy goals, the oblivious proxy resource cannot be
-operated by the same entity as the oblivious request resource. However,
-colocation of the oblivious request resource and oblivious target resource
+operated by the same entity as the oblivious encapsulation resource. However,
+colocation of the oblivious encapsulation resource and oblivious target resource
 simplifies the interactions between those resources without affecting client
 privacy.
 
@@ -911,7 +920,7 @@ described above. Informally, this means:
    of the corresponding response encapsulation key and HPKE keying material.
    In particular, the oblivious proxy knows the origin and destination of an
    encapsulated request and response, yet does not know the decapsulated
-   contents. Likewise, targets know only the oblivious request origin, i.e.,
+   contents. Likewise, targets know only the oblivious encapsulation origin, i.e.,
    the proxy, and the decapsulated request. Only the client knows both the
    plaintext request and response.
 1. Targets cannot link requests from the same client in the absence of unique
@@ -927,7 +936,7 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 Clients MUST ensure that the key configuration they select for generating
 encapsulated requests is integrity protected and authenticated so that it can
-be attributed to the oblivious request resource; see {{key-configuration}}.
+be attributed to the oblivious encapsulation resource; see {{key-configuration}}.
 
 Since clients connect directly to the proxy instead of the target, application
 configurations wherein clients make policy decisions about target connections,
@@ -979,7 +988,7 @@ The proxy that serves the oblivious proxy resource has a very simple function
 to perform. For each request it receives, it makes a request of the oblivious
 request resource that includes the same content. When it receives a response,
 it sends a response to the client that includes the content of the response
-from the oblivious request resource.
+from the oblivious encapsulation resource.
 
 When forwarding a request, the proxy MUST follow the forwarding rules in
 {{Section 7.6 of HTTP}}.  A generic HTTP intermediary implementation is suitable
@@ -1012,7 +1021,7 @@ encapsulated response.
 ### Denial of Service {#dos}
 
 As there are privacy benefits from having a large rate of requests forwarded by
-the same proxy (see {{ta}}), servers that operate the oblivious request
+the same proxy (see {{ta}}), servers that operate the oblivious encapsulation
 resource might need an arrangement with proxies. This arrangement might be
 necessary to prevent having the large volume of requests being classified as an
 attack by the server.
@@ -1036,7 +1045,7 @@ correlate messages on either side of a proxy.
 
 As the time at which encapsulated request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
-oblivious proxy resource and the oblivious request resource might be sent in a
+oblivious proxy resource and the oblivious encapsulation resource might be sent in a
 single connection, traffic analysis could be used to match messages that are
 forwarded by the proxy.
 
@@ -1055,7 +1064,7 @@ providing larger sets of messages that need to be matched.
 
 ## Server Responsibilities
 
-A server that operates both oblivious request and oblivious target resources is
+A server that operates both oblivious encapsulation and oblivious target resources is
 responsible for removing request encapsulation, generating a response the
 encapsulated request, and encapsulating the response.
 
@@ -1063,15 +1072,15 @@ Servers should account for traffic analysis based on response size or generation
 time.  Techniques such as padding or timing delays can help protect against such
 attacks; see {{ta}}.
 
-If separate entities provide the oblivious request resource and oblivious target
+If separate entities provide the oblivious encapsulation resource and oblivious target
 resource, these entities might need an arrangement similar to that between
 server and proxy for managing denial of service; see {{dos}}. It is also
 necessary to provide confidentiality protection for the unprotected requests and
 responses, plus protections for traffic analysis; see {{ta}}.
 
-An oblivious request resource needs to have a plan for replacing keys. This
+An oblivious encapsulation resource needs to have a plan for replacing keys. This
 might include regular replacement of keys, which can be assigned new key
-identifiers. If an oblivious request resource receives a request that contains a
+identifiers. If an oblivious encapsulation resource receives a request that contains a
 key identifier that it does not understand or that corresponds to a key that has
 been replaced, the server can respond with an HTTP 422 (Unprocessable Content)
 status code.
@@ -1190,7 +1199,7 @@ there is negligible risk associated with a client compromise.
 
 A server retains a secret key that might be used to remove protection from
 messages over much longer periods. A server compromise that provided access to
-the oblivious request resource secret key could allow an attacker to recover the
+the oblivious encapsulation resource secret key could allow an attacker to recover the
 plaintext of all requests sent toward affected keys and all of the responses
 that were generated.
 
@@ -1240,17 +1249,17 @@ proxies close to servers was most effective in minimizing additional latency.
 ## Resource Mappings {#proxy-state}
 
 This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy
-Resource and the Oblivious Request Resource. This means that any encapsulated
+Resource and the Oblivious Encapsulation Resource. This means that any encapsulated
 request sent to the Oblivious Proxy Resource will always be forwarded to the
-Oblivious Request Resource. This constraint was imposed to simplify proxy
+Oblivious Encapsulation Resource. This constraint was imposed to simplify proxy
 configuration and mitigate against the Oblivious Proxy Resource being used as
-a generic proxy for unknown Oblivious Request Resources. The proxy will only
-forward for Oblivious Request Resources that it has explicitly configured and
+a generic proxy for unknown Oblivious Encapsulation Resources. The proxy will only
+forward for Oblivious Encapsulation Resources that it has explicitly configured and
 allowed.
 
 It is possible for a server to be configured with multiple Oblivious Proxy
-Resources, each for a different Oblivious Request Resource as needed.  If the
-goal is to support a large number of Oblivious Request Resources, clients might
+Resources, each for a different Oblivious Encapsulation Resource as needed.  If the
+goal is to support a large number of Oblivious Encapsulation Resources, clients might
 be provided with a URI template {{?TEMPLATE=RFC6570}}, from which multiple
 Oblivious Proxy Resources could be constructed.
 
@@ -1311,11 +1320,11 @@ are shown in hexadecimal. The request and response here are minimal;
 the purpose of this example is to show the cryptographic operations.
 In this example, the client is configured with the oblivious proxy URI
 of `https://proxy.example.org/request.example.net/proxy`, and the proxy
-is configured to map requests to this URI to the oblivious request URI
+is configured to map requests to this URI to the oblivious encapsulation URI
 `https://example.com/oblivious/request`. The oblivious target URI, i.e.,
 the resource the client ultimately wishes to fetch, is `https://example.com`.
 
-To begin the process, the oblivious request resource generates a key pair.
+To begin the process, the oblivious encapsulation resource generates a key pair.
 In this example the server chooses DHKEM(X25519, HKDF-SHA256) and generates
 an X25519 key pair {{?X25519=RFC7748}}. The X25519 secret key is:
 
@@ -1323,7 +1332,7 @@ an X25519 key pair {{?X25519=RFC7748}}. The X25519 secret key is:
 e7693e454a94d999836f25294518c687b6ed95c1fcf6b0b93c71202793182
 ~~~
 
-The oblivious request resource constructs a key configuration that includes the
+The oblivious encapsulation resource constructs a key configuration that includes the
 corresponding public key as follows:
 
 ~~~ hex-dump
@@ -1339,7 +1348,7 @@ it constructs the following binary HTTP message:
 00034745540568747470730b6578616d706c652e636f6d012f
 ~~~
 
-The client then reads the oblivious request resource key configuration and
+The client then reads the oblivious encapsulation resource key configuration and
 selects a mutually supported KDF and AEAD. In this example, the client selects
 HKDF-SHA256 and AES-128-GCM. The client then generates an HPKE context that
 uses the server public key. This context is constructed from the following
@@ -1377,7 +1386,7 @@ Content-Length: 78
 ~~~
 
 The oblivious proxy resource receives this request and forwards it to the
-oblivious request resource, which might look like:
+oblivious encapsulation resource, which might look like:
 
 ~~~ http-message
 POST /oblivious/request HTTP/1.1
@@ -1444,7 +1453,7 @@ cce12ceb52ef5e0cb3c320f9dc1fb4bf199174868a0b2eecc13205c2ce40c5d5
 7fd9ff
 ~~~
 
-The oblivious request resource then constructs a response:
+The oblivious encapsulation resource then constructs a response:
 
 ~~~ http-message
 HTTP/1.1 200 OK
