@@ -913,7 +913,7 @@ request without linking that request with either:
 
 In order to ensure this, the client selects a relay (that serves the
 Oblivious Relay Resource) that it trusts will protect this information
-by forwarding the Encapsulated Request and response without passing it
+by forwarding the Encapsulated Request and Response without passing it
 to the server (that serves the Oblivious Gateway Resource).
 
 In this section, a deployment where there are three entities is considered:
@@ -935,7 +935,7 @@ described above. Informally, this means:
 1. Requests and responses are known only to clients and targets in possession
    of the corresponding response encapsulation key and HPKE keying material.
    In particular, the Oblivious Relay knows the origin and destination of an
-   Encapsulated Request and response, yet does not know the decrypted
+   Encapsulated Request and Response, yet does not know the decrypted
    contents. Likewise, targets know only the Oblivious Gateway origin, i.e.,
    the relay, and the decrypted request. Only the client knows both the
    plaintext request and response.
