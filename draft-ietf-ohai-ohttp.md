@@ -235,7 +235,7 @@ Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
 several ways in which oblivious HTTP is more expensive than a direct request:
 
-* Each Oblivious Gateway requires at least two regular HTTP requests, which adds
+* Each oblivious request requires at least two regular HTTP requests, which adds
   latency.
 
 * Each request is expanded in size with additional HTTP fields,
