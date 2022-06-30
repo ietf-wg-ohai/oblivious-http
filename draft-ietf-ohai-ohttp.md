@@ -141,9 +141,9 @@ A client must initially know the following:
   are used with that key.
 
 * The identity of an Oblivious Relay Resource that will accept relay requests
-  carrying an encapsulated request body and forward these request bodies to
-  a single Oblivious Gateway Resource. See {{proxy-state}} for more
-  information about the mapping between Oblivious Relay and oblivious
+  carrying an encapsulated request as its content and forward the content in
+  these requests to a single Oblivious Gateway Resource. See {{proxy-state}}
+  for more information about the mapping between Oblivious Relay and oblivious
   encapsulation resources.
 
 This information allows the client to make a request of an oblivious target
@@ -301,19 +301,19 @@ Oblivious Target Resource:
 
 Relay Request:
 
-: An HTTP request from Client to Relay that contains an encapsulated request as its body.
+: An HTTP request from Client to Relay that contains an encapsulated request as the content.
 
 Relay Response:
 
-: An HTTP response from Relay to Client that contains an encapsulated response as its body.
+: An HTTP response from Relay to Client that contains an encapsulated response as the content.
 
 Gateway Request:
 
-: An HTTP request from Relay to Gateway that contains an encapsulated request as its body.
+: An HTTP request from Relay to Gateway that contains an encapsulated request as the content.
 
 Gateway Response:
 
-: An HTTP response from Gateway to Relay that contains an encapsulated response as its body.
+: An HTTP response from Gateway to Relay that contains an encapsulated response as the content.
 
 This draft includes pseudocode that uses the functions and conventions defined
 in {{!HPKE}}.
