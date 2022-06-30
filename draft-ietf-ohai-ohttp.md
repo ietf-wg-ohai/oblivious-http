@@ -696,8 +696,8 @@ When a response is received from the Oblivious Gateway Resource, the
 Oblivious Relay Resource forwards the response according to the rules of an
 HTTP proxy; see {{Section 7.6 of HTTP}}.
 
-An Oblivious Gateway Resource, if it receives any response from the oblivious
-target resource, sends a single 200 response containing the encapsulated
+An Oblivious Gateway Resource, if it receives any response from the Oblivious
+Target Resource, sends a single 200 response containing the encapsulated
 response.  Like the request from the client, this response MUST only contain
 those fields necessary to carry the encapsulated response: a 200 status code, a
 header field indicating the content type, and the encapsulated response as the
