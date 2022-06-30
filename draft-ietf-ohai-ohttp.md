@@ -133,7 +133,7 @@ them or linked to other requests.
 A client must initially know the following:
 
 * The identity of an Oblivious Gateway Resource.  This might include some
-  information about what oblivious target resources the Oblivious Gateway
+  information about what Oblivious Target Resources the Oblivious Gateway
   resource supports.
 
 * The details of an HPKE public key that the Oblivious Gateway Resource
@@ -290,7 +290,7 @@ Oblivious Relay Resource:
 Oblivious Gateway Resource:
 
 : A resource that can receive an encapsulated request, extract the contents of
-  that request, forward it to an oblivious target resource, receive a response,
+  that request, forward it to an Oblivious Target Resource, receive a response,
   encapsulate that response, then return that response.
 
 Oblivious Target Resource:
@@ -676,12 +676,12 @@ remove before forwarding the Encapsulated Request towards the target, such as th
 Connection or Proxy-Authorization header fields {{?SEMANTICS=RFC9110}}.
 
 The client role in this protocol acts as an HTTP client both with respect to the
-Oblivious Relay Resource and the oblivious target resource.  For the request the
-clients makes to the oblivious target resource, this diverges from typical HTTP
+Oblivious Relay Resource and the Oblivious Target Resource.  For the request the
+clients makes to the Oblivious Target Resource, this diverges from typical HTTP
 assumptions about the use of a connection (see {{Section 3.3 of HTTP}}) in that
 the request and response are encrypted rather than sent over a connection.
 The Oblivious Relay Resource and the Oblivious Gateway Resource also act as HTTP
-clients toward the Oblivious Gateway Resource and oblivious target resource
+clients toward the Oblivious Gateway Resource and Oblivious Target Resource
 respectively.
 
 The Oblivious Relay Resource interacts with the Oblivious Gateway Resource as an
@@ -736,7 +736,7 @@ remove encapsulation for any reason) result in the status code being sent
 without protection in response to the POST request made to that resource.
 
 Errors detected by the Oblivious Gateway Resource after successfully removing
-encapsulation and errors detected by the oblivious target resource MUST be sent
+encapsulation and errors detected by the Oblivious Target Resource MUST be sent
 in an Encapsulated Response.
 
 
@@ -901,7 +901,7 @@ Change controller:
 # Security Considerations {#security}
 
 In this design, a client wishes to make a request of a server that is
-authoritative for the oblivious target resource. The client wishes to make this
+authoritative for the Oblivious Target Resource. The client wishes to make this
 request without linking that request with either:
 
 1. The identity at the network and transport layer of the client (that is, the
@@ -925,7 +925,7 @@ In this section, a deployment where there are three entities is considered:
 
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
-colocation of the Oblivious Gateway Resource and oblivious target resource
+colocation of the Oblivious Gateway Resource and Oblivious Target Resource
 simplifies the interactions between those resources without affecting client
 privacy.
 
@@ -1080,7 +1080,7 @@ providing larger sets of messages that need to be matched.
 
 ## Server Responsibilities
 
-A server that operates both Oblivious Gateway and oblivious target resources is
+A server that operates both Oblivious Gateway and Oblivious Target Resources is
 responsible for removing request encryption, generating a response to the
 Encapsulated Request, and encrypting the response.
 
@@ -1234,7 +1234,7 @@ limited by regular rotation of server keys.
 One goal of this design is that independent client requests are only linkable by
 the chosen key configuration. The Oblivious Relay and request resources can link
 requests using the same key configuration by matching KeyConfig.key\_id, or, if
-the oblivious target resource is willing to use trial decryption, a limited set
+the Oblivious Target Resource is willing to use trial decryption, a limited set
 of key configurations that share an identifier. An Oblivious Relay can link
 requests using the public key corresponding to KeyConfig.key\_id.
 
