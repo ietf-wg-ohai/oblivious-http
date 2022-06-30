@@ -103,7 +103,7 @@ connections to make multiple requests improves performance, but provides
 servers with additional certainty about the identity of clients in a similar
 fashion.
 
-Use of an HTTP proxy can provide a degree of protection against servers
+Use of an HTTP proxy or relay can provide a degree of protection against servers
 correlating requests. Systems like virtual private networks or the Tor network
 {{Dingledine2004}}, provide other options for clients.
 
@@ -123,7 +123,7 @@ of a requester from the request.
 
 Though this scheme requires that servers and proxies explicitly support it,
 this design represents a performance improvement over options that perform just
-one request in each connection. With limited trust placed in the proxy (see
+one request in each connection. With limited trust placed in the relay (see
 {{security}}), clients are assured that requests are not uniquely attributed to
 them or linked to other requests.
 
@@ -140,7 +140,7 @@ A client must initially know the following:
   accepts, including an identifier for that key and the HPKE algorithms that
   are used with that key.
 
-* The identity of an Oblivious Relay Resource that will accept proxy requests
+* The identity of an Oblivious Relay Resource that will accept relay requests
   carrying an encapsulated request body and forward these request bodies to
   a single Oblivious Gateway Resource. See {{proxy-state}} for more
   information about the mapping between Oblivious Relay and oblivious
@@ -152,33 +152,33 @@ request with the client IP or other requests that the client might make to that
 server.
 
 ~~~ aasvg
-+---------+      +----------+      +----------+      +----------+
-| Client  |      | Relay    |      | Gateway  |      | Target   |
-|         |      | Resource |      | Resource |      | Resource |
-+----+----+      +----+-----+      +-------+--+      +----+-----+
-     |                |                    |              |
-     | Proxy          |                    |              |
-     | Request        |                    |              |
-     | [+ Encrypted   |                    |              |
-     |    Request ]   |                    |              |
-     +--------------->| Encapsulated       |              |
-     |                | Request            |              |
-     |                | [+ Encrypted       |              |
-     |                |    Request ]       |              |
-     |                +------------------->| Request      |
-     |                |                    +------------->|
-     |                |                    |              |
-     |                |                    |     Response |
-     |                |       Encapsulated |<-------------+
-     |                |           Response |              |
-     |                |      [+ Encrypted  |              |
-     |                |         Response ] |              |
-     |          Proxy |<-------------------+              |
-     |       Response |                    |              |
-     |  [+ Encrypted  |                    |              |
-     |     Response ] |                    |              |
-     |<---------------+                    |              |
-     |                |                    |              |
++---------+       +----------+      +----------+      +----------+
+| Client  |       | Relay    |      | Gateway  |      | Target   |
+|         |       | Resource |      | Resource |      | Resource |
++----+----+       +----+-----+      +-------+--+      +----+-----+
+     |                 |                    |              |
+     | Relay           |                    |              |
+     | Request         |                    |              |
+     | [+ Encapsulated |                    |              |
+     |    Request ]    |                    |              |
+     +---------------->| Gateway            |              |
+     |                 | Request            |              |
+     |                 | [+ Encapsulated    |              |
+     |                 |    Request ]       |              |
+     |                 +------------------->| Request      |
+     |                 |                    +------------->|
+     |                 |                    |              |
+     |                 |                    |     Response |
+     |                 |            Gateway |<-------------+
+     |                 |           Response |              |
+     |                 |    [+ Encapsulated |              |
+     |                 |         Response ] |              |
+     |           Relay |<-------------------+              |
+     |        Response |                    |              |
+     | [+ Encapsulated |                    |              |
+     |      Response ] |                    |              |
+     |<----------------+                    |              |
+     |                 |                    |              |
 ~~~
 {: #fig-overview title="Overview of Oblivious HTTP"}
 
@@ -690,7 +690,7 @@ request, except that the target URI is the Oblivious Gateway Resource.  The
 content of this request is copied from the client.  The Oblivious Relay Resource
 MUST NOT add information to the request without the client being aware of
 the type of information that might be added; see
-{{relay-responsibilities}} for more information on proxy responsibilities.
+{{relay-responsibilities}} for more information on relay responsibilities.
 
 When a response is received from the Oblivious Gateway Resource, the
 Oblivious Relay Resource forwards the response according to the rules of an
@@ -911,7 +911,7 @@ request without linking that request with either:
 2. Any other request the client might have made in the past or might make in
    the future.
 
-In order to ensure this, the client selects a proxy (that serves the
+In order to ensure this, the client selects a relay (that serves the
 Oblivious Relay Resource) that it trusts will protect this information
 by forwarding the Encapsulated Request and response without passing it
 to the server (that serves the Oblivious Gateway Resource).
@@ -919,7 +919,7 @@ to the server (that serves the Oblivious Gateway Resource).
 In this section, a deployment where there are three entities is considered:
 
 * A client makes requests and receives responses
-* A proxy operates the Oblivious Relay Resource
+* A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the oblivious
   target resource
 
@@ -937,7 +937,7 @@ described above. Informally, this means:
    In particular, the Oblivious Relay knows the origin and destination of an
    Encapsulated Request and response, yet does not know the decrypted
    contents. Likewise, targets know only the Oblivious Gateway origin, i.e.,
-   the proxy, and the decrypted request. Only the client knows both the
+   the relay, and the decrypted request. Only the client knows both the
    plaintext request and response.
 1. Targets cannot link requests from the same client in the absence of unique
    per-client keys.
@@ -1256,7 +1256,7 @@ This section discusses various operational and deployment considerations.
 ## Performance Overhead
 
 Using Oblivious HTTP adds both cryptographic and latency to requests relative to
-a simple HTTP request-response exchange.  Deploying proxy services that are on
+a simple HTTP request-response exchange.  Deploying relay services that are on
 path between clients and servers avoids adding significant additional delay due
 to network topology.  A study of a similar system {{ODoH}} found that deploying
 proxies close to servers was most effective in minimizing additional latency.
@@ -1267,9 +1267,9 @@ proxies close to servers was most effective in minimizing additional latency.
 This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy
 Resource and the Oblivious Gateway Resource. This means that any encrypted
 request sent to the Oblivious Relay Resource will always be forwarded to the
-Oblivious Gateway Resource. This constraint was imposed to simplify proxy
+Oblivious Gateway Resource. This constraint was imposed to simplify relay
 configuration and mitigate against the Oblivious Relay Resource being used as
-a generic proxy for unknown Oblivious Gateway Resources. The proxy will only
+a generic relay for unknown Oblivious Gateway Resources. The relay will only
 forward for Oblivious Gateway Resources that it has explicitly configured and
 allowed.
 
