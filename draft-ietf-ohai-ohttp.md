@@ -690,7 +690,7 @@ request, except that the target URI is the Oblivious Gateway Resource.  The
 content of this request is copied from the client.  The Oblivious Relay Resource
 MUST NOT add information to the request without the client being aware of
 the type of information that might be added; see
-{{proxy-responsibilities}} for more information on proxy responsibilities.
+{{relay-responsibilities}} for more information on proxy responsibilities.
 
 When a response is received from the Oblivious Gateway Resource, the
 Oblivious Relay Resource forwards the response according to the rules of an
