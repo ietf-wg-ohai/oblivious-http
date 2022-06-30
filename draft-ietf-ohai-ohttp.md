@@ -742,9 +742,9 @@ in an Encapsulated Response.
 
 # Media Types {#media-types}
 
-Media types are used to identify Encapsulated Requests and responses.
+Media types are used to identify Encapsulated Requests and Responses.
 
-Evolution of the format of Encapsulated Requests and responses is supported
+Evolution of the format of Encapsulated Requests and Responses is supported
 through the definition of new formats that are identified by new media types.
 
 
