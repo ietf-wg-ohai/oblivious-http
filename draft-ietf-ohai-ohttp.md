@@ -143,8 +143,8 @@ A client must initially know the following:
 * The identity of an Oblivious Relay Resource that will accept relay requests
   carrying an encapsulated request as its content and forward the content in
   these requests to a single Oblivious Gateway Resource. See {{proxy-state}}
-  for more information about the mapping between Oblivious Relay and oblivious
-  encapsulation resources.
+  for more information about the mapping between Oblivious Relay and Gateway
+  Resources.
 
 This information allows the client to make a request of an oblivious target
 resource with that resource having only a limited ability to correlate that
