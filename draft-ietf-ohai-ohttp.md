@@ -103,7 +103,7 @@ connections to make multiple requests improves performance, but provides
 servers with additional certainty about the identity of clients in a similar
 fashion.
 
-Use of an HTTP proxy or relay can provide a degree of protection against servers
+Use of an HTTP proxy can provide a degree of protection against servers
 correlating requests. Systems like virtual private networks or the Tor network
 {{Dingledine2004}}, provide other options for clients.
 
