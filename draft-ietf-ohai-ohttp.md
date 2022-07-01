@@ -121,11 +121,11 @@ This document describes a method of encapsulation for binary HTTP messages
 responses and enables a deployment architecture that can separate the identity
 of a requester from the request.
 
-Though this scheme requires that servers and proxies explicitly support it,
-this design represents a performance improvement over options that perform just
-one request in each connection. With limited trust placed in the relay (see
-{{security}}), clients are assured that requests are not uniquely attributed to
-them or linked to other requests.
+Though this scheme requires that servers and proxies (called relays in this document)
+explicitly support it, this design represents a performance improvement over options
+that perform just one request in each connection. With limited trust placed in the
+relay (see {{security}}), clients are assured that requests are not uniquely
+attributed to them or linked to other requests.
 
 
 # Overview
