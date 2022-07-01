@@ -134,7 +134,7 @@ A client must initially know the following:
 
 * The identity of an Oblivious Gateway Resource.  This might include some
   information about what Oblivious Target Resources the Oblivious Gateway
-  resource supports.
+  Resource supports.
 
 * The details of an HPKE public key that the Oblivious Gateway Resource
   accepts, including an identifier for that key and the HPKE algorithms that
@@ -146,8 +146,8 @@ A client must initially know the following:
   for more information about the mapping between Oblivious Relay and Gateway
   Resources.
 
-This information allows the client to make a request of an oblivious target
-resource with that resource having only a limited ability to correlate that
+This information allows the client to make a request of an Oblivious Target
+Resource with that resource having only a limited ability to correlate that
 request with the client IP or other requests that the client might make to that
 server.
 
