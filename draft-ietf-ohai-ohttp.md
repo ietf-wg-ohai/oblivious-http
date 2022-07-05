@@ -1022,17 +1022,35 @@ information about the client, such as the Via field or the Forwarded field
 requests that might be used to identify clients, with the exception of
 information that a client is aware of.
 
+Finally, a relay can also generate responses, though it assumed to not be able
+to examine the content of a request (other than to observe the choice of key
+identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
+Encapsulated Response.
+
+### Differential Treatment
+
 A relay MAY add information to requests if the client is aware of the nature of
 the information that could be added.  The client does not need to be aware of
 the exact value added for each request, but needs to know the range of possible
 values the relay might use.  It is important to note that information added by
-the relay can reduce the size of the anonymity set of clients at a server.
+the relay can reduce the size of the anonymity set of clients at a gateway.
 
-A relay can also generate responses, though it assumed to not be able to
-examine the content of a request (other than to observe the choice of key
-identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
-Encapsulated Response.
+Moreover, relays MAY apply differential treatment to clients that engage in abusive
+behavior, e.g., by sending too many requests in comparison to other clients,
+or as a response to rate limits signalled from the gateway. Any such
+differential treatment can reveal information to the gateway that would not
+be revealed otherwise and therefore reduce the size of the anonymity set of
+clients using a gateway. For example, if a relay chooses to rate limit or
+block an abusive client, this means that any client requests which are not
+treated this way are known to be non-abusive by the gateway. Clients should
+consider the likelihood of such differential treatment and the privacy
+risks when using a relay.
 
+Some patterns of abuse cannot be detected without access to the request that
+is made to the target. This means that only the gateway or target are in a
+position to identify abuse. A gateway MAY send signals toward the relay to
+provide feedback about specific requests. A relay that acts on this feedback
+could - either inadvertently or by design - lead to clients being deanonymized.
 
 ### Denial of Service {#dos}
 
@@ -1264,7 +1282,7 @@ proxies close to servers was most effective in minimizing additional latency.
 
 ## Resource Mappings {#proxy-state}
 
-This protocol assumes a fixed, one-to-one mapping between the Oblivious Proxy
+This protocol assumes a fixed, one-to-one mapping between the Oblivious Relay
 Resource and the Oblivious Gateway Resource. This means that any encrypted
 request sent to the Oblivious Relay Resource will always be forwarded to the
 Oblivious Gateway Resource. This constraint was imposed to simplify relay
@@ -1273,7 +1291,7 @@ a generic relay for unknown Oblivious Gateway Resources. The relay will only
 forward for Oblivious Gateway Resources that it has explicitly configured and
 allowed.
 
-It is possible for a server to be configured with multiple Oblivious Proxy
+It is possible for a server to be configured with multiple Oblivious Relay
 Resources, each for a different Oblivious Gateway Resource as needed.  If the
 goal is to support a large number of Oblivious Gateway Resources, clients might
 be provided with a URI template {{?TEMPLATE=RFC6570}}, from which multiple
