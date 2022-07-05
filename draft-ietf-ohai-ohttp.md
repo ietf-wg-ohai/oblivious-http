@@ -1022,13 +1022,20 @@ information about the client, such as the Via field or the Forwarded field
 requests that might be used to identify clients, with the exception of
 information that a client is aware of.
 
+Finally, a relay can also generate responses, though it assumed to not be able
+to examine the content of a request (other than to observe the choice of key
+identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
+Encapsulated Response.
+
+### Differential Treatment
+
 A relay MAY add information to requests if the client is aware of the nature of
 the information that could be added.  The client does not need to be aware of
 the exact value added for each request, but needs to know the range of possible
 values the relay might use.  It is important to note that information added by
 the relay can reduce the size of the anonymity set of clients at a gateway.
 
-Relays MAY apply differential treatment to clients that engage in abusive
+Moreover, relays MAY apply differential treatment to clients that engage in abusive
 behavior, e.g., by sending too many requests in comparison to other clients,
 or as a response to rate limits signalled from the gateway. Any such
 differential treatment can reveal information to the gateway that would not
@@ -1039,11 +1046,11 @@ treated this way are known to be non-abusive by the gateway. Clients should
 consider the likelihood of such differential treatment and the privacy
 risks when using a relay.
 
-Finally, a relay can also generate responses, though it assumed to not be able
-to examine the content of a request (other than to observe the choice of key
-identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
-Encapsulated Response.
-
+Some patterns of abuse cannot be detected without access to the request that
+is made to the target. This means that only the gateway or target are in a
+position to identify abuse. A gateway MAY send signals toward the relay to
+provide feedback about specific requests. A relay that acts on this feedback
+could - either inadvertently or by design - lead to clients being deanonymized.
 
 ### Denial of Service {#dos}
 
