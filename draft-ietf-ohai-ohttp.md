@@ -233,10 +233,9 @@ operational costs.
 
 Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
-several ways in which oblivious HTTP is more expensive than a direct request:
+several ways in which Oblivious HTTP is more expensive than a direct request:
 
-* Each oblivious request requires at least two regular HTTP requests, which adds
-  latency.
+* Each request requires at least two regular HTTP requests, which adds latency.
 
 * Each request is expanded in size with additional HTTP fields,
   encryption-related metadata, and AEAD expansion.
@@ -251,7 +250,7 @@ include:
   about the requester, particularly if linked to other queries.
 
 * Telemetry submission.  Applications that submit reports about their usage to
-  their developers might use oblivious HTTP for some types of moderately
+  their developers might use Oblivious HTTP for some types of moderately
   sensitive data.
 
 These are examples of requests where there is information in a request that - if
@@ -297,7 +296,7 @@ Oblivious Target Resource:
 
 : The resource that is the target of an encapsulated request.  This resource
   logically handles only regular HTTP requests and responses and so might be
-  ignorant of the use of oblivious HTTP to reach it.
+  ignorant of the use of Oblivious HTTP to reach it.
 
 Relay Request:
 
@@ -704,8 +703,8 @@ header field indicating the content type, and the encapsulated response as the
 response content.  As with requests, additional fields MAY be used to convey
 information that does not reveal information about the encapsulated response.
 
-An Oblivious Gateway Resource acts as a gateway for requests to the oblivious
-target resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
+An Oblivious Gateway Resource acts as a gateway for requests to the Oblivious
+Target Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
 responding to errors it detects before removing encapsulation of the request;
 see {{errors}}.
@@ -718,10 +717,10 @@ the binary HTTP response format does support the inclusion of informational
 (1xx) status codes, the AEAD encapsulation cannot be removed until the entire
 message is received.
 
-In particular, the Expect header field with 100-continue (see Section 10.1.1 of
-{{HTTP}}) cannot be used.  Clients MUST NOT
-construct a request that includes a 100-continue expectation; the oblivious
-request resource MUST generate an error if a 100-continue expectation is
+In particular, the Expect header field with 100-continue (see {{Section 10.1.1 of
+HTTP}}) cannot be used.  Clients MUST NOT
+construct a request that includes a 100-continue expectation; the Oblivious
+Gateway Resource MUST generate an error if a 100-continue expectation is
 received.
 
 
@@ -920,8 +919,8 @@ In this section, a deployment where there are three entities is considered:
 
 * A client makes requests and receives responses
 * A relay operates the Oblivious Relay Resource
-* A server operates both the Oblivious Gateway Resource and the oblivious
-  target resource
+* A server operates both the Oblivious Gateway Resource and the Oblivious
+  Target Resource
 
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
@@ -1001,8 +1000,8 @@ cannot inspect or modify the contents of Encapsulated Requests or responses.
 ## Relay Responsibilities
 
 The relay that serves the Oblivious Relay Resource has a very simple function
-to perform. For each request it receives, it makes a request of the oblivious
-request resource that includes the same content. When it receives a response,
+to perform. For each request it receives, it makes a request of the Oblivious
+Gateway Resource that includes the same content. When it receives a response,
 it sends a response to the client that includes the content of the response
 from the Oblivious Gateway Resource.
 
@@ -1011,10 +1010,10 @@ When forwarding a request, the relay MUST follow the forwarding rules in
 for the purposes of serving an Oblivious Relay Resource, but additional care is
 needed to ensure that client privacy is maintained.
 
-Firstly, a generic implementation will forward unknown fields.  For oblivious
-HTTP, a relay SHOULD NOT forward unknown fields.  Though clients are not
-expected to include fields that might contain identifying information,
-removing unknown fields removes this privacy risk.
+Firstly, a generic implementation will forward unknown fields.  For Oblivious
+HTTP, a Oblivious Relay Resource SHOULD NOT forward unknown fields.  Though
+clients are not expected to include fields that might contain identifying
+information, removing unknown fields removes this privacy risk.
 
 Secondly, generic implementations are often configured to augment requests with
 information about the client, such as the Via field or the Forwarded field
@@ -1055,10 +1054,10 @@ could - either inadvertently or by design - lead to clients being deanonymized.
 ### Denial of Service {#dos}
 
 As there are privacy benefits from having a large rate of requests forwarded by
-the same relay (see {{ta}}), servers that operate the Oblivious Gateway
-resource might need an arrangement with proxies. This arrangement might be
-necessary to prevent having the large volume of requests being classified as an
-attack by the server.
+the same relay (see {{ta}}), servers that operate the Oblivious Gateway Resource
+might need an arrangement with Oblivious Relay Resources. This arrangement might
+be necessary to prevent having the large volume of requests being classified as
+an attack by the server.
 
 If a server accepts a larger volume of requests from a relay, it needs to
 trust that the relay does not allow abusive levels of request volumes from
@@ -1106,8 +1105,8 @@ Servers should account for traffic analysis based on response size or generation
 time.  Techniques such as padding or timing delays can help protect against such
 attacks; see {{ta}}.
 
-If separate entities provide the Oblivious Gateway Resource and oblivious target
-resource, these entities might need an arrangement similar to that between
+If separate entities provide the Oblivious Gateway Resource and Oblivious Target
+Resource, these entities might need an arrangement similar to that between
 server and relay for managing denial of service; see {{dos}}. It is also
 necessary to provide confidentiality protection for the unprotected requests and
 responses, plus protections for traffic analysis; see {{ta}}.
@@ -1139,14 +1138,14 @@ the effect of replays does not adversely affect clients or resources; see
 ## Replay Attacks {#replay}
 
 Encrypted requests can be copied and replayed by the Oblivious Relay
-resource. The threat model for oblivious HTTP allows the possibility that an
+resource. The threat model for Oblivious HTTP allows the possibility that an
 Oblivious Relay Resource might replay requests. Furthermore, if a client sends
 an Encapsulated Request in TLS early data (see {{Section 8 of TLS}} and
 {{!RFC8470}}), a network-based adversary might be able to cause the request to
 be replayed. In both cases, the effect of a replay attack and the mitigations
 that might be employed are similar to TLS early data.
 
-It is the responsibility of the application that uses oblivious HTTP to either
+It is the responsibility of the application that uses Oblivious HTTP to either
 reject replayed requests or to ensure that replayed requests have no adverse
 affects on their operation.  This section describes some approaches that are
 universally applicable and suggestions for more targeted techniques.
@@ -1161,7 +1160,7 @@ processing occurred. Connection failures or interruptions are not sufficient
 signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
-applicable to oblivious HTTP requests. The encapsulated keying material (or
+applicable to Oblivious HTTP requests. The encapsulated keying material (or
 `enc`) can be used in place of a nonce to uniquely identify a request.  This
 value is a high-entropy value that is freshly generated for every request, so
 two valid requests will have different values with overwhelming probability.
@@ -1250,11 +1249,11 @@ limited by regular rotation of server keys.
 # Privacy Considerations {#privacy}
 
 One goal of this design is that independent client requests are only linkable by
-the chosen key configuration. The Oblivious Relay and request resources can link
+the chosen key configuration. The Oblivious Relay and Gateway resources can link
 requests using the same key configuration by matching KeyConfig.key\_id, or, if
 the Oblivious Target Resource is willing to use trial decryption, a limited set
-of key configurations that share an identifier. An Oblivious Relay can link
-requests using the public key corresponding to KeyConfig.key\_id.
+of key configurations that share an identifier. An Oblivious Relay Resource can
+link requests using the public key corresponding to KeyConfig.key\_id.
 
 Request resources are capable of linking requests depending on how KeyConfigs
 are produced by servers and discovered by clients. Specifically, servers can
@@ -1349,13 +1348,14 @@ Note: "rust-hpke" doesn't log the client/sender keying material.
 
 A single request and response exchange is shown here. Binary values (key
 configuration, secret keys, the content of messages, and intermediate values)
-are shown in hexadecimal. The request and response here are minimal;
-the purpose of this example is to show the cryptographic operations.
-In this example, the client is configured with the Oblivious Relay URI
-of `https://proxy.example.org/request.example.net/proxy`, and the proxy
-is configured to map requests to this URI to the Oblivious Gateway URI
-`https://example.com/oblivious/request`. The oblivious target URI, i.e.,
-the resource the client ultimately wishes to fetch, is `https://example.com`.
+are shown in hexadecimal. The request and response here are minimal; the purpose
+of this example is to show the cryptographic operations.  In this example, the
+client is configured with the Oblivious Relay Resource URI of
+`https://proxy.example.org/request.example.net/proxy`, and the proxy is
+configured to map requests to this URI to the Oblivious Gateway URI
+`https://example.com/oblivious/request`. The Oblivious Target Resource URI,
+i.e., the resource the client ultimately wishes to query, is
+`https://example.com`.
 
 To begin the process, the Oblivious Gateway Resource generates a key pair.
 In this example the server chooses DHKEM(X25519, HKDF-SHA256) and generates
@@ -1431,12 +1431,12 @@ Content-Length: 78
 ~~~
 
 The oblivous request resource receives this request, selects the key it
-generated previously using the key identifier from the message, and decrypts
-the message. As this request is directed to the same server, the oblivious
-request resource does not need to initiate an HTTP request to the oblivious
-target resource. The request can be served directly by the oblivious target
-resource, which generates a minimal response (consisting of just a 200 status
-code) as follows:
+generated previously using the key identifier from the message, and decrypts the
+message. As this request is directed to the same server, the Oblivious Gateway
+Resource does not need to initiate an HTTP request to the Oblivious Target
+Resource. The request can be served directly by the Oblivious Target Resource,
+which generates a minimal response (consisting of just a 200 status code) as
+follows:
 
 ~~~ hex-dump
 0140c8
@@ -1507,6 +1507,6 @@ construct the AEAD key and nonce and decrypt the response.
 # Acknowledgments
 {: numbered="false"}
 
-This design is based on a design for oblivious DoH, described in
+This design is based on a design for Oblivious DoH, described in
 {{?ODOH=I-D.pauly-dprive-oblivious-doh}}. David Benjamin and Eric Rescorla made
 technical contributions.
