@@ -1430,7 +1430,7 @@ Content-Length: 78
 <content is the Encapsulated Request above>
 ~~~
 
-The oblivous request resource receives this request, selects the key it
+The Oblivous Gateway Resource receives this request, selects the key it
 generated previously using the key identifier from the message, and decrypts the
 message. As this request is directed to the same server, the Oblivious Gateway
 Resource does not need to initiate an HTTP request to the Oblivious Target
