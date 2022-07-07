@@ -1374,15 +1374,15 @@ In this example the server chooses DHKEM(X25519, HKDF-SHA256) and generates
 an X25519 key pair {{?X25519=RFC7748}}. The X25519 secret key is:
 
 ~~~ hex-dump
-3cf36bbc17111f07e816aa895ff42de8d1a029af16580c232a68e15feefa1073
+3c168975674b2fa8e465970b79c8dcf09f1c741626480bd4c6162fc5b6a98e1a
 ~~~
 
 The Oblivious Gateway Resource constructs a key configuration that includes the
 corresponding public key as follows:
 
 ~~~ hex-dump
-010020a2baf3a20a6c551df011f02e7b5e87afded5f9d584c1071e439abc1cc5
-ffc34500080001000100010003
+01002031e1f05a740102115220e9af918f738674aec95f54db6e04eb705aae8e
+79815500080001000100010003
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
@@ -1395,27 +1395,33 @@ it constructs the following binary HTTP message:
 
 The client then reads the Oblivious Gateway Resource key configuration and
 selects a mutually supported KDF and AEAD. In this example, the client selects
-HKDF-SHA256 and AES-128-GCM. The client then generates an HPKE context that
-uses the server public key. This context is constructed from the following
-ephemeral public key:
+HKDF-SHA256 and AES-128-GCM. The client then generates an HPKE sending context
+that uses the server public key. This context is constructed from the following
+ephemeral secret key:
 
 ~~~ hex-dump
-984880a3350e0223e10a56c37e95c77a77cd0e4a056405b5cdce8f813d562d06
+bc51d5e930bda26589890ac7032f70ad12e4ecb37abb1b65b1256c9c48999c73
 ~~~
 
-The corresponding private key is:
+The corresponding public key is:
 
 ~~~ hex-dump
-a9ebdb1efc14e3ea8956f8688b47b424160c1e93d82a0301dddbb710363b3941
+4b28f881333e7c164ffc499ad9796f877f4e1051ee6d31bad19dec96c208b472
+~~~
+
+And an `info` parameter of:
+
+~~~ hex-dump
+6d6573736167652f626874747020726571756573740001002000010001
 ~~~
 
 Applying the Seal operation from the HPKE context produces an encrypted
 message, allowing the client to construct the following Encapsulated Request:
 
 ~~~ hex-dump
-01002000010001984880a3350e0223e10a56c37e95c77a77cd0e4a056405b5cd
-ce8f813d562d06a76430f42315a26fe661b11b6d1ce64de152733af519628f4f
-e3cb3e239aa4f4c42729d165029e6c26
+010020000100014b28f881333e7c164ffc499ad9796f877f4e1051ee6d31bad1
+9dec96c208b4726374e469135906992e1268c594d2a10c695d858c40a026e796
+5e7d86b83dd440b2c0185204b4d63525
 ~~~
 
 The client then sends this to the Oblivious Relay Resource in a POST request,
@@ -1458,47 +1464,47 @@ The response is constructed by extracting a secret from the HPKE context:
 
 <!-- ikm for HKDF extract -->
 ~~~ hex-dump
-cec71c150d58bdcadbf4a1d27a20967e
+62d87a6ba569ee81014c2641f52bea36
 ~~~
 
 The key derivation for the Encapsulated Response uses both the encapsulated KEM
 key from the request and a randomly selected nonce. This produces a salt of:
 
 ~~~ hex-dump
-984880a3350e0223e10a56c37e95c77a77cd0e4a056405b5cdce8f813d562d06
-4bbf6a36b9a9783914cfdb66670419b9
+4b28f881333e7c164ffc499ad9796f877f4e1051ee6d31bad19dec96c208b472
+c789e7151fcba46158ca84b04464910d
 ~~~
 
 The salt and secret are both passed to the Extract function of the selected KDF
 (HKDF-SHA256) to produce a pseudorandom key of:
 
 ~~~ hex-dump
-ea9b0f025b63d4d2693b23eea2ed9772acb483f05db7a95d99d6b4ef15c4b766
+979aaeae066cf211ab407b31ae49767f344e1501e475c84e8aff547cc5a683db
 ~~~
 
 The pseudorandom key is used with the Expand function of the KDF and an info
 field of "key" to produce a 16-byte key for the selected AEAD (AES-128-GCM):
 
 ~~~ hex-dump
-afe1375849f14b7e7c7ab9f4b570c0b5
+5d0172a080e428b16d298c4ea0db620d
 ~~~
 
 With the same KDF and pseudorandom key, an info field of "nonce" is used to
 generate a 12-byte nonce:
 
 ~~~ hex-dump
-88b2cf64bfcc447a9dd9b427
+f6bf1aeb88d6df87007fa263
 ~~~
 
-The AEAD Seal function is then used to encrypt the response, which is added
+The AEAD `Seal()` function is then used to encrypt the response, which is added
 to the randomized nonce value to produce the Encapsulated Response:
 
 ~~~ hex-dump
-4bbf6a36b9a9783914cfdb66670419b9517faaa500d3c547a0da2cd407b77151
-421ef3
+c789e7151fcba46158ca84b04464910d86f9013e404feea014e7be4a441f234f
+857fbd
 ~~~
 
-The Oblivious Gateway Resource then constructs a response:
+The Oblivious Gateway Resource constructs a response with the same content:
 
 ~~~ http-message
 HTTP/1.1 200 OK
