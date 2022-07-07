@@ -320,8 +320,9 @@ in {{!HPKE}}.
 
 Encoding an integer to a sequence of bytes in network byte order is described
 using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
-the integer value. The function `len()` returns the length of a sequence of
-bytes.
+the integer value.  ASCII {{!ASCII=RFC0020}} encoding of a string `s` is
+indicated using the function `encode_str(s)`.  The function `len()` returns the
+length of a sequence of bytes.
 
 Formats are described using notation from {{Section 1.3 of QUIC}}.
 
@@ -540,17 +541,21 @@ Clients encapsulate a request `request` using values from a key configuration:
 The client then constructs an Encapsulated Request, `enc_request`, from a binary
 encoded HTTP request, `request`, as follows:
 
-1. Compute an HPKE context using `pkR` and a label of "message/bhttp request",
-   yielding `context` and encapsulation key `enc`.
-
-2. Construct associated data, `aad`, by concatenating the values of `keyID`,
+1. Construct a message header, `hdr`, by concatenating the values of `keyID`,
    `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
    integers, respectively, each in network byte order.
 
-3. Encrypt (seal) `request` with `aad` as associated data using `context`,
-   yielding ciphertext `ct`.
+2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
+   request", a zero byte, and the header.
 
-4. Concatenate the values of `aad`, `enc`, and `ct`, yielding an Encrypted
+3. Create a sending HPKE context by invoking `SetupBaseS()` ({{Section 5.1.1 of
+   HPKE}}) with the public key of the receiver `pkR` and `info`.  This yields
+   the context `sctxt` and an encapsulation key `enc`.
+
+4. Encrypt `request` by invoking the `Seal()` method on `sctxt` ({{Section 5.2
+   of HPKE}}) with empty associated data `aad`, yielding ciphertext `ct`.
+
+5. Concatenate the values of `hdr`, `enc`, and `ct`, yielding an Encrypted
    Request `enc_request`.
 
 Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
@@ -559,13 +564,16 @@ structure.
 In pseudocode, this procedure is as follows:
 
 ~~~
-enc, context = SetupBaseS(pkR, "message/bhttp request")
-aad = concat(encode(1, keyID),
+hdr = concat(encode(1, keyID),
              encode(2, kemID),
              encode(2, kdfID),
              encode(2, aeadID))
-ct = context.Seal(aad, request)
-enc_request = concat(aad, enc, ct)
+info = concat(encode_str("message/bhttp request"),
+              encode(1, 0),
+              hdr)
+enc, sctxt = SetupBaseS(pkR, hdr)
+ct = sctxt.Seal([], request)
+enc_request = concat(hdr, enc, ct)
 ~~~
 
 Servers decrypt an Encapsulated Request by reversing this process. Given an
@@ -581,25 +589,29 @@ Encapsulated Request `enc_request`, a server:
    b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
       server is unwilling to use with `skR`, the server returns an error.
 
-2. Compute an HPKE context using `skR`, a label of "message/bhttp request", and
-   the encapsulated key `enc`, yielding `context`.
+2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
+   request", a zero byte, `keyID` as an 8-bit integer, plus `kemID`, `kdfID`,
+   and `aeadID` as three 16-bit integers.
 
-3. Construct additional associated data, `aad`, from `keyID`, `kemID`, `kdfID`,
-   and `aeadID` or as the first seven bytes of `enc_request`.
+3. Create a receiving HPKE context by invoking `SetupBaseR()` ({{Section 5.1.1
+   of HPKE}}) with `skR`, `enc`, and `info`.  This produces a context `rctxt`.
 
-4. Decrypt `ct` using `aad` as associated data, yielding `request` or an error
+4. Decrypt `ct` by invoking the `Open()` method on `rctxt` ({{Section 5.2 of
+   HPKE}}), with an empty associated data `aad`, yielding `request` or an error
    on failure. If decryption fails, the server returns an error.
 
 In pseudocode, this procedure is as follows:
 
 ~~~
 keyID, kemID, kdfID, aeadID, enc, ct = parse(enc_request)
-aad = concat(encode(1, keyID),
-             encode(2, kemID),
-             encode(2, kdfID),
-             encode(2, aeadID))
-context = SetupBaseR(enc, skR, "message/bhttp request")
-request, error = context.Open(aad, ct)
+info = concat(encode_str("message/bhttp request"),
+              encode(1, 0),
+              encode(1, keyID),
+              encode(2, kemID),
+              encode(2, kdfID),
+              encode(2, aeadID))
+rctxt = SetupBaseR(enc, skR, info)
+request, error = rctxt.Open([], ct)
 ~~~
 
 
