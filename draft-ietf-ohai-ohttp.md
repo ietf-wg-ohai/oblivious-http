@@ -146,7 +146,7 @@ A client must initially know the following:
   for more information about the mapping between Oblivious Relay and Gateway
   Resources.
 
-This information allows the client to make a request of an Target Resource with
+This information allows the client to make a request of a Target Resource with
 that resource having only a limited ability to correlate that request with the
 client IP or other requests that the client might make to that server.
 
@@ -181,7 +181,7 @@ client IP or other requests that the client might make to that server.
 ~~~
 {: #fig-overview title="Overview of Oblivious HTTP"}
 
-In order to make a request to an Target Resource, the following steps occur, as
+In order to make a request to a Target Resource, the following steps occur, as
 shown in {{fig-overview}}:
 
 1. The client constructs an HTTP request for a Target Resource.
@@ -287,7 +287,7 @@ Oblivious Relay Resource:
 Oblivious Gateway Resource:
 
 : A resource that can receive an encapsulated request, extract the contents of
-  that request, forward it to an Target Resource, receive a response,
+  that request, forward it to a Target Resource, receive a response,
   encapsulate that response, then return that response.
 
 Target Resource:
