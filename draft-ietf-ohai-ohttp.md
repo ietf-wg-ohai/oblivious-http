@@ -1204,29 +1204,28 @@ HTTP requests often do not include a `Date` header field, the value of this
 field might be used by a server to limit the amount of requests it needs to
 track if it needs to prevent replay attacks.
 
-A server can maintain state for requests for a small window of time over which
-it wishes to accept requests.  A server can store all requests it processes
-within this window; storing just the `enc` field of a request, which should be
-unique to each request, is sufficient. The server then rejects requests if the
-request is the same as one that was previously answered within that time window.
-Servers also reject requests with a `Date` header field that is outside of the
-current time window.
+An Oblivious Gateway Resource can maintain state for requests for a small window
+of time over which it wishes to accept requests.  The Oblivious Gateway Resource
+can store all requests it processes within this window.  Storing just the `enc`
+field of a request, which should be unique to each request, is sufficient.  The
+Oblivious Gateway Resource then rejects requests if the request is the same as
+one that was previously answered within that time window, or if the `Date`
+header field is outside of the current time window.
 
-Servers SHOULD allow for the time it takes requests to arrive from the client,
-with a time window that is large enough to allow for differences in the clock of
-clients and servers.  How large a time window is needed could depend on the
-population of clients that the server needs to serve.
+Oblivious Gateway Resources SHOULD allow for the time it takes requests to
+arrive from the client, with a time window that is large enough to allow for
+differences in clocks.
 
-Servers MUST NOT treat the time window as secret information. An attacker can
-actively probe the server with different values for the `Date` field to
-determine the time window over which the server will accept responses.
+Oblivious Gateway Resources MUST NOT treat the time window as secret
+information. An attacker can actively probe with different values for the `Date`
+field to determine the time window over which the server will accept responses.
 
 
 ### Correcting Clock Differences
 
-A server can reject requests that contain a `Date` value that is outside of its
-active window with a 400 series status code.  The problem type
-{{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
+An Oblivious Gateway Resource can reject requests that contain a `Date` value
+that is outside of its active window with a 400 series status code.  The problem
+type {{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
 "https://iana.org/assignments/http-problem-types#date" is defined to allow the
 server to signal that the `Date` value in the request was unacceptable.
 
@@ -1243,31 +1242,33 @@ Content-Length: 128
 ~~~
 {: #fig-date-reject title="Example Rejection of Request Date Field"}
 
-Disagreements about time are unlikely if both client and server have a good
-source of time; see {{?NTP=RFC5905}}. However, clock differences are known to be
-commonplace; see Section 7.1 of {{CLOCKSKEW=DOI.10.1145/3133956.3134007}}.
+Disagreements about time are unlikely if both client and Oblivious Gateway
+Resource have a good source of time; see {{?NTP=RFC5905}}. However, clock
+differences are known to be commonplace; see Section 7.1 of
+{{CLOCKSKEW=DOI.10.1145/3133956.3134007}}.
 
 Including a `Date` header field in the response allows the client to correct
 clock errors by retrying the same request using the value of the `Date` field
-provided by the server.  The value of the `Date` field can be copied if the
-request is fresh, with an adjustment based on the `Age` field otherwise.  When
-retrying a request, the client MUST create a fresh encryption of the modified
-request, using a new HPKE context.
+provided by the Oblivious Gateway Resource.  The value of the `Date` field can
+be copied if the request is fresh, with an adjustment based on the `Age` field
+otherwise.  When retrying a request, the client MUST create a fresh encryption
+of the modified request, using a new HPKE context.
 
 Intermediaries can sometimes rewrite the `Date` field when forwarding responses.
-This might cause problems if the server and intermediary clocks differ by enough
+This might cause problems if the Oblivious Gateway Resource and intermediary clocks differ by enough
 to cause the retry to be rejected.  Therefore, clients MUST NOT retry a request
 with an adjusted date more than once.
 
-Servers that condition their responses on the `Date` header field SHOULD either
-ensure that intermediaries do not cache responses (by including a
-`Cache-Control` directive of `no-store`) or designate the response as
-conditional on the value of the `Date` request header field (by including the
+Oblivious Gateway Resources that condition their responses on the `Date` header
+field SHOULD either ensure that intermediaries do not cache responses (by
+including a `Cache-Control` directive of `no-store`) or designate the response
+as conditional on the value of the `Date` request header field (by including the
 token "date" in a `Vary` header field).
 
-Clients MUST NOT use the date provided by the server for any other purpose,
-including future requests.  Using information provided by the server allows the
-server to correlate the original request with the retry.
+Clients MUST NOT use the date provided by the Oblivious Gateway Resource for any
+other purpose, including future requests to any resource.  Any request that uses
+information provided by the Oblivious Gateway Resource might be correlated using
+that information.
 
 
 ## Forward Secrecy
@@ -1307,10 +1308,10 @@ Including a `Date` field in requests reveals some information about the client
 clock.  This might be used to fingerprint clients {{UWT}} or to identify clients
 that are vulnerable to attacks that depend on incorrect clocks.
 
-Clients can randomize the value that they provide the server to obscure the true
+Clients can randomize the value that they provide for `Date` to obscure the true
 value of their clock and reduce the change of linking of requests over time.
-However, this increases the risk that a server will reject a request as a result
-of the time being unacceptable.
+However, this increases the risk that their request is rejected as outside the
+acceptable window.
 
 
 # Privacy Considerations {#privacy}
