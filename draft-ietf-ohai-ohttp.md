@@ -1221,7 +1221,7 @@ information. An attacker can actively probe with different values for the `Date`
 field to determine the time window over which the server will accept responses.
 
 
-### Correcting Clock Differences
+### Correcting Clock Differences {#date-fix}
 
 An Oblivious Gateway Resource can reject requests that contain a `Date` value
 that is outside of its active window with a 400 series status code.  The problem
@@ -1416,7 +1416,7 @@ Recommended HTTP Status Code:
 : 400
 
 Reference:
-: {{problem-type}} of this document
+: {{date-fix}} of this document
 
 
 --- back
