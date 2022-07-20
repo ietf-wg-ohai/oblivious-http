@@ -387,83 +387,13 @@ determined by the choice of HPKE KEM, which can also be found in {{!HPKE}}.
 
 ## Key Configuration Media Type {#ohttp-keys}
 
-The "application/ohttp-keys" format is a media type that identifies a
-serialized collection of key configurations. The content of this media
-type comprises one or more key configuration encodings (see
-{{key-config}}) that are concatenated.
+The "application/ohttp-keys" format is a media type that identifies a serialized
+collection of key configurations. The content of this media type comprises one
+or more key configuration encodings (see {{key-config}}) that are concatenated;
+see {{iana-keys}} for a definition of the media type.
 
-Evolution of the key
-configuration format is supported through the definition of new
-formats that are identified by new media types.
-
-Type name:
-
-: application
-
-Subtype name:
-
-: ohttp-keys
-
-Required parameters:
-
-: N/A
-
-Optional parameters:
-
-: None
-
-Encoding considerations:
-
-: only "8bit" or "binary" is permitted
-
-Security considerations:
-
-: see {{security}}
-
-Interoperability considerations:
-
-: N/A
-
-Published specification:
-
-: this specification
-
-Applications that use this media type:
-
-: N/A
-
-Fragment identifier considerations:
-
-: N/A
-
-Additional information:
-
-: <dl>
-  <dt>Magic number(s):</dt><dd>N/A</dd>
-  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
-  <dt>File extension(s):</dt><dd>N/A</dd>
-  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
-  </dl>
-
-Person and email address to contact for further information:
-
-: see Authors' Addresses section
-
-Intended usage:
-
-: COMMON
-
-Restrictions on usage:
-
-: N/A
-
-Author:
-
-: see Authors' Addresses section
-
-Change controller:
-
-: IESG
+Evolution of the key configuration format is supported through the definition of
+new formats that are identified by new media types.
 
 
 # HPKE Encapsulation
@@ -675,6 +605,14 @@ the AEAD. Decrypting might produce an error, as follows:
 reponse, error = Open(aead_key, aead_nonce, "", ct)
 ~~~
 
+## Request and Response Media Types
+
+Media types are used to identify Encapsulated Requests and Responses; see
+{{iana-req}} and {{iana-res}} for definitions of these media types.
+
+Evolution of the format of Encapsulated Requests and Responses is supported
+through the definition of new formats that are identified by new media types.
+
 
 # HTTP Usage {#http-usage}
 
@@ -683,7 +621,7 @@ Encapsulated Request.  This Encapsulated Request is included as the content of a
 POST request to the Oblivious Relay Resource.  This request MUST only contain
 those fields necessary to carry the Encapsulated Request: a method of POST, a
 target URI of the Oblivious Relay Resource, a header field containing
-the content type (see ({{media-types}}), and the Encapsulated Request as the
+the content type (see ({{iana-req}}), and the Encapsulated Request as the
 request content. In the request to the Oblivious Relay Resource, clients MAY
 include additional fields. However, those fields MUST be independent of the
 Encapsulated Request and MUST be fields that the Oblivious Relay Resource will
@@ -753,163 +691,6 @@ Errors detected by the Oblivious Gateway Resource after successfully removing
 encapsulation and errors detected by the Target Resource MUST be sent in an
 Encapsulated Response.
 
-
-# Media Types {#media-types}
-
-Media types are used to identify Encapsulated Requests and Responses.
-
-Evolution of the format of Encapsulated Requests and Responses is supported
-through the definition of new formats that are identified by new media types.
-
-
-## message/ohttp-req Media Type
-
-The "message/ohttp-req" identifies an encrypted binary HTTP request.  This
-is a binary format that is defined in {{request}}.
-
-Type name:
-
-: message
-
-Subtype name:
-
-: ohttp-req
-
-Required parameters:
-
-: N/A
-
-Optional parameters:
-
-: None
-
-Encoding considerations:
-
-: only "8bit" or "binary" is permitted
-
-Security considerations:
-
-: see {{security}}
-
-Interoperability considerations:
-
-: N/A
-
-Published specification:
-
-: this specification
-
-Applications that use this media type:
-
-: N/A
-
-Fragment identifier considerations:
-
-: N/A
-
-Additional information:
-
-: <dl>
-  <dt>Magic number(s):</dt><dd>N/A</dd>
-  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
-  <dt>File extension(s):</dt><dd>N/A</dd>
-  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
-  </dl>
-
-Person and email address to contact for further information:
-
-: see Authors' Addresses section
-
-Intended usage:
-
-: COMMON
-
-Restrictions on usage:
-
-: N/A
-
-Author:
-
-: see Authors' Addresses section
-
-Change controller:
-
-: IESG
-
-
-## message/ohttp-res Media Type
-
-The "message/ohttp-res" identifies an encrypted binary HTTP response. This
-is a binary format that is defined in {{response}}.
-
-Type name:
-
-: message
-
-Subtype name:
-
-: ohttp-res
-
-Required parameters:
-
-: N/A
-
-Optional parameters:
-
-: None
-
-Encoding considerations:
-
-: only "8bit" or "binary" is permitted
-
-Security considerations:
-
-: see {{security}}
-
-Interoperability considerations:
-
-: N/A
-
-Published specification:
-
-: this specification
-
-Applications that use this media type:
-
-: N/A
-
-Fragment identifier considerations:
-
-: N/A
-
-Additional information:
-
-: <dl>
-  <dt>Magic number(s):</dt><dd>N/A</dd>
-  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
-  <dt>File extension(s):</dt><dd>N/A</dd>
-  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
-  </dl>
-
-Person and email address to contact for further information:
-
-: see Authors' Addresses section
-
-Intended usage:
-
-: COMMON
-
-Restrictions on usage:
-
-: N/A
-
-Author:
-
-: see Authors' Addresses section
-
-Change controller:
-
-: IESG
 
 
 # Security Considerations {#security}
@@ -1407,7 +1188,8 @@ Oblivious HTTP might be incompatible with network interception regimes, such as
 those that rely on configuring clients with trust anchors and intercepting TLS
 connections.  While TLS might be intercepted successfully, interception
 middleboxes devices might not receive updates that would allow Oblivious HTTP to
-be correctly identified using the media types defined in {{media-types}}.
+be correctly identified using the media types defined in {{iana-req}} and
+{{iana-res}}.
 
 Oblivious HTTP has a simple key management design that is not trivially altered
 to enable interception by intermediaries.  Clients that are configured to enable
@@ -1434,10 +1216,237 @@ request" for request encryption, and the HPKE export context string should be
 
 # IANA Considerations
 
-IANA are request to update the "Media Types" registry at
-<https://www.iana.org/assignments/media-types> with the registration information
-in {{media-types}} for the media types "message/ohttp-req", "message/ohttp-res",
-and "application/ohttp-keys".
+Please update the "Media Types" registry at
+<https://www.iana.org/assignments/media-types> for the media types
+"application/ohttp-keys" ({{iana-keys}}), "message/ohttp-req" ({{iana-req}}),
+and "message/ohttp-res" ({{iana-res}}).
+
+
+## message/ohttp-keys Media Type {#iana-keys}
+
+The "application/ohttp-keys" media type identifies a key configuration used by
+Oblivious HTTP.
+
+Type name:
+
+: application
+
+Subtype name:
+
+: ohttp-keys
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: None
+
+Encoding considerations:
+
+: only "8bit" or "binary" is permitted
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: Oblivious HTTP and applications that use Oblivious HTTP
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl>
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IESG
+
+
+
+## message/ohttp-req Media Type {#iana-req}
+
+The "message/ohttp-req" identifies an encrypted binary HTTP request.  This
+is a binary format that is defined in {{request}}.
+
+Type name:
+
+: message
+
+Subtype name:
+
+: ohttp-req
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: None
+
+Encoding considerations:
+
+: only "8bit" or "binary" is permitted
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: Oblivious HTTP and applications that use Oblivious HTTP
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl>
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IESG
+
+
+## message/ohttp-res Media Type {#iana-res}
+
+The "message/ohttp-res" identifies an encrypted binary HTTP response. This
+is a binary format that is defined in {{response}}.
+
+Type name:
+
+: message
+
+Subtype name:
+
+: ohttp-res
+
+Required parameters:
+
+: N/A
+
+Optional parameters:
+
+: None
+
+Encoding considerations:
+
+: only "8bit" or "binary" is permitted
+
+Security considerations:
+
+: see {{security}}
+
+Interoperability considerations:
+
+: N/A
+
+Published specification:
+
+: this specification
+
+Applications that use this media type:
+
+: Oblivious HTTP and applications that use Oblivious HTTP
+
+Fragment identifier considerations:
+
+: N/A
+
+Additional information:
+
+: <dl>
+  <dt>Magic number(s):</dt><dd>N/A</dd>
+  <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
+  <dt>File extension(s):</dt><dd>N/A</dd>
+  <dt>Macintosh file type code(s):</dt><dd>N/A</dd>
+  </dl>
+
+Person and email address to contact for further information:
+
+: see Authors' Addresses section
+
+Intended usage:
+
+: COMMON
+
+Restrictions on usage:
+
+: N/A
+
+Author:
+
+: see Authors' Addresses section
+
+Change controller:
+
+: IESG
+
 
 IANA are requested to create a new entry in the "HTTP Problem Type" registry
 established by {{!PROBLEM}}.
