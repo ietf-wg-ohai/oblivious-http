@@ -1245,7 +1245,7 @@ Content-Length: 128
 Disagreements about time are unlikely if both client and Oblivious Gateway
 Resource have a good source of time; see {{?NTP=RFC5905}}. However, clock
 differences are known to be commonplace; see Section 7.1 of
-{{CLOCKSKEW=DOI.10.1145/3133956.3134007}}.
+{{?CLOCKSKEW=DOI.10.1145/3133956.3134007}}.
 
 Including a `Date` header field in the response allows the client to correct
 clock errors by retrying the same request using the value of the `Date` field
