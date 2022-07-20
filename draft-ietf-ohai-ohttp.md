@@ -76,6 +76,13 @@ informative:
     author:
       - fullname: Jonathan Hoyland
 
+  UWT:
+    title: "Unsanctioned Web Tracking"
+    author:
+      fullname: Mark Nottingham
+    date: 2015-07-17
+    target: https://www.w3.org/2001/tag/doc/unsanctioned-tracking/
+
 
 --- abstract
 
@@ -116,10 +123,9 @@ significant secondary costs, both in terms of the number of additional bytes
 exchanged and the CPU cost of cryptographic computations.
 
 This document describes a method of encapsulation for binary HTTP messages
-{{BINARY}} using Hybrid Public Key Encryption (HPKE;
-{{!HPKE=I-D.irtf-cfrg-hpke}}). This protects the content of both requests and
-responses and enables a deployment architecture that can separate the identity
-of a requester from the request.
+{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). This
+protects the content of both requests and responses and enables a deployment
+architecture that can separate the identity of a requester from the request.
 
 Though this scheme requires that servers and proxies (called relays in this document)
 explicitly support it, this design represents a performance improvement over options
@@ -1199,11 +1205,12 @@ field might be used by a server to limit the amount of requests it needs to
 track if it needs to prevent replay attacks.
 
 A server can maintain state for requests for a small window of time over which
-it wishes to accept requests.  The server then rejects requests if the request
-is the same as one that was previously answered within that time window.
-Servers can reject requests outside of this window and signal that clients might
-retry with a different `Date` header field; see {{Section 4 of !REQUEST-DATE}}.
-Servers can identify duplicate requests using the encapsulation (`enc`) value.
+it wishes to accept requests.  A server can store all requests it processes
+within this window; storing just the `enc` field of a request, which should be
+unique to each request, is sufficient. The server then rejects requests if the
+request is the same as one that was previously answered within that time window.
+Servers also reject requests with a `Date` header field that is outside of the
+current time window.
 
 Servers SHOULD allow for the time it takes requests to arrive from the client,
 with a time window that is large enough to allow for differences in the clock of
@@ -1211,15 +1218,56 @@ clients and servers.  How large a time window is needed could depend on the
 population of clients that the server needs to serve.
 
 Servers MUST NOT treat the time window as secret information. An attacker can
-actively probe the server with specially crafted request timestamps to determine
-the time window over which the server will accept responses.
+actively probe the server with different values for the `Date` field to
+determine the time window over which the server will accept responses.
 
-{{?REQUEST-DATE=I-D.thomson-httpapi-date-requests}} contains further
-considerations for the use of the `Date` request header field.  This includes
-the way in which clients might correct for clock skew and the privacy
-considerations arising from that usage.  Servers that reject requests on the
-basis of the `Date` request header field SHOULD implement the feedback mechanism
-in {{Section 4 of !REQUEST-DATE}} to support clock correction by clients.
+
+### Correcting Clock Differences
+
+A server can reject requests that contain a `Date` value that is outside of its
+active window with a 400 series status code.  The problem type
+{{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
+"https://iana.org/assignments/http-problem-types#date" is defined to allow the
+server to signal that the `Date` value in the request was unacceptable.
+
+{{fig-date-reject}} shows an example response in HTTP/1.1 format.
+
+~~~ http-message
+HTTP/1.1 400 Bad Request
+Date: Mon, 07 Feb 2022 00:28:05 GMT
+Content-Type: application/problem+json
+Content-Length: 128
+
+{"type":"https://iana.org/assignments/http-problem-types#date",
+"title": "date field in request outside of acceptable range"}
+~~~
+{: #fig-date-reject title="Example Rejection of Request Date Field"}
+
+Disagreements about time are unlikely if both client and server have a good
+source of time; see {{?NTP=RFC5905}}. However, clock differences are known to be
+commonplace; see Section 7.1 of {{CLOCKSKEW=DOI.10.1145/3133956.3134007}}.
+
+Including a `Date` header field in the response allows the client to correct
+clock errors by retrying the same request using the value of the `Date` field
+provided by the server.  The value of the `Date` field can be copied if the
+request is fresh, with an adjustment based on the `Age` field otherwise.  When
+retrying a request, the client MUST create a fresh encryption of the modified
+request, using a new HPKE context.
+
+Intermediaries can sometimes rewrite the `Date` field when forwarding responses.
+This might cause problems if the server and intermediary clocks differ by enough
+to cause the retry to be rejected.  Therefore, clients MUST NOT retry a request
+with an adjusted date more than once.
+
+Servers that condition their responses on the `Date` header field SHOULD either
+ensure that intermediaries do not cache responses (by including a
+`Cache-Control` directive of `no-store`) or designate the response as
+conditional on the value of the `Date` request header field (by including the
+token "date" in a `Vary` header field).
+
+Clients MUST NOT use the date provided by the server for any other purpose,
+including future requests.  Using information provided by the server allows the
+server to correlate the original request with the retry.
 
 
 ## Forward Secrecy
@@ -1251,6 +1299,18 @@ compromise these TLS connections.
 
 The total number of affected messages affected by server key compromise can be
 limited by regular rotation of server keys.
+
+
+## Client Clock Exposure
+
+Including a `Date` field in requests reveals some information about the client
+clock.  This might be used to fingerprint clients {{UWT}} or to identify clients
+that are vulnerable to attacks that depend on incorrect clocks.
+
+Clients can randomize the value that they provide the server to obscure the true
+value of their clock and reduce the change of linking of requests over time.
+However, this increases the risk that a server will reject a request as a result
+of the time being unacceptable.
 
 
 # Privacy Considerations {#privacy}
@@ -1337,10 +1397,25 @@ request" for request encryption, and the HPKE export context string should be
 
 # IANA Considerations
 
-Please update the "Media Types" registry at
+IANA are request to update the "Media Types" registry at
 <https://www.iana.org/assignments/media-types> with the registration information
 in {{media-types}} for the media types "message/ohttp-req", "message/ohttp-res",
 and "application/ohttp-keys".
+
+IANA are requested to create a new entry in the "HTTP Problem Type" registry
+established by {{!PROBLEM}}.
+
+Type URI:
+: https://iana.org/assignments/http-problem-types#date
+
+Title:
+: Date Not Acceptable
+
+Recommended HTTP Status Code:
+: 400
+
+Reference:
+: {{problem-type}} of this document
 
 
 --- back
@@ -1519,5 +1594,5 @@ construct the AEAD key and nonce and decrypt the response.
 {: numbered="false"}
 
 This design is based on a design for Oblivious DoH, described in
-{{?ODOH=I-D.pauly-dprive-oblivious-doh}}. David Benjamin and Eric Rescorla made
+{{?ODOH=RFC9230}}. David Benjamin, Mark Nottingham, and Eric Rescorla made
 technical contributions.
