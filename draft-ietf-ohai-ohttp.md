@@ -505,7 +505,7 @@ Response {
 ~~~
 {: #fig-res-pt title="Plaintext Response Content"}
 
-Responses are bound to responses and so consist only of AEAD-protected content.
+Responses are bound to requests and so consist only of AEAD-protected content.
 {{response}} describes the process for constructing and processing an
 Encapsulated Response.
 
