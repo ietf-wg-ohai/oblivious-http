@@ -1089,6 +1089,8 @@ Oblivious Relay Resource and the Oblivious Gateway Resource might be sent in a
 single connection, traffic analysis could be used to match messages that are
 forwarded by the relay.
 
+In addition, if the client buffers Encapsulated Requests (for e.g. in order to retry sending later) and the server rotates the HPKE public key in the meantime, this would leak the time of message creation. To mitigate this, the client SHOULD NOT buffer encrypted requests before sending.
+
 A relay could, as part of its function, add delays in order to increase the
 anonymity set into which each message is attributed. This could latency to the
 overall time clients take to receive a response, which might not be what some
