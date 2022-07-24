@@ -1254,10 +1254,31 @@ be copied if the request is fresh, with an adjustment based on the `Age` field
 otherwise.  When retrying a request, the client MUST create a fresh encryption
 of the modified request, using a new HPKE context.
 
+~~~ aasvg
++---------+       +-------------------+      +----------+
+| Client  |       | Relay and Gateway |      | Target   |
+|         |       |     Resources     |      | Resource |
++----+----+       +----+-----------+--+      +----+-----+
+     |                 |           |              |
+     |                 |           |              |
+     |  Request        |           |              |
+     +============================>+------------->|
+     |                 |           |              |
+     |                 |           | 400 Response |
+     |                 |           |       + Date |
+     |<============================+<-------------+
+     |                 |           |              |
+     |  Request        |           |              |
+     |  + Updated Date |           |              |
+     +============================>+------------->|
+     |                 |           |              |
+~~~
+{: #fig-retry-date title="Retrying with an Update Date Field"}
+
 Intermediaries can sometimes rewrite the `Date` field when forwarding responses.
-This might cause problems if the Oblivious Gateway Resource and intermediary clocks differ by enough
-to cause the retry to be rejected.  Therefore, clients MUST NOT retry a request
-with an adjusted date more than once.
+This might cause problems if the Oblivious Gateway Resource and intermediary
+clocks differ by enough to cause the retry to be rejected.  Therefore, clients
+MUST NOT retry a request with an adjusted date more than once.
 
 Oblivious Gateway Resources that condition their responses on the `Date` header
 field SHOULD either ensure that intermediaries do not cache responses (by
