@@ -1110,6 +1110,12 @@ providing larger sets of messages that need to be matched.
 
 ## Server Responsibilities
 
+The Oblivious Gateway Resource can be operated by a different entity than the
+Target Resource.  However, this means that the client needs to trust the
+Oblivious Gateway Resource not to modify requests or responses.  This analysis
+concerns itself with a deployment scenario where a single server provides both
+the Oblivious Gateway Resource and Target Resource.
+
 A server that operates both Oblivious Gateway and Target Resources is
 responsible for removing request encryption, generating a response to the
 Encapsulated Request, and encrypting the response.
@@ -1123,6 +1129,14 @@ these entities might need an arrangement similar to that between server and
 relay for managing denial of service; see {{dos}}. It is also necessary to
 provide confidentiality protection for the unprotected requests and responses,
 plus protections for traffic analysis; see {{ta}}.
+
+Unsecured requests - such those with the "http" scheme as opposed to the "https"
+scheme - MUST NOT be used if the Oblivious Gateway and Target Resources are
+operated by different entities as that would expose both requests and response
+to modification or inspection by a network attacker.
+
+
+## Key Management
 
 An Oblivious Gateway Resource needs to have a plan for replacing keys. This
 might include regular replacement of keys, which can be assigned new key
@@ -1143,12 +1157,11 @@ HPKE.  The "message/bhttp response" label was chosen for symmetry only as it
 provides key diversity only within the HPKE context created using the
 "message/bhttp request" label; see {{repurposing-the-encapsulation-format}}.
 
-A server is responsible for either rejecting replayed requests or ensuring that
-the effect of replays does not adversely affect clients or resources; see
-{{replay}}.
-
 
 ## Replay Attacks {#replay}
+
+A server is responsible for either rejecting replayed requests or ensuring that
+the effect of replays does not adversely affect clients or resources.
 
 Encrypted requests can be copied and replayed by the Oblivious Relay
 resource. The threat model for Oblivious HTTP allows the possibility that an
