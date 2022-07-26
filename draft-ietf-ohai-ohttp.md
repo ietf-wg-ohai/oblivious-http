@@ -1330,7 +1330,7 @@ clock.  This might be used to fingerprint clients {{UWT}} or to identify clients
 that are vulnerable to attacks that depend on incorrect clocks.
 
 Clients can randomize the value that they provide for `Date` to obscure the true
-value of their clock and reduce the change of linking of requests over time.
+value of their clock and reduce the chance of linking of requests over time.
 However, this increases the risk that their request is rejected as outside the
 acceptable window.
 
