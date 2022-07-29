@@ -1130,8 +1130,8 @@ relay for managing denial of service; see {{dos}}. It is also necessary to
 provide confidentiality protection for the unprotected requests and responses,
 plus protections for traffic analysis; see {{ta}}.
 
-Unsecured requests - such those with the "http" scheme as opposed to the "https"
-scheme - MUST NOT be used if the Oblivious Gateway and Target Resources are
+Nonsecure requests - such those with the "http" scheme as opposed to the "https"
+scheme - SHOULD NOT be used if the Oblivious Gateway and Target Resources are
 operated by different entities as that would expose both requests and response
 to modification or inspection by a network attacker.
 
