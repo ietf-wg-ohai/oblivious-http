@@ -1065,7 +1065,7 @@ position to identify abuse. A gateway MAY send signals toward the relay to
 provide feedback about specific requests. For example, a gateway could respond
 differently to requests it cannot decapsulate, as mentioned in {{errors}}. A
 relay that acts on this feedback could - either inadvertently or by
-design - lead to client deaononymization.
+design - lead to client deanonymization.
 
 ### Denial of Service {#dos}
 
