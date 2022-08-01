@@ -1082,14 +1082,15 @@ Servers that enter into an agreement with a relay that enables a higher request
 rate might choose to authenticate the relay to enable the higher rate.
 
 
-### Linkability Through Traffic Analysis {#ta}
+### Traffic Analysis {#ta}
 
-This document assumes that all communication between different entities is
-protected by HTTPS.  This protects information about which resources are the
-subject of request and prevents a network observer from being able to trivially
-correlate messages on either side of a relay.
+This document assumes that all communication between different Oblivious Client,
+Gateway, and Relay is protected by HTTPS.  This protects information about which
+resources are the subject of request and prevents a network observer from being
+able to trivially correlate messages on either side of a relay.  However, it does
+not mitigate traffic analysis by such network observers.
 
-As the time at which Encapsulated Request or response messages are sent can
+The time at which Encapsulated Request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
 Oblivious Relay Resource and the Oblivious Gateway Resource might be sent in a
 single connection, traffic analysis could be used to match messages that are
@@ -1100,13 +1101,19 @@ anonymity set into which each message is attributed. This could latency to the
 overall time clients take to receive a response, which might not be what some
 clients want.
 
-A relay can use padding to reduce the effectiveness of traffic analysis.
-Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
-BINARY}}.
-
 A relay that forwards large volumes of exchanges can provide better privacy by
 providing larger sets of messages that need to be matched.
 
+Traffic analysis is not restricted to network observers. A malicious relay could
+use traffic analysis to learn information about otherwise encrypted requests
+and responses relayed between clients and gateways. Since relays terminate
+TLS connections from clients, they see message boundaries. This privileged
+position allows for richer feature extraction from encrypted data, which might
+improve traffic analysis.
+
+Clients can use padding to reduce the effectiveness of traffic analysis.
+Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
+BINARY}}.
 
 ## Server Responsibilities
 
