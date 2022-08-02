@@ -1358,7 +1358,7 @@ requests using the same key configuration by matching KeyConfig.key\_id, or, if
 the Target Resource is willing to use trial decryption, a limited set of key
 configurations that share an identifier. An Oblivious Relay Resource can link
 requests using the public key corresponding to KeyConfig.key\_id or via the
-Oblivious Gateway Resource. We refer to this set of information as the gateway's
+URI of the Oblivious Gateway Resource. We refer to this set of information as the gateway's
 configuration.
 
 Whether or not targets can link requests depends on how gateway configuration
