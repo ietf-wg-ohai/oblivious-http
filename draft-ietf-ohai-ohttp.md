@@ -1369,10 +1369,9 @@ Ideally, all clients share a consistent view of the gateway configuration. The n
 of different valid configurations can exponentially partition the anonymity set of
 clients. For example, if there are two valid configurations, that would yield two
 anonymity sets consisting of clients that used one configuration and clients that used
-the other configuration. If the size of these sets are large enough and roughly equal,
-this may not be a total loss of privacy in practice. But it is possible that one
-set is small while the other is large. Configuration consistency is an important
-part of ensuring client anonymity sets are few in number and large in size.
+the other configuration. If the size of each set is large enough, this may not be
+a significant loss of privacy in practice. Ensuring that many clients share
+a configuration is necessary to provide privacy for clients.
 
 A specific method for a client to acquire configurations is not included in this
 specification. Clients need to consider these tracking vectors when choosing a discovery
