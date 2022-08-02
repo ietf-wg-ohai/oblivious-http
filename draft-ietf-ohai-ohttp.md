@@ -1104,7 +1104,7 @@ clients want.
 A relay that forwards large volumes of exchanges can provide better privacy by
 providing larger sets of messages that need to be matched.
 
-Traffic analysis is not restricted to network observers. A malicious relay could
+Traffic analysis is not restricted to network observers. A malicious Oblivious Relay Resource could
 use traffic analysis to learn information about otherwise encrypted requests
 and responses relayed between clients and gateways. Since relays terminate
 TLS connections from clients, they see message boundaries. This privileged
