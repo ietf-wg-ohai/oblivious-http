@@ -1044,8 +1044,9 @@ Encapsulated Response.
 A relay MAY add information to requests if the client is aware of the nature of
 the information that could be added.  The client does not need to be aware of
 the exact value added for each request, but needs to know the range of possible
-values the relay might use.  It is important to note that information added by
-the relay can reduce the size of the anonymity set of clients at a gateway.
+values the relay might use.  Importantly, information added by the relay - beyond
+what is already revealed through encapsulated requests from clients - can reduce
+the size of the anonymity set of clients at a gateway.
 
 Moreover, relays MAY apply differential treatment to clients that engage in abusive
 behavior, e.g., by sending too many requests in comparison to other clients,
@@ -1061,8 +1062,10 @@ risks when using a relay.
 Some patterns of abuse cannot be detected without access to the request that
 is made to the target. This means that only the gateway or target are in a
 position to identify abuse. A gateway MAY send signals toward the relay to
-provide feedback about specific requests. A relay that acts on this feedback
-could - either inadvertently or by design - lead to clients being deanonymized.
+provide feedback about specific requests. For example, a gateway could respond
+differently to requests it cannot decapsulate, as mentioned in {{errors}}. A
+relay that acts on this feedback could - either inadvertently or by
+design - lead to client deanonymization.
 
 ### Denial of Service {#dos}
 
