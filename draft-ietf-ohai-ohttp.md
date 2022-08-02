@@ -1375,9 +1375,8 @@ a configuration is necessary to provide privacy for clients.
 
 A specific method for a client to acquire configurations is not included in this
 specification. Applications using this design MUST provide accommodations to mitigate tracking
-using gateway configurations. {{?CONSISTENCY=I-D.wood-key-consistency}} provides an
-analysis of the options for ensuring the configurations are consistent between
-different clients.
+using gateway configurations. {{?CONSISTENCY=I-D.wood-key-consistency}} provides
+options for ensuring that configurations are consistent between clients.
 
 
 # Operational and Deployment Considerations {#deployment}
