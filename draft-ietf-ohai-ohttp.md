@@ -1364,17 +1364,26 @@ the chosen key configuration. The Oblivious Relay and Gateway resources can link
 requests using the same key configuration by matching KeyConfig.key\_id, or, if
 the Target Resource is willing to use trial decryption, a limited set of key
 configurations that share an identifier. An Oblivious Relay Resource can link
-requests using the public key corresponding to KeyConfig.key\_id.
+requests using the public key corresponding to KeyConfig.key\_id or via the
+URI of the Oblivious Gateway Resource. We refer to this set of information as the gateway's
+configuration.
 
-Request resources are capable of linking requests depending on how KeyConfigs
-are produced by servers and discovered by clients. Specifically, servers can
-maliciously construct key configurations to track individual clients. A specific
-method for a client to acquire key configurations is not included in this
-specification. Clients need to consider these tracking vectors when choosing a
-discovery method.  Applications using this design should provide accommodations
-to mitigate tracking using key configurations.
-{{?CONSISTENCY=I-D.wood-key-consistency}} provides an analysis of the options
-for ensuring the key configurations are consistent between different clients.
+Whether or not targets can link requests depends on how gateway configuration
+information is produced and discovered by clients. Specifically, gateways can
+maliciously construct configurations to track individual clients.
+
+Ideally, all clients share a consistent view of the gateway configuration. The number
+of different valid configurations can exponentially partition the anonymity set of
+clients. For example, if there are two valid configurations, that would yield two
+anonymity sets consisting of clients that used one configuration and clients that used
+the other configuration. If the size of each set is large enough, this may not be
+a significant loss of privacy in practice. Ensuring that many clients share
+a configuration is necessary to provide privacy for clients.
+
+A specific method for a client to acquire configurations is not included in this
+specification. Applications using this design MUST provide accommodations to mitigate tracking
+using gateway configurations. {{?CONSISTENCY=I-D.wood-key-consistency}} provides
+options for ensuring that configurations are consistent between clients.
 
 
 # Operational and Deployment Considerations {#deployment}
