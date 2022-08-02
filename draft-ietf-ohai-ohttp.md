@@ -1085,7 +1085,7 @@ rate might choose to authenticate the relay to enable the higher rate.
 ### Traffic Analysis {#ta}
 
 This document assumes that all communication between different Oblivious Client,
-Gateway, and Relay is protected by HTTPS.  This protects information about which
+Oblivious Relay Resource, and Oblivious Gateway Resource is protected by HTTPS.  This protects information about which
 resources are the subject of request and prevents a network observer from being
 able to trivially correlate messages on either side of a relay.  However, it does
 not mitigate traffic analysis by such network observers.
