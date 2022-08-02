@@ -1107,7 +1107,7 @@ providing larger sets of messages that need to be matched.
 Traffic analysis is not restricted to network observers. A malicious Oblivious Relay Resource could
 use traffic analysis to learn information about otherwise encrypted requests
 and responses relayed between clients and gateways. An Oblivious Relay Resource terminates
-TLS connections from clients, they see message boundaries. This privileged
+TLS connections from clients, so they see message boundaries. This privileged
 position allows for richer feature extraction from encrypted data, which might
 improve traffic analysis.
 
