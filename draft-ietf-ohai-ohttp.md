@@ -1155,24 +1155,24 @@ acceptable window.
 One goal of this design is that independent client requests are only linkable by
 their content.  However, the choice of client configuration might be used to
 correlate requests.  A client configuration includes the Oblivious Relay
-Resource URI, the key identifier, the HPKE public key, and Oblivious Gateway
-Resource URI.
+Resource URI, the Oblivious Gateway key configuration (KeyConfig), and Oblivious Gateway
+Resource URI. A configuration is active if clients can successfully use it for interacting with with a target.
 
 Oblivious Relay and Gateway Resources can identify when requests use the same
-key configuration by matching `KeyConfig.key\_id` or the Oblivious Gateway
+configuration by matching `KeyConfig.key\_id` or the Oblivious Gateway
 Resource URI.  The Oblivious Gateway Resource might use the source address of
 requests to correlate requests that use an Oblivious Relay Resource run by the
 same operator.  If the Oblivious Gateway Resource is willing to use trial
 decryption, requests can be further separated into smaller groupings based on
 the keys that are used.
 
-Having multiple client configurations partitions the anonymity set of clients,
-which is unavoidable for practical reasons.  Enabling diversity in choice of
+Each active client configuration partitions the client anonymity set. In practice,
+it is infeasible to reduce the number of active configurations to one. Enabling diversity in choice of
 Oblivious Relay Resource naturally increases the number of active
 configurations.  A small number of configurations might need to be active to
 allow for key rotation and server maintenance.
 
-Client privacy depends on having each configuration used by many other users.
+Client privacy depends on having each configuration used by many other clients.
 It is critical prevent the use of unique client configurations, which might be
 used to track of individual clients, but it is also important to avoid creating
 small groupings of clients that might weaken privacy protections.
