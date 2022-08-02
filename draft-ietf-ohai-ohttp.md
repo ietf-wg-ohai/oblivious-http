@@ -1374,8 +1374,7 @@ a significant loss of privacy in practice. Ensuring that many clients share
 a configuration is necessary to provide privacy for clients.
 
 A specific method for a client to acquire configurations is not included in this
-specification. Clients need to consider these tracking vectors when choosing a discovery
-method. Applications using this design should provide accommodations to mitigate tracking
+specification. Applications using this design MUST provide accommodations to mitigate tracking
 using gateway configurations. {{?CONSISTENCY=I-D.wood-key-consistency}} provides an
 analysis of the options for ensuring the configurations are consistent between
 different clients.
