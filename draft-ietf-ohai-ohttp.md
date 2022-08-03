@@ -37,6 +37,8 @@ normative:
 
 informative:
 
+  CONSISTENCY: I-D.wood-key-consistency
+
   Dingledine2004:
     title: "Tor: The Second-Generation Onion Router"
     date: 2004-08
@@ -82,6 +84,13 @@ informative:
       fullname: Mark Nottingham
     date: 2015-07-17
     target: https://www.w3.org/2001/tag/doc/unsanctioned-tracking/
+
+  FIELDING:
+    title: "Architectural Styles and the Design of Network-based Software Architectures"
+    author:
+      fullname: Roy Thomas Fielding
+    date: 2000
+    target: "https://www.ics.uci.edu/~fielding/pubs/dissertation/fielding_dissertation.pdf"
 
 
 --- abstract
@@ -1144,30 +1153,41 @@ acceptable window.
 # Privacy Considerations {#privacy}
 
 One goal of this design is that independent client requests are only linkable by
-the chosen key configuration. The Oblivious Relay and Gateway resources can link
-requests using the same key configuration by matching KeyConfig.key\_id, or, if
-the Target Resource is willing to use trial decryption, a limited set of key
-configurations that share an identifier. An Oblivious Relay Resource can link
-requests using the public key corresponding to KeyConfig.key\_id or via the
-URI of the Oblivious Gateway Resource. We refer to this set of information as the gateway's
-configuration.
+their content.  However, the choice of client configuration might be used to
+correlate requests.  A client configuration includes the Oblivious Relay
+Resource URI, the Oblivious Gateway key configuration (KeyConfig), and Oblivious Gateway
+Resource URI. A configuration is active if clients can successfully use it for interacting with with a target.
 
-Whether or not targets can link requests depends on how gateway configuration
-information is produced and discovered by clients. Specifically, gateways can
-maliciously construct configurations to track individual clients.
+Oblivious Relay and Gateway Resources can identify when requests use the same
+configuration by matching `KeyConfig.key\_id` or the Oblivious Gateway
+Resource URI.  The Oblivious Gateway Resource might use the source address of
+requests to correlate requests that use an Oblivious Relay Resource run by the
+same operator.  If the Oblivious Gateway Resource is willing to use trial
+decryption, requests can be further separated into smaller groupings based on
+the keys that are used.
 
-Ideally, all clients share a consistent view of the gateway configuration. The number
-of different valid configurations can exponentially partition the anonymity set of
-clients. For example, if there are two valid configurations, that would yield two
-anonymity sets consisting of clients that used one configuration and clients that used
-the other configuration. If the size of each set is large enough, this may not be
-a significant loss of privacy in practice. Ensuring that many clients share
-a configuration is necessary to provide privacy for clients.
+Each active client configuration partitions the client anonymity set. In practice,
+it is infeasible to reduce the number of active configurations to one. Enabling diversity in choice of
+Oblivious Relay Resource naturally increases the number of active
+configurations.  A small number of configurations might need to be active to
+allow for key rotation and server maintenance.
+
+Client privacy depends on having each configuration used by many other clients.
+It is critical prevent the use of unique client configurations, which might be
+used to track of individual clients, but it is also important to avoid creating
+small groupings of clients that might weaken privacy protections.
 
 A specific method for a client to acquire configurations is not included in this
-specification. Applications using this design MUST provide accommodations to mitigate tracking
-using gateway configurations. {{?CONSISTENCY=I-D.wood-key-consistency}} provides
-options for ensuring that configurations are consistent between clients.
+specification.  Applications using this design MUST provide accommodations to
+mitigate tracking using client configurations.  {{CONSISTENCY}} provides options
+for ensuring that client configurations are consistent between clients.
+
+The content of requests or responses, if used in forming new requests, can be
+used to correlate requests.  This includes obvious methods of linking requests,
+like cookies {{?COOKIES}}, but it also includes any information in either
+message that might affect how subsequent requests are formulated. For example,
+{{FIELDING}} describes how interactions that are individually stateless can be
+used to build a stateful system when a client acts on the content of a response.
 
 
 # Operational and Deployment Considerations {#deployment}
