@@ -513,7 +513,7 @@ hdr = concat(encode(1, keyID),
 info = concat(encode_str("message/bhttp request"),
               encode(1, 0),
               hdr)
-enc, sctxt = SetupBaseS(pkR, hdr)
+enc, sctxt = SetupBaseS(pkR, info)
 ct = sctxt.Seal([], request)
 enc_request = concat(hdr, enc, ct)
 ~~~
