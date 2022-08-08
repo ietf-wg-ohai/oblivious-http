@@ -134,7 +134,7 @@ requester from the request.
 Although this scheme requires support for two new kinds of oblivious resources,
 it represents a performance improvement over options
 that perform just one request in each connection. With limited trust placed in the
-relay resource (see {{security}}), clients are assured that requests are not uniquely
+Oblivious Relay Resource (see {{security}}), clients are assured that requests are not uniquely
 attributed to them or linked to other requests.
 
 
