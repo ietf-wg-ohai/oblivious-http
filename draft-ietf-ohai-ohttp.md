@@ -113,7 +113,7 @@ information that the client has only limited control over.
 Even where an IP address is not directly associated with an individual, the requests
 made from it can be correlated over time to assemble a profile of client behavior. In
 particular, connection reuse improves performance, but provides servers with 
-additional certainty about the identity of clients.
+the ability to correlate requests that share a connection.
 
 Client-configured HTTP proxies can provide a degree of protection against IP address
 tracking, and systems like virtual private networks and the Tor network
