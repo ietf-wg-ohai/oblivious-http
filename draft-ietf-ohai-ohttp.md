@@ -95,51 +95,46 @@ informative:
 
 --- abstract
 
-This document describes a system for the forwarding of encrypted HTTP messages.
-This allows a client to make multiple requests of a server without the server being able
+This document describes a system for forwarding encrypted HTTP messages.
+This allows a client to make multiple requests to an origin server without that server being able
 to link those requests to the client or to identify the requests as having come
-from the same client.
+from the same client, while placing only limited trust in the nodes used to forward the messages.
 
 
 --- middle
 
 # Introduction
 
-The act of making a request using HTTP reveals information about the client
-identity to a server. Though the content of requests might reveal information,
-that is information under the control of the client. In comparison, the source
-address on the connection reveals information that a client has only limited
-control over.
+A HTTP request reveals information about the client's identity to the server.
+Some of that information is in the request content, and therefore under the control
+of the client. However, the source IP address of the underlying connection reveals
+information that the client has only limited control over.
 
-Even where an IP address is not directly attributed to an individual, the use
-of an address over time can be used to correlate requests. Servers are able to
-use this information to assemble profiles of client behavior, from which they
-can make inferences about the people involved. The use of persistent
-connections to make multiple requests improves performance, but provides
-servers with additional certainty about the identity of clients in a similar
-fashion.
+Even where an IP address is not directly associated with an individual, the requests
+made from it can be correlated over time to assemble a profile of client behavior. In
+particular, connection reuse improves performance, but provides servers with 
+the ability to correlate requests that share a connection.
 
-Use of an HTTP proxy can provide a degree of protection against servers
-correlating requests. Systems like virtual private networks or the Tor network
-{{Dingledine2004}}, provide other options for clients.
+Client-configured HTTP proxies can provide a degree of protection against IP address
+tracking, and systems like virtual private networks and the Tor network
+{{Dingledine2004}} provide additional options for clients.
 
-Though the overhead imposed by these methods varies, the cost for each request
-is significant. Preventing request linkability requires that each request
-use a completely new TLS connection to the server. At a minimum,
-this requires an additional round trip to the server in addition to that
-required by the request. In addition to having high latency, there are
-significant secondary costs, both in terms of the number of additional bytes
-exchanged and the CPU cost of cryptographic computations.
+However, even when IP address tracking is mitigated using one of these techniques, each request
+needs to be on a completely new TLS connection to avoid the connection itself being used
+to correlate behavior. This imposes considerable performance and efficiency overheads, due
+to the additional round trip to the server (at a minumum), additional data exchanged, and
+additional CPU cost of cryptographic computations.
 
-This document describes a method of encapsulation for binary HTTP messages
-{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). This
-protects the content of both requests and responses and enables a deployment
-architecture that can separate the identity of a requester from the request.
+This document defines two kinds of HTTP resources -- Oblivious Relay Resources
+and Oblivious Gateway Resources -- that process encapsulated binary HTTP messages
+{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). They can be composed to
+protect the content of encapsulated requests and responses, thereby separating the identity of a
+requester from the request.
 
-Though this scheme requires that servers and proxies (called relays in this document)
-explicitly support it, this design represents a performance improvement over options
+Although this scheme requires support for two new kinds of oblivious resources,
+it represents a performance improvement over options
 that perform just one request in each connection. With limited trust placed in the
-relay (see {{security}}), clients are assured that requests are not uniquely
+Oblivious Relay Resource (see {{security}}), clients are assured that requests are not uniquely
 attributed to them or linked to other requests.
 
 
