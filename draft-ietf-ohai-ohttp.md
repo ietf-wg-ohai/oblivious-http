@@ -665,6 +665,12 @@ In order to achieve the privacy and security goals of the protocol an Oblivious
 Relay Resource also needs to observe the guidance in
 {{relay-responsibilities}}.
 
+An Oblivious Gateway Resource acts as a gateway for requests to the Target
+Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
+information it might forward in a response MUST be encapsulated, unless it is
+responding to errors it detects before removing encapsulation of the request;
+see {{errors}}.
+
 An Oblivious Gateway Resource, if it receives any response from the Target
 Resource, sends a single 200 response containing the encapsulated response.
 Like the request from the client, this response MUST only contain those fields
@@ -673,16 +679,9 @@ indicating the content type, and the encapsulated response as the response
 content.  As with requests, additional fields MAY be used to convey information
 that does not reveal information about the encapsulated response.
 
-An Oblivious Gateway Resource acts as a gateway for requests to the Target
-Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
-information it might forward in a response MUST be encapsulated, unless it is
-responding to errors it detects before removing encapsulation of the request;
-see {{errors}}.
-
 In order to achieve the privacy and security goals of the protocol an Oblivious
 Gateway Resource also needs to observe the guidance in
 {{server-responsibilities}}.
-
 
 ## Informational Responses
 
