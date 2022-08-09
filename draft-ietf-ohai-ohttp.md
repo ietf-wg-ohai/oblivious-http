@@ -1675,4 +1675,5 @@ construct the AEAD key and nonce and decrypt the response.
 
 This design is based on a design for Oblivious DoH, described in
 {{?ODOH=RFC9230}}. David Benjamin, Mark Nottingham, and Eric Rescorla made
-technical contributions.
+technical contributions.  The authors also thank Lucas Pardue and Tommy Pauly
+for their assistance.
