@@ -1487,6 +1487,8 @@ Change controller:
 : IESG
 
 
+## Registration of "date" Problem Type
+
 IANA are requested to create a new entry in the "HTTP Problem Type" registry
 established by {{!PROBLEM}}.
 
