@@ -926,9 +926,7 @@ attacks; see {{ta}}.
 
 If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
-relay for managing denial of service; see {{dos}}. It is also necessary to
-provide confidentiality protection for the unprotected requests and responses,
-plus protections for traffic analysis; see {{ta}}.
+relay for managing denial of service; see {{dos}}.
 
 Nonsecure requests - such those with the "http" scheme as opposed to the "https"
 scheme - SHOULD NOT be used if the Oblivious Gateway and Target Resources are
