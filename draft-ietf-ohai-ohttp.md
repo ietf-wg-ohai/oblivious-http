@@ -38,6 +38,12 @@ normative:
 informative:
 
   CONSISTENCY: I-D.wood-key-consistency
+  HTTP2:
+    =: RFC9113
+    display: HTTP/2
+  HTTP3:
+    =: RFC9114
+    display: HTTP/3
 
   Dingledine2004:
     title: "Tor: The Second-Generation Onion Router"
@@ -95,51 +101,46 @@ informative:
 
 --- abstract
 
-This document describes a system for the forwarding of encrypted HTTP messages.
-This allows a client to make multiple requests of a server without the server being able
+This document describes a system for forwarding encrypted HTTP messages.
+This allows a client to make multiple requests to an origin server without that server being able
 to link those requests to the client or to identify the requests as having come
-from the same client.
+from the same client, while placing only limited trust in the nodes used to forward the messages.
 
 
 --- middle
 
 # Introduction
 
-The act of making a request using HTTP reveals information about the client
-identity to a server. Though the content of requests might reveal information,
-that is information under the control of the client. In comparison, the source
-address on the connection reveals information that a client has only limited
-control over.
+An HTTP request reveals information about the client's identity to the server.
+Some of that information is in the request content, and therefore under the control
+of the client. However, the source IP address of the underlying connection reveals
+information that the client has only limited control over.
 
-Even where an IP address is not directly attributed to an individual, the use
-of an address over time can be used to correlate requests. Servers are able to
-use this information to assemble profiles of client behavior, from which they
-can make inferences about the people involved. The use of persistent
-connections to make multiple requests improves performance, but provides
-servers with additional certainty about the identity of clients in a similar
-fashion.
+Even where an IP address is not directly associated with an individual, the requests
+made from it can be correlated over time to assemble a profile of client behavior. In
+particular, connection reuse improves performance, but provides servers with
+the ability to correlate requests that share a connection.
 
-Use of an HTTP proxy can provide a degree of protection against servers
-correlating requests. Systems like virtual private networks or the Tor network
-{{Dingledine2004}}, provide other options for clients.
+Client-configured HTTP proxies can provide a degree of protection against IP address
+tracking, and systems like virtual private networks and the Tor network
+{{Dingledine2004}} provide additional options for clients.
 
-Though the overhead imposed by these methods varies, the cost for each request
-is significant. Preventing request linkability requires that each request
-use a completely new TLS connection to the server. At a minimum,
-this requires an additional round trip to the server in addition to that
-required by the request. In addition to having high latency, there are
-significant secondary costs, both in terms of the number of additional bytes
-exchanged and the CPU cost of cryptographic computations.
+However, even when IP address tracking is mitigated using one of these techniques, each request
+needs to be on a completely new TLS connection to avoid the connection itself being used
+to correlate behavior. This imposes considerable performance and efficiency overheads, due
+to the additional round trip to the server (at a minumum), additional data exchanged, and
+additional CPU cost of cryptographic computations.
 
-This document describes a method of encapsulation for binary HTTP messages
-{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). This
-protects the content of both requests and responses and enables a deployment
-architecture that can separate the identity of a requester from the request.
+This document defines two kinds of HTTP resources -- Oblivious Relay Resources
+and Oblivious Gateway Resources -- that process encapsulated binary HTTP messages
+{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). They can be composed to
+protect the content of encapsulated requests and responses, thereby separating the identity of a
+requester from the request.
 
-Though this scheme requires that servers and proxies (called relays in this document)
-explicitly support it, this design represents a performance improvement over options
+Although this scheme requires support for two new kinds of oblivious resources,
+it represents a performance improvement over options
 that perform just one request in each connection. With limited trust placed in the
-relay (see {{security}}), clients are assured that requests are not uniquely
+Oblivious Relay Resource (see {{security}}), clients are assured that requests are not uniquely
 attributed to them or linked to other requests.
 
 
@@ -513,7 +514,7 @@ hdr = concat(encode(1, keyID),
 info = concat(encode_str("message/bhttp request"),
               encode(1, 0),
               hdr)
-enc, sctxt = SetupBaseS(pkR, hdr)
+enc, sctxt = SetupBaseS(pkR, info)
 ct = sctxt.Seal([], request)
 enc_request = concat(hdr, enc, ct)
 ~~~
@@ -577,14 +578,14 @@ follows:
 
 4. Use the `Expand` function provided by the same KDF to extract an AEAD key
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
-   with `context`. Generating `key` uses a label of "key".
+   with `context`. Generating `aead_key` uses a label of "key".
 
 5. Use the same `Expand` function to extract a nonce `nonce` of length `Nn` -
-   the length of the nonce used by the AEAD. Generating `nonce` uses a label of
-   "nonce".
+   the length of the nonce used by the AEAD. Generating `aead_nonce` uses a
+   label of "nonce".
 
-6. Encrypt `response`, passing the AEAD function Seal the values of `key`,
-   `nonce`, empty `aad`, and a `pt` input of `request`, which yields `ct`.
+6. Encrypt `response`, passing the AEAD function Seal the values of `aead_key`,
+   `aead_nonce`, an empty `aad`, and a `pt` input of `response`, which yields `ct`.
 
 7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
    `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
@@ -645,6 +646,9 @@ response are encrypted rather than sent over a connection.  The Oblivious Relay
 Resource and the Oblivious Gateway Resource also act as HTTP clients toward the
 Oblivious Gateway Resource and Target Resource respectively.
 
+In order to achieve the privacy and security goals of the protocol a client also
+needs to observe the guidance in {{client-responsibilities}}.
+
 The Oblivious Relay Resource interacts with the Oblivious Gateway Resource as an
 HTTP client by constructing a request using the same restrictions as the client
 request, except that the target URI is the Oblivious Gateway Resource.  The
@@ -656,6 +660,10 @@ the type of information that might be added; see
 When a response is received from the Oblivious Gateway Resource, the
 Oblivious Relay Resource forwards the response according to the rules of an
 HTTP proxy; see {{Section 7.6 of HTTP}}.
+
+In order to achieve the privacy and security goals of the protocol an Oblivious
+Relay Resource also needs to observe the guidance in
+{{relay-responsibilities}}.
 
 An Oblivious Gateway Resource acts as a gateway for requests to the Target
 Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
@@ -671,6 +679,9 @@ indicating the content type, and the encapsulated response as the response
 content.  As with requests, additional fields MAY be used to convey information
 that does not reveal information about the encapsulated response.
 
+In order to achieve the privacy and security goals of the protocol an Oblivious
+Gateway Resource also needs to observe the guidance in
+{{server-responsibilities}}.
 
 ## Informational Responses
 
@@ -725,6 +736,12 @@ In this section, a deployment where there are three entities is considered:
 * A client makes requests and receives responses
 * A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the Target Resource
+
+Connections between the client, Oblvious Relay Resource, and Oblivious Gateway
+Resource MUST use HTTPS in order to provide unlinkability in the presence of a
+network observer.  The scheme of the encapsulated request detemrines what is
+used between the Oblivious Gateway and Target Resources, though using HTTPS is
+RECOMMENDED; see {{server-responsibilities}}.
 
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
@@ -877,11 +894,10 @@ rate might choose to authenticate the relay to enable the higher rate.
 
 ### Traffic Analysis {#ta}
 
-This document assumes that all communication between different Oblivious Client,
-Oblivious Relay Resource, and Oblivious Gateway Resource is protected by HTTPS.  This protects information about which
-resources are the subject of request and prevents a network observer from being
-able to trivially correlate messages on either side of a relay.  However, it does
-not mitigate traffic analysis by such network observers.
+Using HTTPS protects information about which resources are the subject of
+request and prevents a network observer from being able to trivially correlate
+messages on either side of a relay.  However, using HTTPS does not prevent
+traffic analysis by such network observers.
 
 The time at which Encapsulated Request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
@@ -889,10 +905,11 @@ Oblivious Relay Resource and the Oblivious Gateway Resource might be sent in a
 single connection, traffic analysis could be used to match messages that are
 forwarded by the relay.
 
-A relay could, as part of its function, add delays in order to increase the
-anonymity set into which each message is attributed. This could latency to the
-overall time clients take to receive a response, which might not be what some
-clients want.
+A relay could, as part of its function, delay requests before forwarding them.
+Delays might increase the anonymity set into which each request is
+attributed. Any delay also increases the time that a client waits for a
+response, so delays SHOULD only be added with the consent - or at least
+awareness - of clients.
 
 A relay that forwards large volumes of exchanges can provide better privacy by
 providing larger sets of messages that need to be matched.
@@ -908,7 +925,7 @@ Clients can use padding to reduce the effectiveness of traffic analysis.
 Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
 BINARY}}.
 
-## Server Responsibilities
+## Server Responsibilities {#server-responsibilities}
 
 The Oblivious Gateway Resource can be operated by a different entity than the
 Target Resource.  However, this means that the client needs to trust the
@@ -978,9 +995,9 @@ universally applicable and suggestions for more targeted techniques.
 
 A client or Oblivious Relay Resource MUST NOT automatically attempt to retry a
 failed request unless it receives a positive signal indicating that the request
-was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code (Section
-8.1.4 of {{!RFC7540}}), the HTTP/3 H3_REQUEST_REJECTED error code (Section 8.1
-of {{!QUIC-HTTP=I-D.ietf-quic-http}}), or a GOAWAY frame with a low enough
+was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code ({{Section
+8.1.4 of HTTP2}}), the HTTP/3 H3_REQUEST_REJECTED error code ({{Section 8.1
+of HTTP3}}), or a GOAWAY frame with a low enough
 identifier (in either protocol version) are all sufficient signals that no
 processing occurred. Connection failures or interruptions are not sufficient
 signals that no processing occurred.
@@ -1159,7 +1176,7 @@ Resource URI, the Oblivious Gateway key configuration (KeyConfig), and Oblivious
 Resource URI. A configuration is active if clients can successfully use it for interacting with with a target.
 
 Oblivious Relay and Gateway Resources can identify when requests use the same
-configuration by matching `KeyConfig.key\_id` or the Oblivious Gateway
+configuration by matching `KeyConfig.key_id` or the Oblivious Gateway
 Resource URI.  The Oblivious Gateway Resource might use the source address of
 requests to correlate requests that use an Oblivious Relay Resource run by the
 same operator.  If the Oblivious Gateway Resource is willing to use trial
@@ -1487,6 +1504,8 @@ Change controller:
 : IESG
 
 
+## Registration of "date" Problem Type
+
 IANA are requested to create a new entry in the "HTTP Problem Type" registry
 established by {{!PROBLEM}}.
 
@@ -1680,4 +1699,5 @@ construct the AEAD key and nonce and decrypt the response.
 
 This design is based on a design for Oblivious DoH, described in
 {{?ODOH=RFC9230}}. David Benjamin, Mark Nottingham, and Eric Rescorla made
-technical contributions.
+technical contributions.  The authors also thank Lucas Pardue and Tommy Pauly
+for their assistance.
