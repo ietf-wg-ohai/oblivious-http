@@ -726,6 +726,12 @@ In this section, a deployment where there are three entities is considered:
 * A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the Target Resource
 
+Connections between the client, Oblvious Relay Resource, and Oblivious Gateway
+Resource MUST use HTTPS in order to provide unlinkability in the presence of a
+network observer.  The scheme of the encapsulated request detemrines what is
+used between the Oblivious Gateway and Target Resources, though using HTTPS is
+RECOMMENDED; see {{server-responsibilities}}.
+
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
 colocation of the Oblivious Gateway Resource and Target Resource simplifies the
@@ -877,11 +883,10 @@ rate might choose to authenticate the relay to enable the higher rate.
 
 ### Traffic Analysis {#ta}
 
-This document assumes that all communication between different Oblivious Client,
-Oblivious Relay Resource, and Oblivious Gateway Resource is protected by HTTPS.  This protects information about which
-resources are the subject of request and prevents a network observer from being
-able to trivially correlate messages on either side of a relay.  However, it does
-not mitigate traffic analysis by such network observers.
+Using HTTPS protects information about which resources are the subject of
+request and prevents a network observer from being able to trivially correlate
+messages on either side of a relay.  However, using HTTPS does not prevent
+traffic analysis by such network observers.
 
 The time at which Encapsulated Request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
@@ -908,7 +913,7 @@ Clients can use padding to reduce the effectiveness of traffic analysis.
 Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
 BINARY}}.
 
-## Server Responsibilities
+## Server Responsibilities {#server-responsibilities}
 
 The Oblivious Gateway Resource can be operated by a different entity than the
 Target Resource.  However, this means that the client needs to trust the
