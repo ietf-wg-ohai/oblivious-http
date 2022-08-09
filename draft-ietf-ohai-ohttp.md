@@ -766,19 +766,14 @@ provide the same properties as policies enforced directly on target
 connections. When this difference is relevant, applications can instead connect
 directly to the target at the cost of either privacy or performance.
 
-Clients MUST NOT include identifying information in the request that is
-encrypted. Identifying information includes cookies {{?COOKIES=RFC6265}},
-authentication credentials or tokens, and any information that might reveal
-client-specific information such as account credentials.
-
 Clients cannot carry connection-level state between requests as they only
 establish direct connections to the relay responsible for the Oblivious Relay
-resource. However, clients need to ensure that they construct requests without
-any information gained from previous requests. Otherwise, the server might be
-able to use that information to link requests. Cookies {{?COOKIES=RFC6265}} are
-the most obvious feature that MUST NOT be used by clients. However, clients
-need to include all information learned from requests, which could include the
-identity of resources.
+resource.  However, the content of requests might be used by a server to
+correlate requests.  Cookies {{?COOKIES=RFC6265}} are the most obvious feature
+that might be used to correlate requests, but any identity information and
+authentication credentials might have the same effect.  Clients also need to
+treat information learned from responses with similar care when constructing
+subsequent requests, which includes the identity of resources.
 
 Clients MUST generate a new HPKE context for every request, using a good source
 of entropy ({{?RANDOM=RFC4086}}) for generating keys. Key reuse not only risks
