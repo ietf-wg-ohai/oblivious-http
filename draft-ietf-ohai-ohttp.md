@@ -578,14 +578,14 @@ follows:
 
 4. Use the `Expand` function provided by the same KDF to extract an AEAD key
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
-   with `context`. Generating `key` uses a label of "key".
+   with `context`. Generating `aead_key` uses a label of "key".
 
 5. Use the same `Expand` function to extract a nonce `nonce` of length `Nn` -
-   the length of the nonce used by the AEAD. Generating `nonce` uses a label of
-   "nonce".
+   the length of the nonce used by the AEAD. Generating `aead_nonce` uses a
+   label of "nonce".
 
-6. Encrypt `response`, passing the AEAD function Seal the values of `key`,
-   `nonce`, empty `aad`, and a `pt` input of `request`, which yields `ct`.
+6. Encrypt `response`, passing the AEAD function Seal the values of `aead_key`,
+   `aead_nonce`, an empty `aad`, and a `pt` input of `response`, which yields `ct`.
 
 7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
    `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
