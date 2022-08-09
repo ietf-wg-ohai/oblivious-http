@@ -105,7 +105,7 @@ from the same client, while placing only limited trust in the nodes used to forw
 
 # Introduction
 
-A HTTP request reveals information about the client's identity to the server.
+An HTTP request reveals information about the client's identity to the server.
 Some of that information is in the request content, and therefore under the control
 of the client. However, the source IP address of the underlying connection reveals
 information that the client has only limited control over.
