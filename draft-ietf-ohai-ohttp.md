@@ -38,6 +38,12 @@ normative:
 informative:
 
   CONSISTENCY: I-D.wood-key-consistency
+  HTTP2:
+    =: RFC9113
+    display: HTTP/2
+  HTTP3:
+    =: RFC9114
+    display: HTTP/3
 
   Dingledine2004:
     title: "Tor: The Second-Generation Onion Router"
@@ -976,9 +982,9 @@ universally applicable and suggestions for more targeted techniques.
 
 A client or Oblivious Relay Resource MUST NOT automatically attempt to retry a
 failed request unless it receives a positive signal indicating that the request
-was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code (Section
-8.1.4 of {{!RFC7540}}), the HTTP/3 H3_REQUEST_REJECTED error code (Section 8.1
-of {{!QUIC-HTTP=I-D.ietf-quic-http}}), or a GOAWAY frame with a low enough
+was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code ({{Section
+8.1.4 of HTTP2}}), the HTTP/3 H3_REQUEST_REJECTED error code ({{Section 8.1
+of HTTP3}}), or a GOAWAY frame with a low enough
 identifier (in either protocol version) are all sufficient signals that no
 processing occurred. Connection failures or interruptions are not sufficient
 signals that no processing occurred.
