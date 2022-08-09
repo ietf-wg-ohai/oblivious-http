@@ -336,7 +336,9 @@ the integer value.  ASCII {{!ASCII=RFC0020}} encoding of a string `s` is
 indicated using the function `encode_str(s)`.  The function `len()` returns the
 length of a sequence of bytes.
 
-Formats are described using notation from {{Section 1.3 of QUIC}}.
+Formats are described using notation from {{Section 1.3 of QUIC}}.  An extension
+to that notation expresses the number of bits in a field using a simple
+mathematical function.
 
 
 # Key Configuration {#key-configuration}
@@ -437,8 +439,9 @@ Encapsulated Request {
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
 
-The Nenc parameter corresponding to the HpkeKdfId can be found in {{Section 7.1
-of !HPKE}}.
+The Nenc parameter corresponding to the KEM used in HPKE can be found in
+{{Section 7.1 of !HPKE}}.  Nenc refers to the size of the encapsulated KEM
+shared secret, in bytes.
 
 An encrypted HTTP response includes a binary-encoded HTTP message {{BINARY}}
 and no other content; see {{fig-res-pt}}.
@@ -456,16 +459,17 @@ Encapsulated Response.
 
 ~~~
 Encapsulated Response {
-  Nonce (Nk),
+  Nonce (max(Nn, Nk)),
   AEAD-Protected Response (..),
 }
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
 
 
-The Nenc and Nk parameters corresponding to the HpkeKdfId can be found in
-{{!HPKE}}.  Nenc refers to the size of the encapsulated KEM shared secret, in
-bytes; Nk refers to the size of the AEAD key for the HPKE ciphersuite, in bits.
+The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
+defined in {{Section 7.3 of !HPKE}}.  Nn and Nk refer to the size of the AEAD
+nonce and key respectively, in bits.  The nonce length is set to the larger of
+these two lengths.
 
 
 ## Encapsulation of Requests {#request}
