@@ -716,7 +716,7 @@ Encapsulated Response.
 # Security Considerations {#security}
 
 In this design, a client wishes to make a request of a server that is
-authoritative for the Target Resource. The client wishes to make this request
+authoritative for a Target Resource. The client wishes to make this request
 without linking that request with either:
 
 1. The identity at the network and transport layer of the client (that is, the
@@ -1559,8 +1559,8 @@ corresponding public key as follows:
 ~~~
 
 This key configuration is somehow obtained by the client. Then when a client
-wishes to send an HTTP request of a GET request to the target `https://example.com`,
-it constructs the following binary HTTP message:
+wishes to send an HTTP GET request to the target `https://example.com`, it
+constructs the following binary HTTP message:
 
 ~~~ hex-dump
 00034745540568747470730b6578616d706c652e636f6d012f
