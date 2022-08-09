@@ -645,6 +645,9 @@ response are encrypted rather than sent over a connection.  The Oblivious Relay
 Resource and the Oblivious Gateway Resource also act as HTTP clients toward the
 Oblivious Gateway Resource and Target Resource respectively.
 
+In order to achieve the privacy and security goals of the protocol a client also
+needs to observe the guidance in {{client-responsibilities}}.
+
 The Oblivious Relay Resource interacts with the Oblivious Gateway Resource as an
 HTTP client by constructing a request using the same restrictions as the client
 request, except that the target URI is the Oblivious Gateway Resource.  The
@@ -656,6 +659,10 @@ the type of information that might be added; see
 When a response is received from the Oblivious Gateway Resource, the
 Oblivious Relay Resource forwards the response according to the rules of an
 HTTP proxy; see {{Section 7.6 of HTTP}}.
+
+In order to achieve the privacy and security goals of the protocol an Oblivious
+Relay Resource also needs to observe the guidance in
+{{relay-responsibilities}}.
 
 An Oblivious Gateway Resource, if it receives any response from the Target
 Resource, sends a single 200 response containing the encapsulated response.
@@ -670,6 +677,10 @@ Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
 responding to errors it detects before removing encapsulation of the request;
 see {{errors}}.
+
+In order to achieve the privacy and security goals of the protocol an Oblivious
+Gateway Resource also needs to observe the guidance in
+{{server-responsibilities}}.
 
 
 ## Informational Responses
