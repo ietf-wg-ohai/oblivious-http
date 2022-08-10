@@ -739,7 +739,7 @@ In this section, a deployment where there are three entities is considered:
 
 Connections between the client, Oblvious Relay Resource, and Oblivious Gateway
 Resource MUST use HTTPS in order to provide unlinkability in the presence of a
-network observer.  The scheme of the encapsulated request detemrines what is
+network observer.  The scheme of the encapsulated request determines what is
 used between the Oblivious Gateway and Target Resources, though using HTTPS is
 RECOMMENDED; see {{server-responsibilities}}.
 
