@@ -468,8 +468,8 @@ Encapsulated Response {
 
 The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
 defined in {{Section 7.3 of !HPKE}}.  Nn and Nk refer to the size of the AEAD
-nonce and key respectively, in bits.  The nonce length is set to the larger of
-these two lengths.
+nonce and key respectively, in bytes.  The Encapsulated Response nonce length is set to the larger of
+these two lengths, i.e., max(Nn, Nk).
 
 
 ## Encapsulation of Requests {#request}
