@@ -459,7 +459,7 @@ Encapsulated Response.
 
 ~~~
 Encapsulated Response {
-  Nonce (max(Nn, Nk)),
+  Nonce (8 * max(Nn, Nk)),
   AEAD-Protected Response (..),
 }
 ~~~
