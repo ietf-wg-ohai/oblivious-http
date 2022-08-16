@@ -235,7 +235,7 @@ Oblivious HTTP has limited applicability.  Many uses of HTTP benefit
 from being able to carry state between requests, such as with cookies
 ({{?RFC6265}}), authentication ({{Section 11 of HTTP}}), or even
 alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
-at the transport layer, which must be used in conjunction with applications
+at the transport layer, and must be used in conjunction with applications
 that do not carry state between requests.
 
 Oblivious HTTP is primarily useful where privacy risks associated with possible
@@ -249,7 +249,8 @@ Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
 several ways in which Oblivious HTTP is more expensive than a direct request:
 
-* Each request requires at least two regular HTTP requests, which adds latency.
+* Each request requires at least two regular HTTP requests, which adds
+  processing latency.
 
 * Each request is expanded in size with additional HTTP fields,
   encryption-related metadata, and AEAD expansion.
@@ -412,8 +413,10 @@ new formats that are identified by new media types.
 
 HTTP message encapsulation uses HPKE for request and response encryption.
 
-An encapsulated HTTP request contains a binary-encoded HTTP message {{BINARY}}
-and no other fields; see {{fig-req-pt}}.
+By default, an encapsulated HTTP request contains a binary-encoded HTTP
+message {{BINARY}} and no other fields; see {{fig-req-pt}}. (Note that
+this encapsulation mechanism can also be reused for other message types
+as described in {{repurposing}}.)
 
 ~~~
 Request {
@@ -444,8 +447,8 @@ The Nenc parameter corresponding to the KEM used in HPKE can be found in
 {{Section 7.1 of !HPKE}}.  Nenc refers to the size of the encapsulated KEM
 shared secret, in bytes.
 
-An encrypted HTTP response includes a binary-encoded HTTP message {{BINARY}}
-and no other content; see {{fig-res-pt}}.
+By default, an encrypted HTTP response includes a binary-encoded HTTP
+message {{BINARY}} and no other content; see {{fig-res-pt}}.
 
 ~~~
 Response {
@@ -493,7 +496,8 @@ encoded HTTP request, `request`, as follows:
    integers, respectively, each in network byte order.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
-   request", a zero byte, and the header.
+   request", a zero byte, and the header.  See {{repurposing}} for discussion
+   of other media types.
 
 3. Create a sending HPKE context by invoking `SetupBaseS()` ({{Section 5.1.1 of
    HPKE}}) with the public key of the receiver `pkR` and `info`.  This yields
@@ -538,7 +542,8 @@ Encapsulated Request `enc_request`, a server:
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
    request", a zero byte, `keyID` as an 8-bit integer, plus `kemID`, `kdfID`,
-   and `aeadID` as three 16-bit integers.
+   and `aeadID` as three 16-bit integers.  See {{repurposing}} for discussion
+   of other media types.
 
 3. Create a receiving HPKE context by invoking `SetupBaseR()` ({{Section 5.1.1
    of HPKE}}) with `skR`, `enc`, and `info`.  This produces a context `rctxt`.
@@ -571,6 +576,7 @@ follows:
 1. Export a secret `secret` from `context`, using the string "message/bhttp
    response" as context.  The length of this secret is `max(Nn, Nk)`, where `Nn`
    and `Nk` are the length of AEAD key and nonce associated with `context`.
+   See {{repurposing}} for discussion of other media types.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called
    `response_nonce`.
@@ -922,7 +928,8 @@ improve traffic analysis.
 
 Clients can use padding to reduce the effectiveness of traffic analysis.
 Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
-BINARY}}.
+BINARY}}.  If other message types are defined for use ({{repurposing}}),
+those specifications ought to consider padding support.
 
 ## Server Responsibilities {#server-responsibilities}
 
@@ -1250,7 +1257,7 @@ interception might choose to disable Oblivious HTTP in order to ensure that
 content is accessible to middleboxes.
 
 
-# Repurposing the Encapsulation Format
+# Repurposing the Encapsulation Format {#repurposing}
 
 The encrypted payload of an OHTTP request and response is a binary HTTP
 message {{BINARY}}. Client and target agree on this encrypted payload type by
@@ -1263,8 +1270,9 @@ payload is appropriately reflected in the HPKE info and context strings. For
 example, if a future specification were to use the encryption mechanism in
 this specification for DNS messages, identified by the "application/dns-message"
 media type, then the HPKE info string SHOULD be "application/dns-message
-request" for request encryption, and the HPKE export context string should be
-"application/dns-message response" for response encryption.
+request", a zero byte, and the header for request encryption. Similarly,
+the HPKE export context string should be "application/dns-message response"
+for response encryption.
 
 
 # IANA Considerations
