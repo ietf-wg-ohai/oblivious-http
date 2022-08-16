@@ -976,7 +976,7 @@ protocols that reuse this encryption format, especially new versions of this
 protocol, can ensure key diversity by choosing a different label in their use of
 HPKE.  The "message/bhttp response" label was chosen for symmetry only as it
 provides key diversity only within the HPKE context created using the
-"message/bhttp request" label; see {{repurposing-the-encapsulation-format}}.
+"message/bhttp request" label; see {{repurposing}}.
 
 
 ## Replay Attacks {#replay}
