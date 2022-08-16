@@ -1275,7 +1275,7 @@ Please update the "Media Types" registry at
 and "message/ohttp-res" ({{iana-res}}).
 
 
-## message/ohttp-keys Media Type {#iana-keys}
+## application/ohttp-keys Media Type {#iana-keys}
 
 The "application/ohttp-keys" media type identifies a key configuration used by
 Oblivious HTTP.
