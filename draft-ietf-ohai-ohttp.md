@@ -684,7 +684,7 @@ indicating the content type, and the encapsulated response as the response
 content.  As with requests, additional fields MAY be used to convey information
 that does not reveal information about the encapsulated response.
 
-An Oblivious Gateway Resource that does not successfully receive a response can
+An Oblivious Gateway Resource that does not receive a response can itself
 generate a response with an appropriate error status code (such as 504 (Gateway
 Timeout); see {{Section 15.6.5 of HTTP}}), which is then encapsulated in the
 same way as a successful response.
