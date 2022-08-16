@@ -661,9 +661,10 @@ MUST NOT add information to the request without the client being aware of
 the type of information that might be added; see
 {{relay-responsibilities}} for more information on relay responsibilities.
 
-When a response is received from the Oblivious Gateway Resource, the
-Oblivious Relay Resource forwards the response according to the rules of an
-HTTP proxy; see {{Section 7.6 of HTTP}}.
+When a response is received from the Oblivious Gateway Resource, the Oblivious
+Relay Resource forwards the response according to the rules of an HTTP proxy;
+see {{Section 7.6 of HTTP}}.  In case of timeout or error, the Oblivious Relay
+Resource can generate a response with an appropriate status code.
 
 In order to achieve the privacy and security goals of the protocol an Oblivious
 Relay Resource also needs to observe the guidance in
@@ -683,9 +684,15 @@ indicating the content type, and the encapsulated response as the response
 content.  As with requests, additional fields MAY be used to convey information
 that does not reveal information about the encapsulated response.
 
+An Oblivious Gateway Resource that does not receive a response can itself
+generate a response with an appropriate error status code (such as 504 (Gateway
+Timeout); see {{Section 15.6.5 of HTTP}}), which is then encapsulated in the
+same way as a successful response.
+
 In order to achieve the privacy and security goals of the protocol an Oblivious
 Gateway Resource also needs to observe the guidance in
 {{server-responsibilities}}.
+
 
 ## Informational Responses
 
