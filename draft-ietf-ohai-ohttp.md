@@ -434,7 +434,7 @@ Encapsulated Request {
   KEM Identifier (16),
   KDF Identifier (16),
   AEAD Identifier (16),
-  Encapsulated KEM Shared Secret (8*Nenc),
+  Encapsulated KEM Shared Secret (8 * Nenc),
   AEAD-Protected Request (..),
 }
 ~~~
