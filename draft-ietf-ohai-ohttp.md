@@ -1217,11 +1217,12 @@ This section discusses various operational and deployment considerations.
 
 ## Performance Overhead
 
-Using Oblivious HTTP adds both cryptographic and latency to requests relative to
-a simple HTTP request-response exchange.  Deploying relay services that are on
-path between clients and servers avoids adding significant additional delay due
-to network topology.  A study of a similar system {{ODoH}} found that deploying
-proxies close to servers was most effective in minimizing additional latency.
+Using Oblivious HTTP adds both cryptographic overhead and latency to requests
+relative to a simple HTTP request-response exchange.  Deploying relay services
+that are on path between clients and servers avoids adding significant
+additional delay due to network topology.  A study of a similar system {{ODoH}}
+found that deploying proxies close to servers was most effective in minimizing
+additional latency.
 
 
 ## Resource Mappings {#proxy-state}
