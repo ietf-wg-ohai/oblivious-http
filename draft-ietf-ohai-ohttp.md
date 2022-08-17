@@ -684,10 +684,18 @@ indicating the content type, and the encapsulated response as the response
 content.  As with requests, additional fields MAY be used to convey information
 that does not reveal information about the encapsulated response.
 
-An Oblivious Gateway Resource that does not receive a response can itself
-generate a response with an appropriate error status code (such as 504 (Gateway
-Timeout); see {{Section 15.6.5 of HTTP}}), which is then encapsulated in the
+An Oblivious Gateway Resource that fails to process the decapsulated request
+or does not receive a response from the Target Resource can itself generate a
+response with an appropriate error status code (such as 400 (Bad Request) or
+504 (Gateway Timeout); see {{Section 15.5.1 of HTTP}} and
+{{Section 15.6.5 of HTTP}}, respectively), which is then encapsulated in the
 same way as a successful response.
+
+An Oblivious Gateway Resource which fails to decapsute as described in {{request}}
+because the Encapsulated Request key ID is invalid SHOULD send a 401 status code.
+Any other error that occurs prior to decapsulation SHOULD yield a response
+with a 400 status code. These errors are not encapsulated in the same way as
+successful responses; see {{errors}}.
 
 In order to achieve the privacy and security goals of the protocol an Oblivious
 Gateway Resource also needs to observe the guidance in
