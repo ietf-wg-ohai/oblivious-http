@@ -1553,7 +1553,7 @@ Registry name:  ohttp
 
 Specification:  [[THIS DOCUMENT]]
 
-Repository:  http://www.iana.org/assignments/dap
+Repository:  http://www.iana.org/assignments/ohttp
 
 Index value:  No transformation needed.
 ~~~
