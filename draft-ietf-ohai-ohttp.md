@@ -976,7 +976,7 @@ protocols that reuse this encryption format, especially new versions of this
 protocol, can ensure key diversity by choosing a different label in their use of
 HPKE.  The "message/bhttp response" label was chosen for symmetry only as it
 provides key diversity only within the HPKE context created using the
-"message/bhttp request" label; see {{repurposing-the-encapsulation-format}}.
+"message/bhttp request" label; see {{repurposing}}.
 
 
 ## Replay Attacks {#replay}
@@ -1258,7 +1258,7 @@ interception might choose to disable Oblivious HTTP in order to ensure that
 content is accessible to middleboxes.
 
 
-# Repurposing the Encapsulation Format
+# Repurposing the Encapsulation Format {#repurposing}
 
 The encrypted payload of an OHTTP request and response is a binary HTTP
 message {{BINARY}}. Client and target agree on this encrypted payload type by
@@ -1266,13 +1266,17 @@ specifying the media type "message/bhttp" in the HPKE info string and HPKE
 export context string for request and response encryption, respectively.
 
 Future specifications may repurpose the encapsulation mechanism described in
-{{hpke-encapsulation}}, provided that the content type of the encrypted
-payload is appropriately reflected in the HPKE info and context strings. For
-example, if a future specification were to use the encryption mechanism in
-this specification for DNS messages, identified by the "application/dns-message"
-media type, then the HPKE info string SHOULD be "application/dns-message
-request" for request encryption, and the HPKE export context string should be
-"application/dns-message response" for response encryption.
+{{hpke-encapsulation}}.  This requires that the specification define a new media
+type.  The encapsulation process for that content type can follow the same
+process, using new constant strings for the HPKE info and exporter
+context inputs.
+
+For example, a future specification might encapsulate DNS messages, which use
+the "application/dns-message" media type {{?RFC8484}}.  In the definition of a
+new, encrypted media type, the specification might define the use of string
+"application/dns-message request" (plus a zero byte and the header for the full
+value) for request encryption and the string "application/dns-message response"
+for response encryption.
 
 
 # IANA Considerations
