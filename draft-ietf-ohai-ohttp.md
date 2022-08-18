@@ -412,8 +412,9 @@ new formats that are identified by new media types.
 
 HTTP message encapsulation uses HPKE for request and response encryption.
 
-An encapsulated HTTP request contains a binary-encoded HTTP message {{BINARY}}
-and no other fields; see {{fig-req-pt}}.
+By default, an encapsulated HTTP request contains a binary-encoded HTTP message
+{{BINARY}} and no other fields; see {{fig-req-pt}}.  This Encapsulated Request
+format is identified by the ["message/ohttp-req" media type](#iana-req).
 
 ~~~
 Request {
@@ -444,8 +445,9 @@ The Nenc parameter corresponding to the KEM used in HPKE can be found in
 {{Section 7.1 of !HPKE}}.  Nenc refers to the size of the encapsulated KEM
 shared secret, in bytes.
 
-An encrypted HTTP response includes a binary-encoded HTTP message {{BINARY}}
-and no other content; see {{fig-res-pt}}.
+An encrypted HTTP response includes a binary-encoded HTTP message {{BINARY}} and
+no other content; see {{fig-res-pt}}.  This Encapsulated Request format is
+identified by the ["message/ohttp-res" media type](#iana-res).
 
 ~~~
 Response {
