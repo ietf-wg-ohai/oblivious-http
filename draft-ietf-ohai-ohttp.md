@@ -790,7 +790,7 @@ As a consequence of this configuration, Oblivious HTTP prevents linkability
 described above. Informally, this means:
 
 1. Requests and responses are known only to Clients and Target Resources, plus Oblivious Gateway Resources that possess
-   of the corresponding response encapsulation key and HPKE keying material.
+   the corresponding response encapsulation key and HPKE keying material.
    In particular, the Oblivious Relay knows the origin and destination of an
    Encapsulated Request and Response, yet does not know the decrypted
    contents. Likewise, Oblivious Gateway Resources learns only the Oblivious Relay Resource
