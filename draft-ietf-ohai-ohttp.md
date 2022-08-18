@@ -477,19 +477,19 @@ set to the larger of these two lengths, i.e., max(Nn, Nk).
 
 Clients encapsulate a request `request` using values from a key configuration:
 
-* the key identifier from the configuration, `keyID`, with the corresponding KEM
-  identified by `kemID`,
+* the key identifier from the configuration, `key_id`, with the corresponding KEM
+  identified by `kem_id`,
 
 * the public key from the configuration, `pkR`, and
 
-* a selected combination of KDF, identified by `kdfID`, and AEAD, identified by
-  `aeadID`.
+* a selected combination of KDF, identified by `kdf_id`, and AEAD, identified by
+  `aead_id`.
 
 The client then constructs an Encapsulated Request, `enc_request`, from a binary
 encoded HTTP request, `request`, as follows:
 
-1. Construct a message header, `hdr`, by concatenating the values of `keyID`,
-   `kemID`, `kdfID`, and `aeadID`, as one 8-bit integer and three 16-bit
+1. Construct a message header, `hdr`, by concatenating the values of `key_id`,
+   `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
    integers, respectively, each in network byte order.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
@@ -511,10 +511,10 @@ structure.
 In pseudocode, this procedure is as follows:
 
 ~~~
-hdr = concat(encode(1, keyID),
-             encode(2, kemID),
-             encode(2, kdfID),
-             encode(2, aeadID))
+hdr = concat(encode(1, key_id),
+             encode(2, kem_id),
+             encode(2, kdf_id),
+             encode(2, aead_id))
 info = concat(encode_str("message/bhttp request"),
               encode(1, 0),
               hdr)
@@ -526,19 +526,19 @@ enc_request = concat(hdr, enc, ct)
 Servers decrypt an Encapsulated Request by reversing this process. Given an
 Encapsulated Request `enc_request`, a server:
 
-1. Parses `enc_request` into `keyID`, `kemID`, `kdfID`, `aeadID`, `enc`, and
+1. Parses `enc_request` into `key_id`, `kem_id`, `kdf_id`, `aead_id`, `enc`, and
    `ct` (indicated using the function `parse()` in pseudocode). The server is
-   then able to find the HPKE private key, `skR`, corresponding to `keyID`.
+   then able to find the HPKE private key, `skR`, corresponding to `key_id`.
 
-   a. If `keyID` does not identify a key matching the type of `kemID`, the
+   a. If `key_id` does not identify a key matching the type of `kem_id`, the
       server returns an error.
 
-   b. If `kdfID` and `aeadID` identify a combination of KDF and AEAD that the
+   b. If `kdf_id` and `aead_id` identify a combination of KDF and AEAD that the
       server is unwilling to use with `skR`, the server returns an error.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
-   request", a zero byte, `keyID` as an 8-bit integer, plus `kemID`, `kdfID`,
-   and `aeadID` as three 16-bit integers.
+   request", a zero byte, `key_id` as an 8-bit integer, plus `kem_id`, `kdf_id`,
+   and `aead_id` as three 16-bit integers.
 
 3. Create a receiving HPKE context by invoking `SetupBaseR()` ({{Section 5.1.1
    of HPKE}}) with `skR`, `enc`, and `info`.  This produces a context `rctxt`.
@@ -550,13 +550,13 @@ Encapsulated Request `enc_request`, a server:
 In pseudocode, this procedure is as follows:
 
 ~~~
-keyID, kemID, kdfID, aeadID, enc, ct = parse(enc_request)
+key_id, kem_id, kdf_id, aead_id, enc, ct = parse(enc_request)
 info = concat(encode_str("message/bhttp request"),
               encode(1, 0),
-              encode(1, keyID),
-              encode(2, kemID),
-              encode(2, kdfID),
-              encode(2, aeadID))
+              encode(1, key_id),
+              encode(2, kem_id),
+              encode(2, kdf_id),
+              encode(2, aead_id))
 rctxt = SetupBaseR(enc, skR, info)
 request, error = rctxt.Open([], ct)
 ~~~
