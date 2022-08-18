@@ -12,5 +12,7 @@
 /lib
 /versioned/
 archive.json
-draft-thomson-http-oblivious.xml
+draft-ietf-ohai-ohttp.xml
+/node_modules/
+/package-lock.json
 report.xml
