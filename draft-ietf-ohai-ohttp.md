@@ -793,7 +793,7 @@ described above. Informally, this means:
    of the corresponding response encapsulation key and HPKE keying material.
    In particular, the Oblivious Relay knows the origin and destination of an
    Encapsulated Request and Response, yet does not know the decrypted
-   contents. Likewise, Oblivious Gateway Resources know only the Oblivious Relay Resource
+   contents. Likewise, Oblivious Gateway Resources learns only the Oblivious Relay Resource
    and the decrypted request. Only the Client knows both the
    plaintext request and response.
 1. Targets cannot link requests from the same Client in the absence of unique
