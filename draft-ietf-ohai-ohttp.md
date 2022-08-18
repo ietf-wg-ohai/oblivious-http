@@ -673,8 +673,20 @@ Relay Resource also needs to observe the guidance in
 An Oblivious Gateway Resource acts as a gateway for requests to the Target
 Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
-responding to errors it detects before removing encapsulation of the request;
-see {{errors}}.
+responding to errors it detects before removing encapsulation of the request.
+In particular, an Oblivious Gateway Resource which fails to decapsute as described
+in {{request}} because the Encapsulated Request key ID is invalid SHOULD send a
+4xx status code with "invalidConfiguration" error; see {{errors}} for additional
+guidance. Decapsulation failures for other reasons SHOULD result in a response
+with 4xx status code and "malformed" error. These errors are sent without
+encapsulation to the Oblivious Relay Resource.
+
+An Oblivious Gateway Resource that successfully decapsulates a request but then
+encounters another error, e.g., because the request is malformed or the Target
+Resource does not produce a response, can itself generate a response with an
+appropriate error status code (such as 400 (Bad Request) or 504 (Gateway Timeout);
+see {{Section 15.5.1 of HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).
+This response encapsulated in the same way as a successful response.
 
 An Oblivious Gateway Resource, if it receives any response from the Target
 Resource, sends a single 200 response containing the encapsulated response.
@@ -683,19 +695,6 @@ necessary to carry the encapsulated response: a 200 status code, a header field
 indicating the content type, and the encapsulated response as the response
 content.  As with requests, additional fields MAY be used to convey information
 that does not reveal information about the encapsulated response.
-
-An Oblivious Gateway Resource that fails to process the decapsulated request
-or does not receive a response from the Target Resource can itself generate a
-response with an appropriate error status code (such as 400 (Bad Request) or
-504 (Gateway Timeout); see {{Section 15.5.1 of HTTP}} and
-{{Section 15.6.5 of HTTP}}, respectively), which is then encapsulated in the
-same way as a successful response.
-
-An Oblivious Gateway Resource which fails to decapsulate as described in {{request}}
-because the Encapsulated Request key ID is invalid SHOULD send a 401 status code.
-Any other error that occurs prior to decapsulation SHOULD yield a response
-with a 400 status code. These errors are not encapsulated in the same way as
-successful responses; see {{errors}}.
 
 In order to achieve the privacy and security goals of the protocol an Oblivious
 Gateway Resource also needs to observe the guidance in
@@ -719,18 +718,23 @@ received.
 ## Errors
 
 A server that receives an invalid message for any reason MUST generate an HTTP
-response with a 4xx status code.
+response with a 4xx status code. When a server responds this way, it SHOULD provide
+additional information using a problem document {{!RFC7807}}. To facilitate automatic
+response to errors, this document defines the following standard tokens for use in
+the "type" field (within the OHTTP URN namespace "urn:ietf:params:ohai:ohttp:error:"):
 
-Errors detected by the Oblivious Relay Resource and errors detected by the
-Oblivious Gateway Resource before removing protection (including being unable to
-remove encapsulation for any reason) result in the status code being sent
-without protection in response to the POST request made to that resource.
+| Type                       | Description                                                      |
+|:---------------------------|:-----------------------------------------------------------------|
+| invalidConfiguration       | The configuration used for encapsulation was invalid or unknown. |
+| malformed                  | A request was malformed. |
 
-Errors detected by the Oblivious Gateway Resource after successfully removing
-encapsulation and errors detected by the Target Resource MUST be sent in an
-Encapsulated Response.
-
-
+This list is not exhaustive. Servers MAY return errors set to a URI other
+than those defined above. Servers MUST NOT use the OHTTP URN namespace for errors
+not listed in the appropriate IANA registry (see {{urn-space}}). The "instance"
+value MUST be the endpoint which generated the error response. Any error using
+a token in the table above refers to the full URN. For example, an error of
+type 'invalidConfiguration' refers to an error document with "type" value
+"urn:ietf:params:ohai:ohttp:error:invalidConfiguration".
 
 # Security Considerations {#security}
 
@@ -1537,6 +1541,26 @@ Recommended HTTP Status Code:
 Reference:
 : {{date-fix}} of this document
 {: spacing="compact"}
+
+## URN Sub-namespace for OHTTP (urn:ietf:params:ohai:ohttp) {#urn-space}
+
+The following value [will be/has been] registered in the "IETF URN
+Sub-namespace for Registered Protocol Parameter Identifiers" registry,
+following the template in {{!RFC3553}}:
+
+~~~
+Registry name:  ohttp
+
+Specification:  [[THIS DOCUMENT]]
+
+Repository:  http://www.iana.org/assignments/dap
+
+Index value:  No transformation needed.
+~~~
+
+Initial contents: The types and descriptions in the table in
+{{errors}} above, with the Reference field set to point to this
+specification.
 
 
 --- back
