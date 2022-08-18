@@ -288,10 +288,6 @@ map display).
 *[Oblivious Relay Resources]: #dfn-relay
 *[Oblivious Gateway Resources]: #dfn-gateway
 *[Target Resource]: #dfn-target
-*[Relay Request]: #dfn-relay-req
-*[Relay Response]: #dfn-relay-res
-*[Gateway Request]: #dfn-gateway-req
-*[Gateway Response]: #dfn-gateway-res
 
 Client:
 
@@ -331,26 +327,6 @@ Target Resource:
   logically handles only regular HTTP requests and responses and so might be
   ignorant of the use of Oblivious HTTP to reach it.
   {: anchor="dfn-target"}
-
-Relay Request:
-
-: An HTTP request from Client to Relay that contains an encapsulated request as the content.
-  {: anchor="dfn-relay-req"}
-
-Relay Response:
-
-: An HTTP response from Relay to Client that contains an encapsulated response as the content.
-  {: anchor="dfn-relay-res"}
-
-Gateway Request:
-
-: An HTTP request from Relay to Gateway that contains an encapsulated request as the content.
-  {: anchor="dfn-gateway-req"}
-
-Gateway Response:
-
-: An HTTP response from Gateway to Relay that contains an encapsulated response as the content.
-  {: anchor="dfn-gateway-res"}
 
 This draft includes pseudocode that uses the functions and conventions defined
 in {{!HPKE}}.
