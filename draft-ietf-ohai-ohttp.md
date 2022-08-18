@@ -691,7 +691,7 @@ response with an appropriate error status code (such as 400 (Bad Request) or
 {{Section 15.6.5 of HTTP}}, respectively), which is then encapsulated in the
 same way as a successful response.
 
-An Oblivious Gateway Resource which fails to decapsute as described in {{request}}
+An Oblivious Gateway Resource which fails to decapsulate as described in {{request}}
 because the Encapsulated Request key ID is invalid SHOULD send a 401 status code.
 Any other error that occurs prior to decapsulation SHOULD yield a response
 with a 400 status code. These errors are not encapsulated in the same way as
