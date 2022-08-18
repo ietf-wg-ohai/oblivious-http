@@ -1180,12 +1180,12 @@ Resource URI, the Oblivious Gateway key configuration (KeyConfig), and Oblivious
 Resource URI. A configuration is active if clients can successfully use it for interacting with with a target.
 
 Oblivious Relay and Gateway Resources can identify when requests use the same
-configuration by matching `KeyConfig.key_id` or the Oblivious Gateway
-Resource URI.  The Oblivious Gateway Resource might use the source address of
-requests to correlate requests that use an Oblivious Relay Resource run by the
-same operator.  If the Oblivious Gateway Resource is willing to use trial
-decryption, requests can be further separated into smaller groupings based on
-the keys that are used.
+configuration by matching the key ID from the key configuration or the Oblivious
+Gateway Resource URI.  The Oblivious Gateway Resource might use the source
+address of requests to correlate requests that use an Oblivious Relay Resource
+run by the same operator.  If the Oblivious Gateway Resource is willing to use
+trial decryption, requests can be further separated into smaller groupings based
+on the keys that are used.
 
 Each active client configuration partitions the client anonymity set. In practice,
 it is infeasible to reduce the number of active configurations to one. Enabling diversity in choice of
