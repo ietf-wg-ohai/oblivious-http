@@ -1272,8 +1272,8 @@ process, using new constant strings for the HPKE info and exporter
 context inputs.
 
 For example, a future specification might encapsulate DNS messages, which use
-the "application/dns-message" media type {{?RFC8484}}.  In the definition of a
-new, encrypted media type, the specification might define the use of string
+the "application/dns-message" media type {{?RFC8484}}.  In the definition of
+new, encrypted media types, specifications might define the use of string
 "application/dns-message request" (plus a zero byte and the header for the full
 value) for request encryption and the string "application/dns-message response"
 for response encryption.
