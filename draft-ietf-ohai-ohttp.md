@@ -628,6 +628,32 @@ Media types are used to identify Encapsulated Requests and Responses; see
 
 Evolution of the format of Encapsulated Requests and Responses is supported
 through the definition of new formats that are identified by new media types.
+New media types might be defined to use similar encapsulation with a different
+HTTP message format than in {{BINARY}}; see {{repurposing}} for guidance on
+reusing this encapsulation.  Alternatively, a new encapsulation method might be
+defined.
+
+
+## Repurposing the Encapsulation Format {#repurposing}
+
+The encrypted payload of an OHTTP request and response is a binary HTTP message
+{{BINARY}}.  The Client and Oblivious Gateway Resource agree on this encrypted
+payload type by specifying the media type "message/bhttp" in the HPKE info
+string and HPKE export context string for request and response encryption,
+respectively.
+
+Future specifications may repurpose the encapsulation mechanism described in
+this document.  This requires that the specification define a new media type.
+The encapsulation process for that content type can follow the same process,
+using new constant strings for the HPKE info and exporter context inputs.
+
+For example, a future specification might encapsulate DNS messages, which use
+the "application/dns-message" media type {{?RFC8484}}.  In creating a new,
+encrypted media types, specifications might define the use of string
+"application/dns-message request" (plus a zero byte and the header for the full
+value) for request encryption and the string "application/dns-message response"
+for response encryption.
+
 
 
 # HTTP Usage {#http-usage}
@@ -1258,27 +1284,6 @@ Oblivious HTTP has a simple key management design that is not trivially altered
 to enable interception by intermediaries.  Clients that are configured to enable
 interception might choose to disable Oblivious HTTP in order to ensure that
 content is accessible to middleboxes.
-
-
-# Repurposing the Encapsulation Format {#repurposing}
-
-The encrypted payload of an OHTTP request and response is a binary HTTP
-message {{BINARY}}. Client and target agree on this encrypted payload type by
-specifying the media type "message/bhttp" in the HPKE info string and HPKE
-export context string for request and response encryption, respectively.
-
-Future specifications may repurpose the encapsulation mechanism described in
-{{hpke-encapsulation}}.  This requires that the specification define a new media
-type.  The encapsulation process for that content type can follow the same
-process, using new constant strings for the HPKE info and exporter
-context inputs.
-
-For example, a future specification might encapsulate DNS messages, which use
-the "application/dns-message" media type {{?RFC8484}}.  In the definition of
-new, encrypted media types, specifications might define the use of string
-"application/dns-message request" (plus a zero byte and the header for the full
-value) for request encryption and the string "application/dns-message response"
-for response encryption.
 
 
 # IANA Considerations
