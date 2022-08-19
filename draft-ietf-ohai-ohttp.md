@@ -724,7 +724,7 @@ Encapsulated Response.  This might be because the request is malformed or the
 Target Resource does not produce a response.  In either case the Oblivious
 Gateway Resource can generate a response with an appropriate error status code
 (such as 400 (Bad Request) or 504 (Gateway Timeout); see {{Section 15.5.1 of
-HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).  This response
+HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).  This response is
 encapsulated in the same way as a successful response.
 
 Errors in the encapsulation of requests mean that responses cannot be
