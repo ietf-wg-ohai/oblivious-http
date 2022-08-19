@@ -728,10 +728,11 @@ HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).  This response
 encapsulated in the same way as a successful response.
 
 Errors in the encapsulation of requests mean that responses cannot be
-encapsulated.  The Oblivious Gateway Resource can generate and send a response
-with an error status to the Oblivious Relay Resource.  This response MAY be
-forwarded to the Client or treated by the Oblivious Relay Resource as a failure.
-If a Client receives a response that is not an Encapsulated Response, this could
+encapsulated.  This includes cases where the key configuration is incorrect or
+outdated.  The Oblivious Gateway Resource can generate and send a response with
+an error status to the Oblivious Relay Resource.  This response MAY be forwarded
+to the Client or treated by the Oblivious Relay Resource as a failure.  If a
+Client receives a response that is not an Encapsulated Response, this could
 indicate that the client configuration used to construct the request is
 incorrect or out of date.
 
