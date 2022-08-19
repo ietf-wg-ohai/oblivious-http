@@ -676,6 +676,13 @@ information it might forward in a response MUST be encapsulated, unless it is
 responding to errors it detects before removing encapsulation of the request;
 see {{errors}}.
 
+An Oblivious Gateway Resource that successfully decapsulates a request but then
+encounters another error, e.g., because the request is malformed or the Target
+Resource does not produce a response, can itself generate a response with an
+appropriate error status code (such as 400 (Bad Request) or 504 (Gateway Timeout);
+see {{Section 15.5.1 of HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).
+This response encapsulated in the same way as a successful response.
+
 An Oblivious Gateway Resource, if it receives any response from the Target
 Resource, sends a single 200 response containing the encapsulated response.
 Like the request from the client, this response MUST only contain those fields
