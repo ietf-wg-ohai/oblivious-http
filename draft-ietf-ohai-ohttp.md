@@ -655,7 +655,6 @@ value) for request encryption and the string "application/dns-message response"
 for response encryption.
 
 
-
 # HTTP Usage {#http-usage}
 
 A client interacts with the Oblivious Relay Resource by constructing an
@@ -957,7 +956,8 @@ improve traffic analysis.
 
 Clients can use padding to reduce the effectiveness of traffic analysis.
 Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
-BINARY}}.
+BINARY}}.  If the encapsulation format is used to protect a different message type
+(see {{repurposing}}), that message format might need to include padding support.
 
 ## Server Responsibilities {#server-responsibilities}
 
