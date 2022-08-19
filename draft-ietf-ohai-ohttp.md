@@ -235,8 +235,8 @@ Oblivious HTTP has limited applicability.  Many uses of HTTP benefit
 from being able to carry state between requests, such as with cookies
 ({{?RFC6265}}), authentication ({{Section 11 of HTTP}}), or even
 alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
-at the transport layer, which must be used in conjunction with applications
-that do not carry state between requests.
+at the transport layer, which is only useful for an application
+that does not carry state between requests.
 
 Oblivious HTTP is primarily useful where privacy risks associated with possible
 stateful treatment of requests are sufficiently large that the cost of
@@ -249,7 +249,8 @@ Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
 several ways in which Oblivious HTTP is more expensive than a direct request:
 
-* Each request requires at least two regular HTTP requests, which adds latency.
+* Each request requires at least two regular HTTP requests, which could
+  increase latency.
 
 * Each request is expanded in size with additional HTTP fields,
   encryption-related metadata, and AEAD expansion.
