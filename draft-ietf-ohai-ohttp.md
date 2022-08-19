@@ -765,14 +765,16 @@ interactions between those resources without affecting Client privacy.
 As a consequence of this configuration, Oblivious HTTP prevents linkability
 described above. Informally, this means:
 
-1. Requests and responses are known only to Clients and Target Resources, plus Oblivious Gateway Resources that possess
-   the corresponding response encapsulation key and HPKE keying material.
-   In particular, the Oblivious Relay knows the origin and destination of an
-   Encapsulated Request and Response, yet does not know the decrypted
-   contents. Likewise, Oblivious Gateway Resources learns only the Oblivious Relay Resource
-   and the decrypted request. Only the Client knows both the
-   plaintext request and response.
-1. Targets cannot link requests from the same Client in the absence of unique
+1. Requests and responses are known only to Clients and Target Resources, plus
+   Oblivious Gateway Resources that possess the corresponding response
+   encapsulation key and HPKE keying material.  In particular, the Oblivious
+   Relay knows the origin and destination of an Encapsulated Request and
+   Response, yet does not know the decrypted contents. Likewise, Oblivious
+   Gateway Resources learns only the Oblivious Relay Resource and the decrypted
+   request.  No entity other than the Client can see the plaintext request and
+   response and can attribute them to the Client.
+
+2. Targets cannot link requests from the same Client in the absence of unique
    per-Client keys.
 
 Traffic analysis that might affect these properties are outside the scope of
