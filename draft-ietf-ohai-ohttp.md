@@ -724,8 +724,21 @@ without protection in response to the POST request made to that resource.
 
 Errors detected by the Oblivious Gateway Resource after successfully removing
 encapsulation and errors detected by the Target Resource MUST be sent in an
-Encapsulated Response.
+Encapsulated Response.  This might be because the request is malformed or the
+Target Resource does not produce a response.  In either case the Oblivious
+Gateway Resource can generate a response with an appropriate error status code
+(such as 400 (Bad Request) or 504 (Gateway Timeout); see {{Section 15.5.1 of
+HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).  This response is
+encapsulated in the same way as a successful response.
 
+Errors in the encapsulation of requests mean that responses cannot be
+encapsulated.  This includes cases where the key configuration is incorrect or
+outdated.  The Oblivious Gateway Resource can generate and send a response with
+an error status to the Oblivious Relay Resource.  This response MAY be forwarded
+to the Client or treated by the Oblivious Relay Resource as a failure.  If a
+Client receives a response that is not an Encapsulated Response, this could
+indicate that the client configuration used to construct the request is
+incorrect or out of date.
 
 
 # Security Considerations {#security}
