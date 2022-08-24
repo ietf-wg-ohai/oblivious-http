@@ -751,7 +751,7 @@ As this response cannot be encrypted, it might not reach the Client.  A Client
 cannot rely on the Oblivious Gateway Resource using this problem type.  A Client
 might also be configured to disregard responses that are not encapsulated on the
 basis that they might be subject to observation or modification by an Oblivious
-Relay Resource.  A Client might manage the risk of a outdated key configuration
+Relay Resource.  A Client might manage the risk of an outdated key configuration
 using a heuristic approach whereby it periodically refreshes its key
 configuration if it receives a response with an error status code that has not
 been encapsulated.
