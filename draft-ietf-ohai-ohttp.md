@@ -727,6 +727,35 @@ encapsulation and errors detected by the Target Resource MUST be sent in an
 Encapsulated Response.
 
 
+## Signaling Key Configuration Problems {#ohttp-key-problem}
+
+The problem type {{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
+"https://iana.org/assignments/http-problem-types#ohttp-key" is defined.  An
+Oblivious Gateway Resource MAY use this problem type in a response to indicate
+that an Encapsulated Request used an outdated or incorrect key configuration.
+
+{{fig-key-problem}} shows an example response in HTTP/1.1 format.
+
+~~~ http-message
+HTTP/1.1 400 Bad Request
+Date: Mon, 07 Feb 2022 00:28:05 GMT
+Content-Type: application/problem+json
+Content-Length: 106
+
+{"type":"https://iana.org/assignments/http-problem-types#ohttp-key",
+"title": "key identifier unknown"}
+~~~
+{: #fig-key-problem title="Example Rejection of Key Configuration"}
+
+As this response cannot be encrypted, it might not reach the Client.  A Client
+cannot rely on the Oblivious Gateway Resource using this problem type.  A Client
+might also be configured to disregard responses that are not encapsulated on the
+basis that they might be subject to observation or modification by an Oblivious
+Relay Resource.  A Client might manage the risk of a outdated key configuration
+using a heuristic approach whereby it periodically refreshes its key
+configuration if it receives a response with an error status code that has not
+been encapsulated.
+
 
 # Security Considerations {#security}
 
@@ -1282,9 +1311,13 @@ request" for request encryption, and the HPKE export context string should be
 # IANA Considerations
 
 Please update the "Media Types" registry at
-<https://www.iana.org/assignments/media-types> for the media types
+<https://iana.org/assignments/media-types> for the media types
 "application/ohttp-keys" ({{iana-keys}}), "message/ohttp-req" ({{iana-req}}),
 and "message/ohttp-res" ({{iana-res}}).
+
+Please update the "HTTP Problem Types" registry at
+<https://iana.org/assignments/http-problem-types> for the types "date"
+({{iana-problem-date}}) and "ohttp-key" ({{iana-problem-ohttp-key}}).
 
 
 ## application/ohttp-keys Media Type {#iana-keys}
@@ -1516,7 +1549,7 @@ Change controller:
 {: spacing="compact"}
 
 
-## Registration of "date" Problem Type
+## Registration of "date" Problem Type {#iana-problem-date}
 
 IANA are requested to create a new entry in the "HTTP Problem Type" registry
 established by {{!PROBLEM}}.
@@ -1532,6 +1565,25 @@ Recommended HTTP Status Code:
 
 Reference:
 : {{date-fix}} of this document
+{: spacing="compact"}
+
+
+## Registration of "ohttp-key" Problem Type {#iana-problem-ohttp-key}
+
+IANA are requested to create a new entry in the "HTTP Problem Type" registry
+established by {{!PROBLEM}}.
+
+Type URI:
+: https://iana.org/assignments/http-problem-types#ohttp-key
+
+Title:
+: Oblivious HTTP key configuration not acceptable
+
+Recommended HTTP Status Code:
+: 400
+
+Reference:
+: {{ohttp-key-problem}} of this document
 {: spacing="compact"}
 
 
