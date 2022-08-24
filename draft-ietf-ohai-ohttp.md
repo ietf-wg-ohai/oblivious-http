@@ -412,9 +412,13 @@ new formats that are identified by new media types.
 
 HTTP message encapsulation uses HPKE for request and response encryption.
 
-By default, an encapsulated HTTP request contains a binary-encoded HTTP message
-{{BINARY}} and no other fields; see {{fig-req-pt}}.  This Encapsulated Request
-format is identified by the ["message/ohttp-req" media type](#iana-req).
+This document defines how a binary-encoded HTTP request {{BINARY}} is
+encapsulated.  This Encapsulated Request format is identified by the
+["`message/ohttp-req`" media type](#iana-req).  Alternative encapsulations or
+message formats are indicated using the media type.
+
+The content of "`message/ohttp-req`" request encapsulation contains only a
+binary HTTP message; see {{fig-req-pt}}.
 
 ~~~
 Request {
@@ -445,9 +449,13 @@ The Nenc parameter corresponding to the KEM used in HPKE can be found in
 {{Section 7.1 of !HPKE}}.  Nenc refers to the size of the encapsulated KEM
 shared secret, in bytes.
 
-An encrypted HTTP response includes a binary-encoded HTTP message {{BINARY}} and
-no other content; see {{fig-res-pt}}.  This Encapsulated Request format is
-identified by the ["message/ohttp-res" media type](#iana-res).
+This document defines how a binary-encoded HTTP request {{BINARY}} is
+encapsulated.  This Encapsulated Response format is identified by the
+["`message/ohttp-res`" media type](#iana-res).  Alternative encapsulations or
+message formats are indicated using the media type.
+
+The content of "`message/ohttp-res`" response encapsulation contains only a
+binary HTTP message; see {{fig-res-pt}}.
 
 ~~~
 Response {
@@ -495,7 +503,8 @@ encoded HTTP request, `request`, as follows:
    integers, respectively, each in network byte order.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
-   request", a zero byte, and the header.
+   request", a zero byte, and the header.  Note: {{repurposing}} discusses how
+   alternative message formats might use a different `info` value.
 
 3. Create a sending HPKE context by invoking `SetupBaseS()` ({{Section 5.1.1 of
    HPKE}}) with the public key of the receiver `pkR` and `info`.  This yields
@@ -573,6 +582,8 @@ follows:
 1. Export a secret `secret` from `context`, using the string "message/bhttp
    response" as context.  The length of this secret is `max(Nn, Nk)`, where `Nn`
    and `Nk` are the length of AEAD key and nonce associated with `context`.
+   Note: {{repurposing}} discusses how alternative message formats might use a
+   different `context` value.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called
    `response_nonce`.
@@ -956,8 +967,9 @@ improve traffic analysis.
 
 Clients can use padding to reduce the effectiveness of traffic analysis.
 Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
-BINARY}}.  If the encapsulation format is used to protect a different message type
-(see {{repurposing}}), that message format might need to include padding support.
+BINARY}}.  If the encapsulation method described in this document is used to
+protect a different message type (see {{repurposing}}), that message format
+might need to include padding support.
 
 ## Server Responsibilities {#server-responsibilities}
 
