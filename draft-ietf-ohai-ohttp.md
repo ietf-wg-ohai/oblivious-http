@@ -410,15 +410,24 @@ new formats that are identified by new media types.
 
 # HPKE Encapsulation
 
-HTTP message encapsulation uses HPKE for request and response encryption.
+This document defines how a binary-encoded HTTP message {{BINARY}} is
+encapsulated using HPKE {{!HPKE}}.  Separate media types are defined to
+distinguish request and response messages:
 
-This document defines how a binary-encoded HTTP request {{BINARY}} is
-encapsulated.  This Encapsulated Request format is identified by the
-["`message/ohttp-req`" media type](#iana-req).  Alternative encapsulations or
-message formats are indicated using the media type.
+* An Encapsulated Request format defined in {{req-format}} is identified by the
+  ["`message/ohttp-req`" media type](#iana-req).
 
-The content of "`message/ohttp-req`" request encapsulation contains only a
-binary HTTP message; see {{fig-req-pt}}.
+* An Encapsulated Response format defined in {{res-format}} is identified by the
+  ["`message/ohttp-res`" media type](#iana-res).
+
+Alternative encapsulations or message formats are indicated using the media
+type; see {{req-res-media}} and {{repurposing}}.
+
+
+## Request Format {#req-format}
+
+A message in "`message/ohttp-req`" format protects a binary HTTP request
+message; see {{fig-req-pt}}.
 
 ~~~
 Request {
@@ -427,11 +436,14 @@ Request {
 ~~~
 {: #fig-req-pt title="Plaintext Request Content"}
 
-An Encapsulated Request is comprised of a key identifier and a HPKE-protected
-request message. HPKE protection includes an encapsulated KEM shared secret (or
-`enc`), plus the AEAD-protected request message. An Encapsulated Request is
-shown in {{fig-enc-request}}. {{request}} describes the process for constructing
-and processing an Encapsulated Request.
+This plaintext Request is encapsulated into a message in "`message/ohttp-req`"
+form by generating an Encapsulated Request.  An Encapsulated Request is
+comprised of a key identifier; HPKE parameters for the chosen KEM, KDF, and
+AEAD; the encapsulated KEM shared secret (or `enc`); and the HPKE-protected
+binary HTTP request message.
+
+An Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes
+the process for constructing and processing an Encapsulated Request.
 
 ~~~
 Encapsulated Request {
@@ -440,7 +452,7 @@ Encapsulated Request {
   KDF Identifier (16),
   AEAD Identifier (16),
   Encapsulated KEM Shared Secret (8 * Nenc),
-  AEAD-Protected Request (..),
+  HPKE-Protected Request (..),
 }
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
@@ -449,13 +461,11 @@ The Nenc parameter corresponding to the KEM used in HPKE can be found in
 {{Section 7.1 of !HPKE}}.  Nenc refers to the size of the encapsulated KEM
 shared secret, in bytes.
 
-This document defines how a binary-encoded HTTP request {{BINARY}} is
-encapsulated.  This Encapsulated Response format is identified by the
-["`message/ohttp-res`" media type](#iana-res).  Alternative encapsulations or
-message formats are indicated using the media type.
 
-The content of "`message/ohttp-res`" response encapsulation contains only a
-binary HTTP message; see {{fig-res-pt}}.
+## Response Format {#res-format}
+
+A message in "`message/ohttp-res`" format protects a binary HTTP response
+message; see {{fig-res-pt}}.
 
 ~~~
 Response {
@@ -464,9 +474,12 @@ Response {
 ~~~
 {: #fig-res-pt title="Plaintext Response Content"}
 
-Responses are bound to requests and so consist only of AEAD-protected content.
-{{response}} describes the process for constructing and processing an
-Encapsulated Response.
+This plaintext Response is encapsulated into a message in "`message/ohttp-res`"
+form by generating an Encapsulated Response.  An Encapsulated Response is
+comprised of a nonce and the AEAD-protected binary HTTP response message.
+
+An Encapsulated Response is shown in {{fig-enc-response}}. {{response}} describes
+the process for constructing and processing an Encapsulated Response.
 
 ~~~
 Encapsulated Response {
@@ -475,7 +488,6 @@ Encapsulated Response {
 }
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
-
 
 The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
 defined in {{Section 7.3 of !HPKE}}.  Nn and Nk refer to the size of the AEAD
@@ -530,7 +542,7 @@ info = concat(encode_str("message/bhttp request"),
               encode(1, 0),
               hdr)
 enc, sctxt = SetupBaseS(pkR, info)
-ct = sctxt.Seal([], request)
+ct = sctxt.Seal("", request)
 enc_request = concat(hdr, enc, ct)
 ~~~
 
@@ -569,7 +581,7 @@ info = concat(encode_str("message/bhttp request"),
               encode(2, kdfID),
               encode(2, aeadID))
 rctxt = SetupBaseR(enc, skR, info)
-request, error = rctxt.Open([], ct)
+request, error = rctxt.Open("", ct)
 ~~~
 
 
@@ -632,7 +644,8 @@ the AEAD. Decrypting might produce an error, as follows:
 reponse, error = Open(aead_key, aead_nonce, "", ct)
 ~~~
 
-## Request and Response Media Types
+
+## Request and Response Media Types {#req-res-media}
 
 Media types are used to identify Encapsulated Requests and Responses; see
 {{iana-req}} and {{iana-res}} for definitions of these media types.
