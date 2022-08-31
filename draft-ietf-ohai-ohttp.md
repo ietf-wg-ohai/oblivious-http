@@ -523,7 +523,7 @@ info = concat(encode_str("message/bhttp request"),
               encode(1, 0),
               hdr)
 enc, sctxt = SetupBaseS(pkR, info)
-ct = sctxt.Seal([], request)
+ct = sctxt.Seal("", request)
 enc_request = concat(hdr, enc, ct)
 ~~~
 
@@ -562,7 +562,7 @@ info = concat(encode_str("message/bhttp request"),
               encode(2, kdf_id),
               encode(2, aead_id))
 rctxt = SetupBaseR(enc, skR, info)
-request, error = rctxt.Open([], ct)
+request, error = rctxt.Open("", ct)
 ~~~
 
 
