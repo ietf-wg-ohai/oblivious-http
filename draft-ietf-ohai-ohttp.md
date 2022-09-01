@@ -660,9 +660,8 @@ needs to observe the guidance in {{client-responsibilities}}.
 The Oblivious Relay Resource interacts with the Oblivious Gateway Resource as an
 HTTP client by constructing a request using the same restrictions as the Client
 request, except that the target URI is the Oblivious Gateway Resource.  The
-content of this request is copied from the Client.  If the content of the Client
-request is empty, the Oblivious Relay Resource MUST return an error to the Client
-without forwarding the request to the Oblivious Gateway Resource. The Oblivious Relay
+content of this request is copied from the Client.  An Oblivious Relay Resource MAY reject
+requests that are obviously invalid, such as a request with no content. The Oblivious Relay
 Resource MUST NOT add information to the request without the Client being aware of
 the type of information that might be added; see {{relay-responsibilities}} for
 more information on relay responsibilities.
