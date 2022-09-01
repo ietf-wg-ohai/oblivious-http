@@ -414,10 +414,24 @@ new formats that are identified by new media types.
 
 # HPKE Encapsulation
 
-HTTP message encapsulation uses HPKE for request and response encryption.
+This document defines how a binary-encoded HTTP message {{BINARY}} is
+encapsulated using HPKE {{!HPKE}}.  Separate media types are defined to
+distinguish request and response messages:
 
-An encapsulated HTTP request contains a binary-encoded HTTP message {{BINARY}}
-and no other fields; see {{fig-req-pt}}.
+* An Encapsulated Request format defined in {{req-format}} is identified by the
+  ["`message/ohttp-req`" media type](#iana-req).
+
+* An Encapsulated Response format defined in {{res-format}} is identified by the
+  ["`message/ohttp-res`" media type](#iana-res).
+
+Alternative encapsulations or message formats are indicated using the media
+type; see {{req-res-media}} and {{repurposing}}.
+
+
+## Request Format {#req-format}
+
+A message in "`message/ohttp-req`" format protects a binary HTTP request
+message; see {{fig-req-pt}}.
 
 ~~~
 Request {
@@ -426,11 +440,14 @@ Request {
 ~~~
 {: #fig-req-pt title="Plaintext Request Content"}
 
-An Encapsulated Request is comprised of a key identifier and a HPKE-protected
-request message. HPKE protection includes an encapsulated KEM shared secret (or
-`enc`), plus the AEAD-protected request message. An Encapsulated Request is
-shown in {{fig-enc-request}}. {{request}} describes the process for constructing
-and processing an Encapsulated Request.
+This plaintext Request is encapsulated into a message in "`message/ohttp-req`"
+form by generating an Encapsulated Request.  An Encapsulated Request is
+comprised of a key identifier; HPKE parameters for the chosen KEM, KDF, and
+AEAD; the encapsulated KEM shared secret (or `enc`); and the HPKE-protected
+binary HTTP request message.
+
+An Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes
+the process for constructing and processing an Encapsulated Request.
 
 ~~~
 Encapsulated Request {
@@ -439,7 +456,7 @@ Encapsulated Request {
   KDF Identifier (16),
   AEAD Identifier (16),
   Encapsulated KEM Shared Secret (8 * Nenc),
-  AEAD-Protected Request (..),
+  HPKE-Protected Request (..),
 }
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
@@ -448,8 +465,11 @@ The Nenc parameter corresponding to the KEM used in HPKE can be found in
 {{Section 7.1 of !HPKE}}.  Nenc refers to the size of the encapsulated KEM
 shared secret, in bytes.
 
-An encrypted HTTP response includes a binary-encoded HTTP message {{BINARY}}
-and no other content; see {{fig-res-pt}}.
+
+## Response Format {#res-format}
+
+A message in "`message/ohttp-res`" format protects a binary HTTP response
+message; see {{fig-res-pt}}.
 
 ~~~
 Response {
@@ -458,9 +478,12 @@ Response {
 ~~~
 {: #fig-res-pt title="Plaintext Response Content"}
 
-Responses are bound to requests and so consist only of AEAD-protected content.
-{{response}} describes the process for constructing and processing an
-Encapsulated Response.
+This plaintext Response is encapsulated into a message in "`message/ohttp-res`"
+form by generating an Encapsulated Response.  An Encapsulated Response is
+comprised of a nonce and the AEAD-protected binary HTTP response message.
+
+An Encapsulated Response is shown in {{fig-enc-response}}. {{response}} describes
+the process for constructing and processing an Encapsulated Response.
 
 ~~~
 Encapsulated Response {
@@ -469,7 +492,6 @@ Encapsulated Response {
 }
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
-
 
 The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
 defined in {{Section 7.3 of !HPKE}}.  Nn and Nk refer to the size of the AEAD
@@ -497,7 +519,8 @@ encoded HTTP request, `request`, as follows:
    integers, respectively, each in network byte order.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
-   request", a zero byte, and the header.
+   request", a zero byte, and the header.  Note: {{repurposing}} discusses how
+   alternative message formats might use a different `info` value.
 
 3. Create a sending HPKE context by invoking `SetupBaseS()` ({{Section 5.1.1 of
    HPKE}}) with the public key of the receiver `pkR` and `info`.  This yields
@@ -575,6 +598,8 @@ follows:
 1. Export a secret `secret` from `context`, using the string "message/bhttp
    response" as context.  The length of this secret is `max(Nn, Nk)`, where `Nn`
    and `Nk` are the length of AEAD key and nonce associated with `context`.
+   Note: {{repurposing}} discusses how alternative message formats might use a
+   different `context` value.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called
    `response_nonce`.
@@ -623,13 +648,39 @@ the AEAD. Decrypting might produce an error, as follows:
 reponse, error = Open(aead_key, aead_nonce, "", ct)
 ~~~
 
-## Request and Response Media Types
+
+## Request and Response Media Types {#req-res-media}
 
 Media types are used to identify Encapsulated Requests and Responses; see
 {{iana-req}} and {{iana-res}} for definitions of these media types.
 
 Evolution of the format of Encapsulated Requests and Responses is supported
 through the definition of new formats that are identified by new media types.
+New media types might be defined to use similar encapsulation with a different
+HTTP message format than in {{BINARY}}; see {{repurposing}} for guidance on
+reusing this encapsulation.  Alternatively, a new encapsulation method might be
+defined.
+
+
+## Repurposing the Encapsulation Format {#repurposing}
+
+The encrypted payload of an OHTTP request and response is a binary HTTP message
+{{BINARY}}.  The Client and Oblivious Gateway Resource agree on this encrypted
+payload type by specifying the media type "message/bhttp" in the HPKE info
+string and HPKE export context string for request and response encryption,
+respectively.
+
+Future specifications may repurpose the encapsulation mechanism described in
+this document.  This requires that the specification define a new media type.
+The encapsulation process for that content type can follow the same process,
+using new constant strings for the HPKE info and exporter context inputs.
+
+For example, a future specification might encapsulate DNS messages, which use
+the "application/dns-message" media type {{?RFC8484}}.  In creating a new,
+encrypted media types, specifications might define the use of string
+"application/dns-message request" (plus a zero byte and the header for the full
+value) for request encryption and the string "application/dns-message response"
+for response encryption.
 
 
 # HTTP Usage {#http-usage}
@@ -949,7 +1000,9 @@ improve traffic analysis.
 
 Clients can use padding to reduce the effectiveness of traffic analysis.
 Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
-BINARY}}.
+BINARY}}.  If the encapsulation method described in this document is used to
+protect a different message type (see {{repurposing}}), that message format
+might need to include padding support.
 
 ## Server Responsibilities {#server-responsibilities}
 
@@ -996,7 +1049,7 @@ protocols that reuse this encryption format, especially new versions of this
 protocol, can ensure key diversity by choosing a different label in their use of
 HPKE.  The "message/bhttp response" label was chosen for symmetry only as it
 provides key diversity only within the HPKE context created using the
-"message/bhttp request" label; see {{repurposing-the-encapsulation-format}}.
+"message/bhttp request" label; see {{repurposing}}.
 
 
 ## Replay Attacks {#replay}
@@ -1274,23 +1327,6 @@ Oblivious HTTP has a simple key management design that is not trivially altered
 to enable interception by intermediaries.  Clients that are configured to enable
 interception might choose to disable Oblivious HTTP in order to ensure that
 content is accessible to middleboxes.
-
-
-# Repurposing the Encapsulation Format
-
-The encrypted payload of an OHTTP request and response is a binary HTTP
-message {{BINARY}}. Client and target agree on this encrypted payload type by
-specifying the media type "message/bhttp" in the HPKE info string and HPKE
-export context string for request and response encryption, respectively.
-
-Future specifications may repurpose the encapsulation mechanism described in
-{{hpke-encapsulation}}, provided that the content type of the encrypted
-payload is appropriately reflected in the HPKE info and context strings. For
-example, if a future specification were to use the encryption mechanism in
-this specification for DNS messages, identified by the "application/dns-message"
-media type, then the HPKE info string SHOULD be "application/dns-message
-request" for request encryption, and the HPKE export context string should be
-"application/dns-message response" for response encryption.
 
 
 # IANA Considerations
