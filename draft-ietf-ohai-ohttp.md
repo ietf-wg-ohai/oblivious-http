@@ -44,6 +44,7 @@ informative:
   HTTP3:
     =: RFC9114
     display: HTTP/3
+  COOKIES: RFC6265
 
   Dingledine2004:
     title: "Tor: The Second-Generation Onion Router"
@@ -233,7 +234,7 @@ shown in {{fig-overview}}:
 
 Oblivious HTTP has limited applicability.  Many uses of HTTP benefit
 from being able to carry state between requests, such as with cookies
-({{?RFC6265}}), authentication ({{Section 11 of HTTP}}), or even
+({{COOKIES}}), authentication ({{Section 11 of HTTP}}), or even
 alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
 at the transport layer, which is only useful for an application
 that does not carry state between requests.
@@ -695,7 +696,7 @@ request content. In the request to the Oblivious Relay Resource, Clients MAY
 include additional fields. However, those fields MUST be independent of the
 Encapsulated Request and MUST be fields that the Oblivious Relay Resource will
 remove before forwarding the Encapsulated Request towards the target, such as the
-Connection or Proxy-Authorization header fields {{?SEMANTICS=RFC9110}}.
+Connection or Proxy-Authorization header fields {{HTTP}}.
 
 The Client role in this protocol acts as an HTTP client both with respect to the
 Oblivious Relay Resource and the Target Resource.  For the request the Clients
@@ -897,7 +898,7 @@ directly to the target at the cost of either privacy or performance.
 Clients cannot carry connection-level state between requests as they only
 establish direct connections to the relay responsible for the Oblivious Relay
 resource.  However, the content of requests might be used by a server to
-correlate requests.  Cookies {{?COOKIES=RFC6265}} are the most obvious feature
+correlate requests.  Cookies {{COOKIES}} are the most obvious feature
 that might be used to correlate requests, but any identity information and
 authentication credentials might have the same effect.  Clients also need to
 treat information learned from responses with similar care when constructing
@@ -1307,7 +1308,7 @@ for ensuring that Client configurations are consistent between Clients.
 
 The content of requests or responses, if used in forming new requests, can be
 used to correlate requests.  This includes obvious methods of linking requests,
-like cookies {{?COOKIES}}, but it also includes any information in either
+like cookies {{COOKIES}}, but it also includes any information in either
 message that might affect how subsequent requests are formulated. For example,
 {{FIELDING}} describes how interactions that are individually stateless can be
 used to build a stateful system when a Client acts on the content of a response.
