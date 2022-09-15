@@ -290,9 +290,10 @@ map display).
 
 Client:
 
-: This document uses its own definition of Client.  When referring to the HTTP
-  definition of client ({{Section 3.3 of HTTP}}), the term "HTTP client" is
-  used; see {{http-usage}}.
+: A Client originates Oblivious HTTP requests.  A Client is also an HTTP client
+  in two ways: for the Target Resource and for the Oblivious Relay
+  Resource. However, when referring to the HTTP definition of client ({{Section
+  3.3 of HTTP}}), the term "HTTP client" is used; see {{http-usage}}.
   {: anchor="dfn-client"}
 
 Encapsulated Request:
