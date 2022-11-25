@@ -1240,9 +1240,9 @@ then deleting the old keys after a suitable period.
 
 This design does not provide post-compromise security for responses.
 
-A Client only needs to retain keying material that might be used compromise the
-confidentiality and integrity of a response until that response is consumed, so
-there is negligible risk associated with a Client compromise.
+A Client only needs to retain keying material that might be used to compromise
+the confidentiality and integrity of a response until that response is consumed,
+so there is negligible risk associated with a Client compromise.
 
 A server retains a secret key that might be used to remove protection from
 messages over much longer periods. A server compromise that provided access to
@@ -1256,8 +1256,8 @@ protected by TLS.  Use of a compromised key also requires that the Oblivious
 Relay Resource cooperate with the attacker or that the attacker is able to
 compromise these TLS connections.
 
-The total number of affected messages affected by server key compromise can be
-limited by regular rotation of server keys.
+The total number of messages affected by server key compromise can be limited by
+regular rotation of server keys.
 
 
 ## Client Clock Exposure
@@ -1277,7 +1277,7 @@ acceptable window.
 One goal of this design is that independent Client requests are only linkable by
 their content.  However, the choice of Client configuration might be used to
 correlate requests.  A Client configuration includes the Oblivious Relay
-Resource URI, the Oblivious Gateway key configuration (KeyConfig), and Oblivious Gateway
+Resource URI, the Oblivious Gateway key configuration, and Oblivious Gateway
 Resource URI. A configuration is active if Clients can successfully use it for interacting with with a target.
 
 Oblivious Relay and Gateway Resources can identify when requests use the same
@@ -1295,9 +1295,9 @@ configurations.  A small number of configurations might need to be active to
 allow for key rotation and server maintenance.
 
 Client privacy depends on having each configuration used by many other Clients.
-It is critical prevent the use of unique Client configurations, which might be
-used to track of individual Clients, but it is also important to avoid creating
-small groupings of Clients that might weaken privacy protections.
+It is critical to prevent the use of unique Client configurations, which might
+be used to track of individual Clients, but it is also important to avoid
+creating small groupings of Clients that might weaken privacy protections.
 
 A specific method for a Client to acquire configurations is not included in this
 specification.  Applications using this design MUST provide accommodations to
