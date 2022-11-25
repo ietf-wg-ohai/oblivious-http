@@ -1149,9 +1149,10 @@ Oblivious Gateway Resource then rejects requests if the request is the same as
 one that was previously answered within that time window, or if the `Date`
 header field from the decrypted request is outside of the current time window.
 
-Oblivious Gateway Resources SHOULD allow for the time it takes requests to
-arrive from the Client, with a time window that is large enough to allow for
-differences in clocks.
+Oblivious Gateway Resources might need to allow for the time it takes requests
+to arrive from the Client, with a time window that is large enough to allow for
+differences in clocks.  Insufficient tolerance of time differences could result
+in valid requests being unnecessarily rejected.
 
 Oblivious Gateway Resources MUST NOT treat the time window as secret
 information. An attacker can actively probe with different values for the `Date`
