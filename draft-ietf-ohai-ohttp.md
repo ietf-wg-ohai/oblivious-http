@@ -385,7 +385,7 @@ HPKE Symmetric Algorithms {
   HPKE AEAD ID (16),
 }
 
-OHTTP Key Config {
+Key Config {
   Key Identifier (8),
   HPKE KEM ID (16),
   HPKE Public Key (Npk * 8),
@@ -667,7 +667,7 @@ defined.
 
 ## Repurposing the Encapsulation Format {#repurposing}
 
-The encrypted payload of an OHTTP request and response is a binary HTTP message
+The encrypted payload of an Oblivious HTTP request and response is a binary HTTP message
 {{BINARY}}.  The Client and Oblivious Gateway Resource agree on this encrypted
 payload type by specifying the media type "message/bhttp" in the HPKE info
 string and HPKE export context string for request and response encryption,
