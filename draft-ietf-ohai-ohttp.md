@@ -689,15 +689,15 @@ for response encryption.
 
 A Client interacts with the Oblivious Relay Resource by constructing an
 Encapsulated Request.  This Encapsulated Request is included as the content of a
-POST request to the Oblivious Relay Resource.  This request MUST only contain
-those fields necessary to carry the Encapsulated Request: a method of POST, a
-target URI of the Oblivious Relay Resource, a header field containing
-the content type (see ({{iana-req}}), and the Encapsulated Request as the
-request content. In the request to the Oblivious Relay Resource, Clients MAY
-include additional fields. However, those fields MUST be independent of the
-Encapsulated Request and MUST be fields that the Oblivious Relay Resource will
-remove before forwarding the Encapsulated Request towards the target, such as the
-Connection or Proxy-Authorization header fields {{HTTP}}.
+POST request to the Oblivious Relay Resource.  This request only needs those
+fields necessary to carry the Encapsulated Request: a method of POST, a target
+URI of the Oblivious Relay Resource, a header field containing the content type
+(see ({{iana-req}}), and the Encapsulated Request as the request content. In the
+request to the Oblivious Relay Resource, Clients MAY include additional
+fields. However, additional fields MUST be independent of the Encapsulated
+Request and MUST be fields that the Oblivious Relay Resource will remove before
+forwarding the Encapsulated Request towards the target, such as the Connection
+or Proxy-Authorization header fields {{HTTP}}.
 
 The Client role in this protocol acts as an HTTP client both with respect to the
 Oblivious Relay Resource and the Target Resource.  For the request the Clients
