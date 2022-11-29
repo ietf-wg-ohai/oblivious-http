@@ -597,9 +597,10 @@ Given an HPKE context `context`, a request message `request`, and a response
 `response`, servers generate an Encapsulated Response `enc_response` as
 follows:
 
-1. Export a secret `secret` from `context`, using the string "message/bhttp
-   response" as context.  The length of this secret is `max(Nn, Nk)`, where `Nn`
-   and `Nk` are the length of AEAD key and nonce associated with `context`.
+1. Export a secret, `secret`, from `context`, using the string "message/bhttp
+   response" as the `exporter_context` parameter to `context.Export`; see
+   {{Section 5.3 of !HPKE}}.  The length of this secret is `max(Nn, Nk)`, where
+   `Nn` and `Nk` are the length of AEAD key and nonce associated with `context`.
    Note: {{repurposing}} discusses how alternative message formats might use a
    different `context` value.
 
