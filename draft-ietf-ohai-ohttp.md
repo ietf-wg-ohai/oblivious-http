@@ -461,8 +461,9 @@ Encapsulated Request {
 {: #fig-enc-request title="Encapsulated Request"}
 
 The Nenc parameter corresponding to the KEM used in HPKE can be found in
-{{Section 7.1 of !HPKE}}.  Nenc refers to the size of the encapsulated KEM
-shared secret, in bytes.
+{{Section 7.1 of !HPKE}} or [the HPKE KEM IANA
+registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).  Nenc
+refers to the size of the encapsulated KEM shared secret, in bytes.
 
 
 ## Response Format {#res-format}
@@ -493,9 +494,11 @@ Encapsulated Response {
 {: #fig-enc-response title="Encapsulated Response"}
 
 The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
-defined in {{Section 7.3 of !HPKE}}.  Nn and Nk refer to the size of the AEAD
-nonce and key respectively, in bytes.  The Encapsulated Response nonce length is
-set to the larger of these two lengths, i.e., max(Nn, Nk).
+defined in {{Section 7.3 of !HPKE}} or [the HPKE AEAD IANA
+registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  Nn
+and Nk refer to the size of the AEAD nonce and key respectively, in bytes.  The
+Encapsulated Response nonce length is set to the larger of these two lengths,
+i.e., max(Nn, Nk).
 
 
 ## Encapsulation of Requests {#request}
