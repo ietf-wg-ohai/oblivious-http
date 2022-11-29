@@ -144,7 +144,7 @@ attributed to them or linked to other requests.
 
 # Overview
 
-A Oblivious HTTP Client must initially know the following:
+An Oblivious HTTP Client must initially know the following:
 
 * The identity of an Oblivious Gateway Resource.  This might include some
   information about what Target Resources the Oblivious Gateway Resource
@@ -503,7 +503,7 @@ i.e., max(Nn, Nk).
 
 ## Encapsulation of Requests {#request}
 
-Clients encapsulate a request `request` using values from a key configuration:
+Clients encapsulate a request, `request`, using values from a key configuration:
 
 * the key identifier from the configuration, `key_id`, with the corresponding KEM
   identified by `kem_id`,
@@ -593,8 +593,8 @@ request, error = rctxt.Open("", ct)
 
 ## Encapsulation of Responses {#response}
 
-Given an HPKE context `context`, a request message `request`, and a response
-`response`, servers generate an Encapsulated Response `enc_response` as
+Given an HPKE context, `context`; a request message, `request`; and a response,
+`response`, servers generate an Encapsulated Response, `enc_response`, as
 follows:
 
 1. Export a secret, `secret`, from `context`, using the string "message/bhttp
@@ -610,13 +610,13 @@ follows:
 3. Extract a pseudorandom key `prk` using the `Extract` function provided by
    the KDF algorithm associated with `context`. The `ikm` input to this
    function is `secret`; the `salt` input is the concatenation of `enc` (from
-   `enc_request`) and `response_nonce`
+   `enc_request`) and `response_nonce`.
 
 4. Use the `Expand` function provided by the same KDF to extract an AEAD key
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
    with `context`. Generating `aead_key` uses a label of "key".
 
-5. Use the same `Expand` function to extract a nonce `nonce` of length `Nn` -
+5. Use the same `Expand` function to extract a nonce, `nonce`, of length `Nn` -
    the length of the nonce used by the AEAD. Generating `aead_nonce` uses a
    label of "nonce".
 
@@ -701,7 +701,7 @@ forwarding the Encapsulated Request towards the target, such as the Connection
 or Proxy-Authorization header fields {{HTTP}}.
 
 The Client role in this protocol acts as an HTTP client both with respect to the
-Oblivious Relay Resource and the Target Resource.  For the request the Clients
+Oblivious Relay Resource and the Target Resource.  For the request, the Clients
 makes to the Target Resource, this diverges from typical HTTP assumptions about
 the use of a connection (see {{Section 3.3 of HTTP}}) in that the request and
 response are encrypted rather than sent over a connection.  The Oblivious Relay
@@ -940,7 +940,7 @@ for the purposes of serving an Oblivious Relay Resource, but additional care is
 needed to ensure that Client privacy is maintained.
 
 Firstly, a generic implementation will forward unknown fields.  For Oblivious
-HTTP, a Oblivious Relay Resource SHOULD NOT forward unknown fields.  Though
+HTTP, an Oblivious Relay Resource SHOULD NOT forward unknown fields.  Though
 Clients are not expected to include fields that might contain identifying
 information, removing unknown fields removes this privacy risk.
 
@@ -950,7 +950,7 @@ information about the Client, such as the Via field or the Forwarded field
 requests that might be used to identify Clients, with the exception of
 information that a Client is aware of.
 
-Finally, a relay can also generate responses, though it assumed to not be able
+Finally, a relay can also generate responses, though it is assumed to not be able
 to examine the content of a request (other than to observe the choice of key
 identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
 Encapsulated Response.
@@ -1056,7 +1056,7 @@ If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
 relay for managing denial of service; see {{dos}}.
 
-Nonsecure requests - such those with the "http" scheme as opposed to the "https"
+Nonsecure requests - such as those with the "http" scheme as opposed to the "https"
 scheme - SHOULD NOT be used if the Oblivious Gateway and Target Resources are
 operated by different entities as that would expose both requests and response
 to modification or inspection by a network attacker.
