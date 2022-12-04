@@ -31,6 +31,7 @@ normative:
   HTTP: RFC9110
   QUIC: RFC9000
   TLS: RFC8446
+  HPKE: RFC9180
 
 informative:
 
@@ -129,17 +130,22 @@ to correlate behavior. This imposes considerable performance and efficiency over
 to the additional round trip to the server (at a minumum), additional data exchanged, and
 additional CPU cost of cryptographic computations.
 
-This document defines two kinds of HTTP resources -- Oblivious Relay Resources
-and Oblivious Gateway Resources -- that process encapsulated binary HTTP messages
-{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). They can be composed to
-protect the content of encapsulated requests and responses, thereby separating the identity of a
-requester from the request.
+To overcome these limitations, this document defines how encapsulated binary
+HTTP messages {{BINARY}} can be encrypted using Hybrid Public Key Encryption
+(HPKE; {{HPKE}}) to protect their contents. Clients exchange these messages with
+an Oblivious Gateway Resource, which is responsible for forwarding unencrypted
+requests to the original Target Resource and encrypting the corresponding
+responses and sending them back to the client. Critically, the encrypted,
+encapsulated messages are sent through a separate Oblivious Relay Resource to
+avoid exposing the client's IP address or allowing the connection to be used as
+a correlator between its requests.
 
-Although this scheme requires support for two new kinds of oblivious resources,
-it represents a performance improvement over options
-that perform just one request in each connection. With limited trust placed in the
-Oblivious Relay Resource (see {{security}}), Clients are assured that requests are not uniquely
-attributed to them or linked to other requests.
+Because it allows connection reuse between the client and Oblivious Relay
+Resource, as well as between that relay and the Oblivious Gateway Resource, this
+scheme represents a performance improvement over using just one request in each
+connection.  With limited trust placed in the Oblivious Relay Resource (see
+{{security}}), Clients are assured that requests are not uniquely attributed to
+them or linked to other requests.
 
 
 # Overview
