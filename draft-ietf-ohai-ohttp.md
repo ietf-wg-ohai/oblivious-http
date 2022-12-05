@@ -280,8 +280,8 @@ map display).
 
 *[client]: #dfn-client
 *[clients]: #dfn-client
-*[Encapsulated Request]: #dfn-enc-req
-*[Encapsulated Response]: #dfn-enc-res
+*[encapsulated request]: #dfn-enc-req
+*[encapsulated response]: #dfn-enc-res
 *[Oblivious Relay Resource]: #dfn-relay
 *[Oblivious Gateway Resource]: #dfn-gateway
 *[Oblivious Relay Resources]: #dfn-relay
@@ -296,13 +296,13 @@ client:
   3.3 of HTTP}}), the term "HTTP client" is used; see {{http-usage}}.
   {: anchor="dfn-client"}
 
-Encapsulated Request:
+encapsulated request:
 
 : An HTTP request that is encapsulated in an HPKE-encrypted message; see
   {{request}}.
   {: anchor="dfn-enc-req"}
 
-Encapsulated Response:
+encapsulated response:
 
 : An HTTP response that is encapsulated in an HPKE-encrypted message; see
   {{response}}.
@@ -417,10 +417,10 @@ This document defines how a binary-encoded HTTP message {{BINARY}} is
 encapsulated using HPKE {{!HPKE}}.  Separate media types are defined to
 distinguish request and response messages:
 
-* An Encapsulated Request format defined in {{req-format}} is identified by the
+* An encapsulated request format defined in {{req-format}} is identified by the
   ["`message/ohttp-req`" media type](#iana-req).
 
-* An Encapsulated Response format defined in {{res-format}} is identified by the
+* An encapsulated response format defined in {{res-format}} is identified by the
   ["`message/ohttp-res`" media type](#iana-res).
 
 Alternative encapsulations or message formats are indicated using the media
@@ -440,13 +440,13 @@ Request {
 {: #fig-req-pt title="Plaintext Request Content"}
 
 This plaintext Request is encapsulated into a message in "`message/ohttp-req`"
-form by generating an Encapsulated Request.  An Encapsulated Request is
+form by generating an encapsulated request.  An encapsulated request is
 comprised of a key identifier; HPKE parameters for the chosen KEM, KDF, and
 AEAD; the encapsulated KEM shared secret (or `enc`); and the HPKE-protected
 binary HTTP request message.
 
-An Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes
-the process for constructing and processing an Encapsulated Request.
+An encapsulated request is shown in {{fig-enc-request}}. {{request}} describes
+the process for constructing and processing an encapsulated request.
 
 ~~~
 Encapsulated Request {
@@ -479,11 +479,11 @@ Response {
 {: #fig-res-pt title="Plaintext Response Content"}
 
 This plaintext Response is encapsulated into a message in "`message/ohttp-res`"
-form by generating an Encapsulated Response.  An Encapsulated Response is
+form by generating an encapsulated response.  An encapsulated response is
 comprised of a nonce and the AEAD-protected binary HTTP response message.
 
-An Encapsulated Response is shown in {{fig-enc-response}}. {{response}} describes
-the process for constructing and processing an Encapsulated Response.
+An encapsulated response is shown in {{fig-enc-response}}. {{response}} describes
+the process for constructing and processing an encapsulated response.
 
 ~~~
 Encapsulated Response {
@@ -497,7 +497,7 @@ The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
 defined in {{Section 7.3 of !HPKE}} or [the HPKE AEAD IANA
 registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  Nn
 and Nk refer to the size of the AEAD nonce and key respectively, in bytes.  The
-Encapsulated Response nonce length is set to the larger of these two lengths,
+encapsulated response nonce length is set to the larger of these two lengths,
 i.e., max(Nn, Nk).
 
 
@@ -513,7 +513,7 @@ Clients encapsulate a request, `request`, using values from a key configuration:
 * a selected combination of KDF, identified by `kdf_id`, and AEAD, identified by
   `aead_id`.
 
-The client then constructs an Encapsulated Request, `enc_request`, from a binary
+The client then constructs an encapsulated request, `enc_request`, from a binary
 encoded HTTP request, `request`, as follows:
 
 1. Construct a message header, `hdr`, by concatenating the values of `key_id`,
@@ -552,8 +552,8 @@ ct = sctxt.Seal("", request)
 enc_request = concat(hdr, enc, ct)
 ~~~
 
-Servers decrypt an Encapsulated Request by reversing this process. Given an
-Encapsulated Request `enc_request`, a server:
+Servers decrypt an encapsulated request by reversing this process. Given an
+encapsulated request `enc_request`, a server:
 
 1. Parses `enc_request` into `key_id`, `kem_id`, `kdf_id`, `aead_id`, `enc`, and
    `ct` (indicated using the function `parse()` in pseudocode). The server is
@@ -594,7 +594,7 @@ request, error = rctxt.Open("", ct)
 ## Encapsulation of Responses {#response}
 
 Given an HPKE context, `context`; a request message, `request`; and a response,
-`response`, servers generate an Encapsulated Response, `enc_response`, as
+`response`, servers generate an encapsulated response, `enc_response`, as
 follows:
 
 1. Export a secret, `secret`, from `context`, using the string "message/bhttp
@@ -623,7 +623,7 @@ follows:
 6. Encrypt `response`, passing the AEAD function Seal the values of `aead_key`,
    `aead_nonce`, an empty `aad`, and a `pt` input of `response`, which yields `ct`.
 
-7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
+7. Concatenate `response_nonce` and `ct`, yielding an encapsulated response
    `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
    ambiguity in parsing either `response_nonce` or `ct`.
 
@@ -640,7 +640,7 @@ ct = Seal(aead_key, aead_nonce, "", response)
 enc_response = concat(response_nonce, ct)
 ~~~
 
-Clients decrypt an Encapsulated Response by reversing this process. That is,
+Clients decrypt an encapsulated response by reversing this process. That is,
 they first parse `enc_response` into `response_nonce` and `ct`. They then
 follow the same process to derive values for `aead_key` and `aead_nonce`.
 
@@ -654,10 +654,10 @@ reponse, error = Open(aead_key, aead_nonce, "", ct)
 
 ## Request and Response Media Types {#req-res-media}
 
-Media types are used to identify Encapsulated Requests and Responses; see
+Media types are used to identify encapsulated requests and Responses; see
 {{iana-req}} and {{iana-res}} for definitions of these media types.
 
-Evolution of the format of Encapsulated Requests and Responses is supported
+Evolution of the format of encapsulated requests and Responses is supported
 through the definition of new formats that are identified by new media types.
 New media types might be defined to use similar encapsulation with a different
 HTTP message format than in {{BINARY}}; see {{repurposing}} for guidance on
@@ -689,15 +689,15 @@ for response encryption.
 # HTTP Usage {#http-usage}
 
 A client interacts with the Oblivious Relay Resource by constructing an
-Encapsulated Request.  This Encapsulated Request is included as the content of a
+encapsulated request.  This encapsulated request is included as the content of a
 POST request to the Oblivious Relay Resource.  This request only needs those
-fields necessary to carry the Encapsulated Request: a method of POST, a target
+fields necessary to carry the encapsulated request: a method of POST, a target
 URI of the Oblivious Relay Resource, a header field containing the content type
-(see ({{iana-req}}), and the Encapsulated Request as the request content. In the
+(see ({{iana-req}}), and the encapsulated request as the request content. In the
 request to the Oblivious Relay Resource, clients MAY include additional
 fields. However, additional fields MUST be independent of the Encapsulated
 Request and MUST be fields that the Oblivious Relay Resource will remove before
-forwarding the Encapsulated Request towards the target, such as the Connection
+forwarding the encapsulated request towards the target, such as the Connection
 or Proxy-Authorization header fields {{HTTP}}.
 
 The client role in this protocol acts as an HTTP client both with respect to the
@@ -779,7 +779,7 @@ without protection in response to the POST request made to that resource.
 
 Errors detected by the Oblivious Gateway Resource after successfully removing
 encapsulation and errors detected by the target resource MUST be sent in an
-Encapsulated Response.  This might be because the request is malformed or the
+encapsulated response.  This might be because the request is malformed or the
 target resource does not produce a response.  In either case the Oblivious
 Gateway Resource can generate a response with an appropriate error status code
 (such as 400 (Bad Request) or 504 (Gateway Timeout); see {{Section 15.5.1 of
@@ -791,7 +791,7 @@ encapsulated.  This includes cases where the key configuration is incorrect or
 outdated.  The Oblivious Gateway Resource can generate and send a response with
 a 4xx status code to the Oblivious Relay Resource.  This response MAY be
 forwarded to the client or treated by the Oblivious Relay Resource as a failure.
-If a client receives a response that is not an Encapsulated Response, this could
+If a client receives a response that is not an encapsulated response, this could
 indicate that the client configuration used to construct the request is
 incorrect or out of date.
 
@@ -800,7 +800,7 @@ incorrect or out of date.
 The problem type {{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
 "https://iana.org/assignments/http-problem-types#ohttp-key" is defined.  An
 Oblivious Gateway Resource MAY use this problem type in a response to indicate
-that an Encapsulated Request used an outdated or incorrect key configuration.
+that an encapsulated request used an outdated or incorrect key configuration.
 
 {{fig-key-problem}} shows an example response in HTTP/1.1 format.
 
@@ -840,7 +840,7 @@ without linking that request with either:
 
 In order to ensure this, the client selects a relay (that serves the
 Oblivious Relay Resource) that it trusts will protect this information
-by forwarding the Encapsulated Request and Response without passing it
+by forwarding the encapsulated request and response without passing it
 to the server (that serves the Oblivious Gateway Resource).
 
 In this section, a deployment where there are three entities is considered:
@@ -866,8 +866,8 @@ described above. Informally, this means:
 1. Requests and responses are known only to clients and target resources, plus
    Oblivious Gateway Resources that possess the corresponding response
    encapsulation key and HPKE keying material.  In particular, the Oblivious
-   Relay knows the origin and destination of an Encapsulated Request and
-   Response, yet does not know the decrypted contents. Likewise, Oblivious
+   Relay knows the origin and destination of an encapsulated request and
+   response, yet does not know the decrypted contents. Likewise, Oblivious
    Gateway Resources learns only the Oblivious Relay Resource and the decrypted
    request.  No entity other than the client can see the plaintext request and
    response and can attribute them to the client.
@@ -884,7 +884,7 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 ## Client Responsibilities
 
 Clients MUST ensure that the key configuration they select for generating
-Encapsulated Requests is integrity protected and authenticated so that it can
+encapsulated requests is integrity protected and authenticated so that it can
 be attributed to the Oblivious Gateway Resource; see {{key-configuration}}.
 
 Since clients connect directly to the Oblivious Relay Resource instead of the target resource, application
@@ -913,7 +913,7 @@ relay.
 
 The request the client sends to the Oblivious Relay Resource only requires
 minimal information; see {{http-usage}}. The request that carries the
-Encapsulated Request and is sent to the Oblivious Relay Resource MUST NOT
+encapsulated request and is sent to the Oblivious Relay Resource MUST NOT
 include identifying information unless the client ensures that this information
 is removed by the relay. A client MAY include information only for the
 Oblivious Relay Resource in header fields identified by the Connection header
@@ -921,9 +921,9 @@ field if it trusts the relay to remove these as required by Section 7.6.1 of
 {{HTTP}}. The client needs to trust that the relay does not replicate the
 source addressing information in the request it forwards.
 
-Clients rely on the Oblivious Relay Resource to forward Encapsulated Requests
+Clients rely on the Oblivious Relay Resource to forward encapsulated requests
 and responses. However, the relay can only refuse to forward messages, it
-cannot inspect or modify the contents of Encapsulated Requests or responses.
+cannot inspect or modify the contents of encapsulated requests or responses.
 
 
 ## Relay Responsibilities
@@ -953,7 +953,7 @@ information that a client is aware of.
 Finally, a relay can also generate responses, though it is assumed to not be able
 to examine the content of a request (other than to observe the choice of key
 identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
-Encapsulated Response.
+encapsulated response.
 
 ### Differential Treatment
 
@@ -1008,7 +1008,7 @@ request and prevents a network observer from being able to trivially correlate
 messages on either side of a relay.  However, using HTTPS does not prevent
 traffic analysis by such network observers.
 
-The time at which Encapsulated Request or response messages are sent can
+The time at which encapsulated request or response messages are sent can
 reveal information to a network observer. Though messages exchanged between the
 Oblivious Relay Resource and the Oblivious Gateway Resource might be sent in a
 single connection, traffic analysis could be used to match messages that are
@@ -1046,7 +1046,7 @@ the Oblivious Gateway Resource and target resource.
 
 A server that operates both Oblivious Gateway and target resources is
 responsible for removing request encryption, generating a response to the
-Encapsulated Request, and encrypting the response.
+encapsulated request, and encrypting the response.
 
 Servers should account for traffic analysis based on response size or generation
 time.  Techniques such as padding or timing delays can help protect against such
@@ -1072,7 +1072,7 @@ been replaced, the server can respond with an HTTP 422 (Unprocessable Content)
 status code.
 
 A server can also use a 422 status code if the server has a key that corresponds
-to the key identifier, but the Encapsulated Request cannot be successfully
+to the key identifier, but the encapsulated request cannot be successfully
 decrypted using the key.
 
 A server MUST ensure that the HPKE keys it uses are not valid for any other
@@ -1092,7 +1092,7 @@ the effect of replays does not adversely affect clients or resources.
 Encrypted requests can be copied and replayed by the Oblivious Relay
 resource. The threat model for Oblivious HTTP allows the possibility that an
 Oblivious Relay Resource might replay requests. Furthermore, if a client sends
-an Encapsulated Request in TLS early data (see {{Section 8 of TLS}} and
+an encapsulated request in TLS early data (see {{Section 8 of TLS}} and
 {{!RFC8470}}), a network-based adversary might be able to cause the request to
 be replayed. In both cases, the effect of a replay attack and the mitigations
 that might be employed are similar to TLS early data.
@@ -1138,7 +1138,7 @@ replayed.
 
 ### Use of Date for Anti-Replay
 
-Clients SHOULD include a `Date` header field in Encapsulated Requests, unless
+Clients SHOULD include a `Date` header field in encapsulated requests, unless
 the Oblivious Gateway Resource does not use `Date` for anti-replay purposes.
 
 Though HTTP requests often do not include a `Date` header field, the value of
@@ -1708,7 +1708,7 @@ And an `info` parameter of:
 ~~~
 
 Applying the Seal operation from the HPKE context produces an encrypted
-message, allowing the client to construct the following Encapsulated Request:
+message, allowing the client to construct the following encapsulated request:
 
 ~~~ hex-dump
 010020000100014b28f881333e7c164ffc499ad9796f877f4e1051ee6d31bad1
@@ -1725,7 +1725,7 @@ Host: proxy.example.org
 Content-Type: message/ohttp-req
 Content-Length: 78
 
-<content is the Encapsulated Request above>
+<content is the encapsulated request above>
 ~~~
 
 The Oblivious Relay Resource receives this request and forwards it to the
@@ -1737,7 +1737,7 @@ Host: example.com
 Content-Type: message/ohttp-req
 Content-Length: 78
 
-<content is the Encapsulated Request above>
+<content is the encapsulated request above>
 ~~~
 
 The Oblivous Gateway Resource receives this request, selects the key it
@@ -1758,7 +1758,7 @@ The response is constructed by extracting a secret from the HPKE context:
 62d87a6ba569ee81014c2641f52bea36
 ~~~
 
-The key derivation for the Encapsulated Response uses both the encapsulated KEM
+The key derivation for the encapsulated response uses both the encapsulated KEM
 key from the request and a randomly selected nonce. This produces a salt of:
 
 ~~~ hex-dump
@@ -1788,7 +1788,7 @@ f6bf1aeb88d6df87007fa263
 ~~~
 
 The AEAD `Seal()` function is then used to encrypt the response, which is added
-to the randomized nonce value to produce the Encapsulated Response:
+to the randomized nonce value to produce the encapsulated response:
 
 ~~~ hex-dump
 c789e7151fcba46158ca84b04464910d86f9013e404feea014e7be4a441f234f
@@ -1804,12 +1804,12 @@ Cache-Control: private, no-store
 Content-Type: message/ohttp-res
 Content-Length: 38
 
-<content is the Encapsulated Response>
+<content is the encapsulated response>
 ~~~
 
 The same response might then be generated by the Oblivious Relay Resource which
 might change as little as the Date header. The client is then able to use the
-HPKE context it created and the nonce from the Encapsulated Response to
+HPKE context it created and the nonce from the encapsulated response to
 construct the AEAD key and nonce and decrypt the response.
 
 
