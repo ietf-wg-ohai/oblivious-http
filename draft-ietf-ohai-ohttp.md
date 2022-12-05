@@ -204,7 +204,7 @@ shown in {{fig-overview}}:
    encapsulates that message using HPKE and the process from {{request}}.
 
 3. The client sends a POST request to the oblivious relay resource with the
-   Encapsulated Request as the content of that message.
+   encapsulated request as the content of that message.
 
 4. The oblivious relay resource forwards this request to the oblivious gateway
    resource.
@@ -695,8 +695,8 @@ fields necessary to carry the encapsulated request: a method of POST, a target
 URI of the oblivious relay resource, a header field containing the content type
 (see ({{iana-req}}), and the encapsulated request as the request content. In the
 request to the oblivious relay resource, clients MAY include additional
-fields. However, additional fields MUST be independent of the Encapsulated
-Request and MUST be fields that the oblivious relay resource will remove before
+fields. However, additional fields MUST be independent of the encapsulated
+request and MUST be fields that the oblivious relay resource will remove before
 forwarding the encapsulated request towards the target, such as the Connection
 or Proxy-Authorization header fields {{HTTP}}.
 
