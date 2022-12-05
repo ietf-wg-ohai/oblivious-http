@@ -35,6 +35,9 @@ normative:
 informative:
 
   CONSISTENCY: I-D.wood-key-consistency
+  HTTP11:
+    =: RFC9112
+    display: HTTP/1.1
   HTTP2:
     =: RFC9113
     display: HTTP/2
@@ -1105,11 +1108,11 @@ universally applicable and suggestions for more targeted techniques.
 A Client or Oblivious Relay Resource MUST NOT automatically attempt to retry a
 failed request unless it receives a positive signal indicating that the request
 was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code ({{Section
-8.1.4 of HTTP2}}), the HTTP/3 H3_REQUEST_REJECTED error code ({{Section 8.1
-of HTTP3}}), or a GOAWAY frame with a low enough
-identifier (in either protocol version) are all sufficient signals that no
-processing occurred. Connection failures or interruptions are not sufficient
-signals that no processing occurred.
+8.1.4 of HTTP2}}), the HTTP/3 H3_REQUEST_REJECTED error code ({{Section 8.1 of
+HTTP3}}), or a GOAWAY frame with a low enough identifier (in either protocol
+version) are all sufficient signals that no processing occurred. HTTP/1.1
+{{?HTTP11}} provides no equivalent signal.  Connection failures or interruptions
+are not sufficient signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
 applicable to Oblivious HTTP requests. The encapsulated keying material (or
