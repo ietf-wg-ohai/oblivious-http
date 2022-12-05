@@ -130,13 +130,13 @@ to correlate behavior. This imposes considerable performance and efficiency over
 to the additional round trip to the server (at a minumum), additional data exchanged, and
 additional CPU cost of cryptographic computations.
 
-To overcome these limitations, this document defines how encapsulated binary
-HTTP messages {{BINARY}} can be encrypted using Hybrid Public Key Encryption
+To overcome these limitations, this document defines how binary
+HTTP messages {{BINARY}} can be encapsulated using Hybrid Public Key Encryption
 (HPKE; {{HPKE}}) to protect their contents. Clients exchange these messages with
-an Oblivious Gateway Resource, which is responsible for forwarding unencrypted
+an Oblivious Gateway Resource, which is responsible for forwarding decapsulated
 requests to the original Target Resource and encrypting the corresponding
-responses and sending them back to the client. Critically, the encrypted,
-encapsulated messages are sent through a separate Oblivious Relay Resource to
+responses and sending them back to the client. Critically, the encapsulated
+messages are sent through a separate Oblivious Relay Resource to
 avoid exposing the client's IP address or allowing the connection to be used as
 a correlator between its requests.
 
