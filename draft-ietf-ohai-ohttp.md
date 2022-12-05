@@ -129,7 +129,7 @@ to correlate behavior. This imposes considerable performance and efficiency over
 to the additional round trip to the server (at a minumum), additional data exchanged, and
 additional CPU cost of cryptographic computations.
 
-This document defines two kinds of HTTP resources -- Oblivious Relay Resources
+This document defines two kinds of HTTP resources -- oblivious relay resources
 and oblivious gateway resources -- that process encapsulated binary HTTP messages
 {{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). They can be composed to
 protect the content of encapsulated requests and responses, thereby separating the identity of a
@@ -138,7 +138,7 @@ requester from the request.
 Although this scheme requires support for two new kinds of oblivious resources,
 it represents a performance improvement over options
 that perform just one request in each connection. With limited trust placed in the
-Oblivious Relay Resource (see {{security}}), clients are assured that requests are not uniquely
+oblivious relay resource (see {{security}}), clients are assured that requests are not uniquely
 attributed to them or linked to other requests.
 
 
@@ -154,11 +154,11 @@ An Oblivious HTTP client must initially know the following:
   accepts, including an identifier for that key and the HPKE algorithms that
   are used with that key.
 
-* The identity of an Oblivious Relay Resource that will accept relay requests
+* The identity of an oblivious relay resource that will accept relay requests
   carrying an encapsulated request as its content and forward the content in
   these requests to a single oblivious gateway resource. See {{proxy-state}}
-  for more information about the mapping between Oblivious Relay and Gateway
-  Resources.
+  for more information about the mapping between oblivious relay and gateway
+  resources.
 
 This information allows the client to make a request of a target resource with
 that resource having only a limited ability to correlate that request with the
@@ -203,10 +203,10 @@ shown in {{fig-overview}}:
 2. The client encodes the HTTP request in a binary HTTP message and then
    encapsulates that message using HPKE and the process from {{request}}.
 
-3. The client sends a POST request to the Oblivious Relay Resource with the
+3. The client sends a POST request to the oblivious relay resource with the
    Encapsulated Request as the content of that message.
 
-4. The Oblivious Relay Resource forwards this request to the Oblivious Gateway
+4. The oblivious relay resource forwards this request to the Oblivious Gateway
    resource.
 
 5. The oblivious gateway resource receives this request and removes
@@ -219,9 +219,9 @@ shown in {{fig-overview}}:
 
 8. The oblivious gateway resource encapsulates the HTTP response following the
    process in {{response}} and sends this in response to the request from the
-   Oblivious Relay Resource.
+   oblivious relay resource.
 
-9. The Oblivious Relay Resource forwards this response to the client.
+9. The oblivious relay resource forwards this response to the client.
 
 10. The client removes the encapsulation to obtain the response to the original
     request.
@@ -291,8 +291,8 @@ map display).
 client:
 
 : A client originates Oblivious HTTP requests.  A client is also an HTTP client
-  in two ways: for the target resource and for the Oblivious Relay
-  Resource. However, when referring to the HTTP definition of client ({{Section
+  in two ways: for the target resource and for the oblivious relay
+  resource. However, when referring to the HTTP definition of client ({{Section
   3.3 of HTTP}}), the term "HTTP client" is used; see {{http-usage}}.
   {: anchor="dfn-client"}
 
@@ -704,8 +704,8 @@ The client role in this protocol acts as an HTTP client both with respect to the
 oblivious relay resource and the target resource.  For the request, the clients
 makes to the target resource, this diverges from typical HTTP assumptions about
 the use of a connection (see {{Section 3.3 of HTTP}}) in that the request and
-response are encrypted rather than sent over a connection.  The Oblivious Relay
-Resource and the oblivious gateway resource also act as HTTP clients toward the
+response are encrypted rather than sent over a connection.  The oblivious relay
+resource and the oblivious gateway resource also act as HTTP clients toward the
 oblivious gateway resource and target resource respectively.
 
 In order to achieve the privacy and security goals of the protocol a client also
@@ -715,18 +715,18 @@ The oblivious relay resource interacts with the oblivious gateway resource as an
 HTTP client by constructing a request using the same restrictions as the client
 request, except that the target URI is the oblivious gateway resource.  The
 content of this request is copied from the client.  An oblivious relay resource MAY reject
-requests that are obviously invalid, such as a request with no content. The Oblivious Relay
-Resource MUST NOT add information to the request without the client being aware of
+requests that are obviously invalid, such as a request with no content. The oblivious relay
+resource MUST NOT add information to the request without the client being aware of
 the type of information that might be added; see {{relay-responsibilities}} for
 more information on relay responsibilities.
 
-When a response is received from the oblivious gateway resource, the Oblivious
-Relay Resource forwards the response according to the rules of an HTTP proxy;
-see {{Section 7.6 of HTTP}}.  In case of timeout or error, the Oblivious Relay
-Resource can generate a response with an appropriate status code.
+When a response is received from the oblivious gateway resource, the oblivious
+relay resource forwards the response according to the rules of an HTTP proxy;
+see {{Section 7.6 of HTTP}}.  In case of timeout or error, the oblivious relay
+resource can generate a response with an appropriate status code.
 
-In order to achieve the privacy and security goals of the protocol an Oblivious
-Relay Resource also needs to observe the guidance in
+In order to achieve the privacy and security goals of the protocol an oblivious
+relay resource also needs to observe the guidance in
 {{relay-responsibilities}}.
 
 An oblivious gateway resource acts as a gateway for requests to the target
@@ -818,8 +818,8 @@ Content-Length: 106
 As this response cannot be encrypted, it might not reach the client.  A client
 cannot rely on the oblivious gateway resource using this problem type.  A client
 might also be configured to disregard responses that are not encapsulated on the
-basis that they might be subject to observation or modification by an Oblivious
-Relay Resource.  A client might manage the risk of an outdated key configuration
+basis that they might be subject to observation or modification by an oblivious
+relay resource.  A client might manage the risk of an outdated key configuration
 using a heuristic approach whereby it periodically refreshes its key
 configuration if it receives a response with an error status code that has not
 been encapsulated.
@@ -865,10 +865,10 @@ described above. Informally, this means:
 
 1. Requests and responses are known only to clients and target resources, plus
    oblivious gateway resources that possess the corresponding response
-   encapsulation key and HPKE keying material.  In particular, the Oblivious
-   Relay knows the origin and destination of an encapsulated request and
-   response, yet does not know the decrypted contents. Likewise, Oblivious
-   Gateway Resources learns only the oblivious relay resource and the decrypted
+   encapsulation key and HPKE keying material.  In particular, the oblivious
+   relay resource knows the origin and destination of an encapsulated request and
+   response, yet does not know the decrypted contents. Likewise, oblivious
+   gateway resources learn only the oblivious relay resource and the decrypted
    request.  No entity other than the client can see the plaintext request and
    response and can attribute them to the client.
 
@@ -898,7 +898,7 @@ connections. When this difference is relevant, applications can instead connect
 directly to the target at the cost of either privacy or performance.
 
 Clients cannot carry connection-level state between requests as they only
-establish direct connections to the relay responsible for the Oblivious Relay
+establish direct connections to the relay responsible for the oblivious relay
 resource.  However, the content of requests might be used by a server to
 correlate requests.  Cookies {{COOKIES}} are the most obvious feature
 that might be used to correlate requests, but any identity information and
@@ -1089,7 +1089,7 @@ provides key diversity only within the HPKE context created using the
 A server is responsible for either rejecting replayed requests or ensuring that
 the effect of replays does not adversely affect clients or resources.
 
-Encrypted requests can be copied and replayed by the Oblivious Relay
+Encrypted requests can be copied and replayed by the oblivious relay
 resource. The threat model for Oblivious HTTP allows the possibility that an
 oblivious relay resource might replay requests. Furthermore, if a client sends
 an encapsulated request in TLS early data (see {{Section 8 of TLS}} and
@@ -1257,8 +1257,8 @@ that were generated.
 
 Even if server keys are compromised, an adversary cannot access messages
 exchanged by the client with the oblivious relay resource as messages are
-protected by TLS.  Use of a compromised key also requires that the Oblivious
-Relay Resource cooperate with the attacker or that the attacker is able to
+protected by TLS.  Use of a compromised key also requires that the oblivious
+relay resource cooperate with the attacker or that the attacker is able to
 compromise these TLS connections.
 
 The total number of messages affected by server key compromise can be limited by
@@ -1281,13 +1281,13 @@ acceptable window.
 
 One goal of this design is that independent client requests are only linkable by
 their content.  However, the choice of client configuration might be used to
-correlate requests.  A client configuration includes the Oblivious Relay
-Resource URI, the Oblivious Gateway key configuration, and Oblivious Gateway
+correlate requests.  A client configuration includes the oblivious relay
+resource URI, the Oblivious Gateway key configuration, and Oblivious Gateway
 Resource URI. A configuration is active if clients can successfully use it for interacting with with a target.
 
-Oblivious Relay and Gateway Resources can identify when requests use the same
-configuration by matching the key ID from the key configuration or the Oblivious
-Gateway Resource URI.  The oblivious gateway resource might use the source
+oblivious relay and gateway resources can identify when requests use the same
+configuration by matching the key ID from the key configuration or the oblivious
+gateway resource URI.  The oblivious gateway resource might use the source
 address of requests to correlate requests that use an oblivious relay resource
 run by the same operator.  If the oblivious gateway resource is willing to use
 trial decryption, requests can be further separated into smaller groupings based
@@ -1331,8 +1331,8 @@ proxies close to servers was most effective in minimizing additional latency.
 
 ## Resource Mappings {#proxy-state}
 
-This protocol assumes a fixed, one-to-one mapping between the Oblivious Relay
-Resource and the oblivious gateway resource. This means that any encrypted
+This protocol assumes a fixed, one-to-one mapping between the oblivious relay
+resource and the oblivious gateway resource. This means that any encrypted
 request sent to the oblivious relay resource will always be forwarded to the
 oblivious gateway resource. This constraint was imposed to simplify relay
 configuration and mitigate against the oblivious relay resource being used as
@@ -1340,8 +1340,8 @@ a generic relay for unknown oblivious gateway resources. The relay will only
 forward for oblivious gateway resources that it has explicitly configured and
 allowed.
 
-It is possible for a server to be configured with multiple Oblivious Relay
-Resources, each for a different oblivious gateway resource as needed.  If the
+It is possible for a server to be configured with multiple oblivious relay
+resources, each for a different oblivious gateway resource as needed.  If the
 goal is to support a large number of oblivious gateway resources, clients might
 be provided with a URI template {{?TEMPLATE=RFC6570}}, from which multiple
 oblivious relay resources could be constructed.
