@@ -423,7 +423,7 @@ encapsulated using HPKE {{!HPKE}}.  Separate media types are defined to
 distinguish request and response messages:
 
 * An Encapsulated Request format defined in {{req-format}} is identified by the
-  ["`message/ohttp-req`" media type](#iana-req).
+  ["`message/ohttp-req`" media type](#iana-req){: format="title"}.
 
 * An Encapsulated Response format defined in {{res-format}} is identified by the
   ["`message/ohttp-res`" media type](#iana-res).
@@ -557,18 +557,20 @@ ct = sctxt.Seal("", request)
 enc_request = concat(hdr, enc, ct)
 ~~~
 
-Servers decrypt an Encapsulated Request by reversing this process. Given an
-Encapsulated Request `enc_request`, a server:
+An Oblivious Gateway Resource decrypts an Encapsulated Request by reversing this
+process. To decapsulate an Encapsulated Request, `enc_request`:
 
 1. Parses `enc_request` into `key_id`, `kem_id`, `kdf_id`, `aead_id`, `enc`, and
-   `ct` (indicated using the function `parse()` in pseudocode). The server is
-   then able to find the HPKE private key, `skR`, corresponding to `key_id`.
+   `ct` (indicated using the function `parse()` in pseudocode). The Oblivious
+   Gateway Resource is then able to find the HPKE private key, `skR`,
+   corresponding to `key_id`.
 
    a. If `key_id` does not identify a key matching the type of `kem_id`, the
-      server returns an error.
+      Oblivious Gateway Resource returns an error.
 
    b. If `kdf_id` and `aead_id` identify a combination of KDF and AEAD that the
-      server is unwilling to use with `skR`, the server returns an error.
+      Oblivious Gateway Resource is unwilling to use with `skR`, the Oblivious
+      Gateway Resource returns an error.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
    request", a zero byte, `key_id` as an 8-bit integer, plus `kem_id`, `kdf_id`,
@@ -579,7 +581,8 @@ Encapsulated Request `enc_request`, a server:
 
 4. Decrypt `ct` by invoking the `Open()` method on `rctxt` ({{Section 5.2 of
    HPKE}}), with an empty associated data `aad`, yielding `request` or an error
-   on failure. If decryption fails, the server returns an error.
+   on failure. If decryption fails, the Oblivious Gateway Resource returns an
+   error.
 
 In pseudocode, this procedure is as follows:
 
@@ -599,8 +602,8 @@ request, error = rctxt.Open("", ct)
 ## Encapsulation of Responses {#response}
 
 Given an HPKE context, `context`; a request message, `request`; and a response,
-`response`, servers generate an Encapsulated Response, `enc_response`, as
-follows:
+`response`, Oblivious Gateway Resources generate an Encapsulated Response,
+`enc_response`, as follows:
 
 1. Export a secret, `secret`, from `context`, using the string "message/bhttp
    response" as the `exporter_context` parameter to `context.Export`; see
