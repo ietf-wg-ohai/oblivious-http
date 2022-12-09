@@ -735,8 +735,8 @@ Relay Resource also needs to observe the guidance in
 An Oblivious Gateway Resource acts as a gateway for requests to the Target
 Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
-responding to errors it detects before removing encapsulation of the request;
-see {{errors}}.
+responding to errors that do not relate to processing the contents of the
+encapsulated request; see {{errors}}.
 
 An Oblivious Gateway Resource, if it receives any response from the Target
 Resource, sends a single 200 response containing the encapsulated response.
