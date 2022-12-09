@@ -314,14 +314,16 @@ Encapsulated Response:
 Oblivious Relay Resource:
 
 : An intermediary that forwards encapsulated requests and responses between
-  Clients and a single Oblivious Gateway Resource.
+  Clients and a single Oblivious Gateway Resource.  In context, this can be
+  referred to as simply a "relay".
   {: anchor="dfn-relay"}
 
 Oblivious Gateway Resource:
 
 : A resource that can receive an encapsulated request, extract the contents of
-  that request, forward it to a Target Resource, receive a response,
-  encapsulate that response, then return that response.
+  that request, forward it to a Target Resource, receive a response, encapsulate
+  that response, then return that response.  In context, this can be referred to
+  as simply a "gateway".
   {: anchor="dfn-gateway"}
 
 Target Resource:
