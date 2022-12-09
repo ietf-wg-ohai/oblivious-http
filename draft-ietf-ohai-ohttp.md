@@ -1059,10 +1059,14 @@ If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
 relay for managing denial of service; see {{dos}}.
 
-Nonsecure requests - such as those with the "http" scheme as opposed to the "https"
-scheme - SHOULD NOT be used if the Oblivious Gateway and Target Resources are
-operated by different entities as that would expose both requests and response
-to modification or inspection by a network attacker.
+Nonsecure requests - such as those with the "http" scheme as opposed to the
+"https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
+Resources are not on the same origin.  If messages are forwarded between these
+resources without the protections afforded by HTTPS, they could be inspected or
+modified by a network attacker.  Insisting that the two resources share an
+origin does not guarantee that requests are not forwarded without protection, so
+clients might need to use other means of ensuring that unsecured requests are
+not exposed to attack.
 
 
 ## Key Management
