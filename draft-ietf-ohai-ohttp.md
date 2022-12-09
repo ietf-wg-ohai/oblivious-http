@@ -1400,7 +1400,7 @@ Optional parameters:
 
 Encoding considerations:
 
-: only "8bit" or "binary" is permitted
+: "binary"
 
 Security considerations:
 
@@ -1477,7 +1477,7 @@ Optional parameters:
 
 Encoding considerations:
 
-: only "8bit" or "binary" is permitted
+: "binary"
 
 Security considerations:
 
@@ -1493,7 +1493,8 @@ Published specification:
 
 Applications that use this media type:
 
-: Oblivious HTTP and applications that use Oblivious HTTP
+: Oblivious HTTP and applications that use Oblivious HTTP use this media type to
+  identify encapsulated binary HTTP requests.
 
 Fragment identifier considerations:
 
@@ -1553,7 +1554,7 @@ Optional parameters:
 
 Encoding considerations:
 
-: only "8bit" or "binary" is permitted
+: "binary"
 
 Security considerations:
 
@@ -1569,7 +1570,8 @@ Published specification:
 
 Applications that use this media type:
 
-: Oblivious HTTP and applications that use Oblivious HTTP
+: Oblivious HTTP and applications that use Oblivious HTTP use this media type to
+  identify encapsulated binary HTTP responses.
 
 Fragment identifier considerations:
 
