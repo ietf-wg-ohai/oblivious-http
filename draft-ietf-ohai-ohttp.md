@@ -281,6 +281,9 @@ map display).
 
 {::boilerplate bcp14-tagged}
 
+This document uses terminology from {{HTTP}} and defines several terms as
+follows:
+
 *[Client]: #dfn-client
 *[Clients]: #dfn-client
 *[Encapsulated Request]: #dfn-enc-req
@@ -289,6 +292,7 @@ map display).
 *[Oblivious Gateway Resource]: #dfn-gateway
 *[Oblivious Relay Resources]: #dfn-relay
 *[Oblivious Gateway Resources]: #dfn-gateway
+*[Oblivious Relay and Gateway Resources]: #dfn-relay
 *[Target Resource]: #dfn-target
 
 Client:
@@ -331,8 +335,8 @@ Target Resource:
   ignorant of the use of Oblivious HTTP to reach it.
   {: anchor="dfn-target"}
 
-This draft includes pseudocode that uses the functions and conventions defined
-in {{!HPKE}}.
+This document includes pseudocode that uses the functions and conventions
+defined in {{!HPKE}}.
 
 Encoding an integer to a sequence of bytes in network byte order is described
 using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
