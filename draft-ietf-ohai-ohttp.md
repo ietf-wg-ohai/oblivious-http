@@ -31,6 +31,7 @@ normative:
   HTTP: RFC9110
   QUIC: RFC9000
   TLS: RFC8446
+  HPKE: RFC9180
 
 informative:
 
@@ -132,17 +133,22 @@ to correlate behavior. This imposes considerable performance and efficiency over
 to the additional round trip to the server (at a minumum), additional data exchanged, and
 additional CPU cost of cryptographic computations.
 
-This document defines two kinds of HTTP resources -- Oblivious Relay Resources
-and Oblivious Gateway Resources -- that process encapsulated binary HTTP messages
-{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). They can be composed to
-protect the content of encapsulated requests and responses, thereby separating the identity of a
-requester from the request.
+To overcome these limitations, this document defines how binary HTTP messages
+{{BINARY}} can be encapsulated using Hybrid Public Key Encryption (HPKE;
+{{HPKE}}) to protect their contents. Clients exchange these messages with an
+Oblivious Gateway Resource, which is responsible for forwarding decapsulated
+requests to the original Target Resource and encapsulating the corresponding
+responses and sending them back to the client. Critically, encapsulated messages
+are sent through a separate Oblivious Relay Resource to avoid exposing the
+client's IP address or allowing the connection to be used as a correlator
+between its requests.
 
-Although this scheme requires support for two new kinds of oblivious resources,
-it represents a performance improvement over options
-that perform just one request in each connection. With limited trust placed in the
-Oblivious Relay Resource (see {{security}}), Clients are assured that requests are not uniquely
-attributed to them or linked to other requests.
+Because it allows connection reuse between the client and Oblivious Relay
+Resource, as well as between that relay and the Oblivious Gateway Resource, this
+scheme represents a performance improvement over using just one request in each
+connection.  With limited trust placed in the Oblivious Relay Resource (see
+{{security}}), Clients are assured that requests are not uniquely attributed to
+them or linked to other requests.
 
 
 # Overview
@@ -332,7 +338,7 @@ Target Resource:
   {: anchor="dfn-target"}
 
 This draft includes pseudocode that uses the functions and conventions defined
-in {{!HPKE}}.
+in {{HPKE}}.
 
 Encoding an integer to a sequence of bytes in network byte order is described
 using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
@@ -399,8 +405,8 @@ Key Config {
 {: #format-key-config title="A Single Key Configuration"}
 
 The definitions for the identifiers used in HPKE and the semantics of the
-algorithms they identify can be found in {{!HPKE}}.  The `Npk` parameter is
-determined by the choice of HPKE KEM, which can also be found in {{!HPKE}}.
+algorithms they identify can be found in {{HPKE}}.  The `Npk` parameter is
+determined by the choice of HPKE KEM, which can also be found in {{HPKE}}.
 
 
 ## Key Configuration Media Type {#ohttp-keys}
@@ -417,7 +423,7 @@ new formats that are identified by new media types.
 # HPKE Encapsulation
 
 This document defines how a binary-encoded HTTP message {{BINARY}} is
-encapsulated using HPKE {{!HPKE}}.  Separate media types are defined to
+encapsulated using HPKE {{HPKE}}.  Separate media types are defined to
 distinguish request and response messages:
 
 * An Encapsulated Request format defined in {{req-format}} is identified by the
@@ -464,7 +470,7 @@ Encapsulated Request {
 {: #fig-enc-request title="Encapsulated Request"}
 
 The Nenc parameter corresponding to the KEM used in HPKE can be found in
-{{Section 7.1 of !HPKE}} or [the HPKE KEM IANA
+{{Section 7.1 of HPKE}} or [the HPKE KEM IANA
 registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).  Nenc
 refers to the size of the encapsulated KEM shared secret, in bytes.
 
@@ -497,7 +503,7 @@ Encapsulated Response {
 {: #fig-enc-response title="Encapsulated Response"}
 
 The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
-defined in {{Section 7.3 of !HPKE}} or [the HPKE AEAD IANA
+defined in {{Section 7.3 of HPKE}} or [the HPKE AEAD IANA
 registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  Nn
 and Nk refer to the size of the AEAD nonce and key respectively, in bytes.  The
 Encapsulated Response nonce length is set to the larger of these two lengths,
@@ -602,7 +608,7 @@ follows:
 
 1. Export a secret, `secret`, from `context`, using the string "message/bhttp
    response" as the `exporter_context` parameter to `context.Export`; see
-   {{Section 5.3 of !HPKE}}.  The length of this secret is `max(Nn, Nk)`, where
+   {{Section 5.3 of HPKE}}.  The length of this secret is `max(Nn, Nk)`, where
    `Nn` and `Nk` are the length of AEAD key and nonce associated with `context`.
    Note: {{repurposing}} discusses how alternative message formats might use a
    different `context` value.
