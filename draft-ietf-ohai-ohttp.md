@@ -1286,7 +1286,7 @@ One goal of this design is that independent Client requests are only linkable by
 their content.  However, the choice of Client configuration might be used to
 correlate requests.  A Client configuration includes the Oblivious Relay
 Resource URI, the Oblivious Gateway key configuration, and Oblivious Gateway
-Resource URI. A configuration is active if Clients can successfully use it for interacting with with a target.
+Resource URI. A configuration is active if Clients can successfully use it for interacting with a target.
 
 Oblivious Relay and Gateway Resources can identify when requests use the same
 configuration by matching the key ID from the key configuration or the Oblivious
