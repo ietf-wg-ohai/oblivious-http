@@ -31,6 +31,7 @@ normative:
   HTTP: RFC9110
   QUIC: RFC9000
   TLS: RFC8446
+  HPKE: RFC9180
 
 informative:
 
@@ -132,17 +133,22 @@ to correlate behavior. This imposes considerable performance and efficiency over
 to the additional round trip to the server (at a minumum), additional data exchanged, and
 additional CPU cost of cryptographic computations.
 
-This document defines two kinds of HTTP resources -- Oblivious Relay Resources
-and Oblivious Gateway Resources -- that process encapsulated binary HTTP messages
-{{BINARY}} using Hybrid Public Key Encryption (HPKE; {{!HPKE=RFC9180}}). They can be composed to
-protect the content of encapsulated requests and responses, thereby separating the identity of a
-requester from the request.
+To overcome these limitations, this document defines how binary HTTP messages
+{{BINARY}} can be encapsulated using Hybrid Public Key Encryption (HPKE;
+{{HPKE}}) to protect their contents. Clients exchange these messages with an
+Oblivious Gateway Resource, which is responsible for forwarding decapsulated
+requests to the original Target Resource and encapsulating the corresponding
+responses and sending them back to the client. Critically, encapsulated messages
+are sent through a separate Oblivious Relay Resource to avoid exposing the
+client's IP address or allowing the connection to be used as a correlator
+between its requests.
 
-Although this scheme requires support for two new kinds of oblivious resources,
-it represents a performance improvement over options
-that perform just one request in each connection. With limited trust placed in the
-Oblivious Relay Resource (see {{security}}), Clients are assured that requests are not uniquely
-attributed to them or linked to other requests.
+Because it allows connection reuse between the client and Oblivious Relay
+Resource, as well as between that relay and the Oblivious Gateway Resource, this
+scheme represents a performance improvement over using just one request in each
+connection.  With limited trust placed in the Oblivious Relay Resource (see
+{{security}}), Clients are assured that requests are not uniquely attributed to
+them or linked to other requests.
 
 
 # Overview
@@ -318,14 +324,16 @@ Encapsulated Response:
 Oblivious Relay Resource:
 
 : An intermediary that forwards encapsulated requests and responses between
-  Clients and a single Oblivious Gateway Resource.
+  Clients and a single Oblivious Gateway Resource.  In context, this can be
+  referred to as simply a "relay".
   {: anchor="dfn-relay"}
 
 Oblivious Gateway Resource:
 
 : A resource that can receive an encapsulated request, extract the contents of
-  that request, forward it to a Target Resource, receive a response,
-  encapsulate that response, then return that response.
+  that request, forward it to a Target Resource, receive a response, encapsulate
+  that response, then return that response.  In context, this can be referred to
+  as simply a "gateway".
   {: anchor="dfn-gateway"}
 
 Target Resource:
@@ -336,7 +344,7 @@ Target Resource:
   {: anchor="dfn-target"}
 
 This document includes pseudocode that uses the functions and conventions
-defined in {{!HPKE}}.
+defined in {{HPKE}}.
 
 Encoding an integer to a sequence of bytes in network byte order is described
 using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
@@ -403,8 +411,8 @@ Key Config {
 {: #format-key-config title="A Single Key Configuration"}
 
 The definitions for the identifiers used in HPKE and the semantics of the
-algorithms they identify can be found in {{!HPKE}}.  The `Npk` parameter is
-determined by the choice of HPKE KEM, which can also be found in {{!HPKE}}.
+algorithms they identify can be found in {{HPKE}}.  The `Npk` parameter is
+determined by the choice of HPKE KEM, which can also be found in {{HPKE}}.
 
 
 ## Key Configuration Media Type {#ohttp-keys}
@@ -421,11 +429,11 @@ new formats that are identified by new media types.
 # HPKE Encapsulation
 
 This document defines how a binary-encoded HTTP message {{BINARY}} is
-encapsulated using HPKE {{!HPKE}}.  Separate media types are defined to
+encapsulated using HPKE {{HPKE}}.  Separate media types are defined to
 distinguish request and response messages:
 
 * An Encapsulated Request format defined in {{req-format}} is identified by the
-  ["`message/ohttp-req`" media type](#iana-req).
+  ["`message/ohttp-req`" media type](#iana-req){: format="title"}.
 
 * An Encapsulated Response format defined in {{res-format}} is identified by the
   ["`message/ohttp-res`" media type](#iana-res).
@@ -447,10 +455,10 @@ Request {
 {: #fig-req-pt title="Plaintext Request Content"}
 
 This plaintext Request is encapsulated into a message in "`message/ohttp-req`"
-form by generating an Encapsulated Request.  An Encapsulated Request is
-comprised of a key identifier; HPKE parameters for the chosen KEM, KDF, and
-AEAD; the encapsulated KEM shared secret (or `enc`); and the HPKE-protected
-binary HTTP request message.
+form by generating an Encapsulated Request.  An Encapsulated Request comprises a
+key identifier; HPKE parameters for the chosen KEM, KDF, and AEAD; the
+encapsulated KEM shared secret (or `enc`); and the HPKE-protected binary HTTP
+request message.
 
 An Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes
 the process for constructing and processing an Encapsulated Request.
@@ -468,7 +476,7 @@ Encapsulated Request {
 {: #fig-enc-request title="Encapsulated Request"}
 
 The Nenc parameter corresponding to the KEM used in HPKE can be found in
-{{Section 7.1 of !HPKE}} or [the HPKE KEM IANA
+{{Section 7.1 of HPKE}} or [the HPKE KEM IANA
 registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).  Nenc
 refers to the size of the encapsulated KEM shared secret, in bytes.
 
@@ -486,8 +494,8 @@ Response {
 {: #fig-res-pt title="Plaintext Response Content"}
 
 This plaintext Response is encapsulated into a message in "`message/ohttp-res`"
-form by generating an Encapsulated Response.  An Encapsulated Response is
-comprised of a nonce and the AEAD-protected binary HTTP response message.
+form by generating an Encapsulated Response.  An Encapsulated Response comprises
+a nonce and the AEAD-protected binary HTTP response message.
 
 An Encapsulated Response is shown in {{fig-enc-response}}. {{response}} describes
 the process for constructing and processing an Encapsulated Response.
@@ -501,7 +509,7 @@ Encapsulated Response {
 {: #fig-enc-response title="Encapsulated Response"}
 
 The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
-defined in {{Section 7.3 of !HPKE}} or [the HPKE AEAD IANA
+defined in {{Section 7.3 of HPKE}} or [the HPKE AEAD IANA
 registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  Nn
 and Nk refer to the size of the AEAD nonce and key respectively, in bytes.  The
 Encapsulated Response nonce length is set to the larger of these two lengths,
@@ -559,18 +567,20 @@ ct = sctxt.Seal("", request)
 enc_request = concat(hdr, enc, ct)
 ~~~
 
-Servers decrypt an Encapsulated Request by reversing this process. Given an
-Encapsulated Request `enc_request`, a server:
+An Oblivious Gateway Resource decrypts an Encapsulated Request by reversing this
+process. To decapsulate an Encapsulated Request, `enc_request`:
 
 1. Parses `enc_request` into `key_id`, `kem_id`, `kdf_id`, `aead_id`, `enc`, and
-   `ct` (indicated using the function `parse()` in pseudocode). The server is
-   then able to find the HPKE private key, `skR`, corresponding to `key_id`.
+   `ct` (indicated using the function `parse()` in pseudocode). The Oblivious
+   Gateway Resource is then able to find the HPKE private key, `skR`,
+   corresponding to `key_id`.
 
    a. If `key_id` does not identify a key matching the type of `kem_id`, the
-      server returns an error.
+      Oblivious Gateway Resource returns an error.
 
    b. If `kdf_id` and `aead_id` identify a combination of KDF and AEAD that the
-      server is unwilling to use with `skR`, the server returns an error.
+      Oblivious Gateway Resource is unwilling to use with `skR`, the Oblivious
+      Gateway Resource returns an error.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
    request", a zero byte, `key_id` as an 8-bit integer, plus `kem_id`, `kdf_id`,
@@ -581,7 +591,8 @@ Encapsulated Request `enc_request`, a server:
 
 4. Decrypt `ct` by invoking the `Open()` method on `rctxt` ({{Section 5.2 of
    HPKE}}), with an empty associated data `aad`, yielding `request` or an error
-   on failure. If decryption fails, the server returns an error.
+   on failure. If decryption fails, the Oblivious Gateway Resource returns an
+   error.
 
 In pseudocode, this procedure is as follows:
 
@@ -601,12 +612,12 @@ request, error = rctxt.Open("", ct)
 ## Encapsulation of Responses {#response}
 
 Given an HPKE context, `context`; a request message, `request`; and a response,
-`response`, servers generate an Encapsulated Response, `enc_response`, as
-follows:
+`response`, Oblivious Gateway Resources generate an Encapsulated Response,
+`enc_response`, as follows:
 
 1. Export a secret, `secret`, from `context`, using the string "message/bhttp
    response" as the `exporter_context` parameter to `context.Export`; see
-   {{Section 5.3 of !HPKE}}.  The length of this secret is `max(Nn, Nk)`, where
+   {{Section 5.3 of HPKE}}.  The length of this secret is `max(Nn, Nk)`, where
    `Nn` and `Nk` are the length of AEAD key and nonce associated with `context`.
    Note: {{repurposing}} discusses how alternative message formats might use a
    different `context` value.
@@ -739,8 +750,8 @@ Relay Resource also needs to observe the guidance in
 An Oblivious Gateway Resource acts as a gateway for requests to the Target
 Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
-responding to errors it detects before removing encapsulation of the request;
-see {{errors}}.
+responding to errors that do not relate to processing the contents of the
+encapsulated request; see {{errors}}.
 
 An Oblivious Gateway Resource, if it receives any response from the Target
 Resource, sends a single 200 response containing the encapsulated response.
@@ -1115,7 +1126,7 @@ was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code ({{Section
 8.1.4 of HTTP2}}), the HTTP/3 H3_REQUEST_REJECTED error code ({{Section 8.1 of
 HTTP3}}), or a GOAWAY frame with a low enough identifier (in either protocol
 version) are all sufficient signals that no processing occurred. HTTP/1.1
-{{?HTTP11}} provides no equivalent signal.  Connection failures or interruptions
+{{HTTP11}} provides no equivalent signal.  Connection failures or interruptions
 are not sufficient signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
@@ -1404,7 +1415,7 @@ Optional parameters:
 
 Encoding considerations:
 
-: only "8bit" or "binary" is permitted
+: "binary"
 
 Security considerations:
 
@@ -1453,7 +1464,7 @@ Author:
 
 Change controller:
 
-: IESG
+: IETF
 {: spacing="compact"}
 
 
@@ -1481,7 +1492,7 @@ Optional parameters:
 
 Encoding considerations:
 
-: only "8bit" or "binary" is permitted
+: "binary"
 
 Security considerations:
 
@@ -1497,7 +1508,8 @@ Published specification:
 
 Applications that use this media type:
 
-: Oblivious HTTP and applications that use Oblivious HTTP
+: Oblivious HTTP and applications that use Oblivious HTTP use this media type to
+  identify encapsulated binary HTTP requests.
 
 Fragment identifier considerations:
 
@@ -1530,7 +1542,7 @@ Author:
 
 Change controller:
 
-: IESG
+: IETF
 {: spacing="compact"}
 
 
@@ -1557,7 +1569,7 @@ Optional parameters:
 
 Encoding considerations:
 
-: only "8bit" or "binary" is permitted
+: "binary"
 
 Security considerations:
 
@@ -1573,7 +1585,8 @@ Published specification:
 
 Applications that use this media type:
 
-: Oblivious HTTP and applications that use Oblivious HTTP
+: Oblivious HTTP and applications that use Oblivious HTTP use this media type to
+  identify encapsulated binary HTTP responses.
 
 Fragment identifier considerations:
 
@@ -1606,7 +1619,7 @@ Author:
 
 Change controller:
 
-: IESG
+: IETF
 {: spacing="compact"}
 
 
