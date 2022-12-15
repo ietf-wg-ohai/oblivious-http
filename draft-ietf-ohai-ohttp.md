@@ -1117,7 +1117,7 @@ was not processed or forwarded. The HTTP/2 REFUSED_STREAM error code ({{Section
 8.1.4 of HTTP2}}), the HTTP/3 H3_REQUEST_REJECTED error code ({{Section 8.1 of
 HTTP3}}), or a GOAWAY frame with a low enough identifier (in either protocol
 version) are all sufficient signals that no processing occurred. HTTP/1.1
-{{?HTTP11}} provides no equivalent signal.  Connection failures or interruptions
+{{HTTP11}} provides no equivalent signal.  Connection failures or interruptions
 are not sufficient signals that no processing occurred.
 
 The anti-replay mechanisms described in {{Section 8 of TLS}} are generally
