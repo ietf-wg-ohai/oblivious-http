@@ -435,7 +435,8 @@ HPKE Symmetric Algorithms Length:
 
 HPKE Symmetric Algorithms:
 
-: One or more pairs of identifiers for the different HPKE KDF and AEAD:
+: One or more pairs of identifiers for the different combinations of HPKE KDF
+  and AEAD that the Oblivious Gateway Resource supports:
   <dl>
   <dt>HPKE KDF ID:</dt>
   <dd markdown="1">
