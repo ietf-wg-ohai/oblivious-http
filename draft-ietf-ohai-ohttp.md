@@ -867,7 +867,7 @@ In this section, a deployment where there are three entities is considered:
 * A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the Target Resource
 
-Connections between the Client, Oblvious Relay Resource, and Oblivious Gateway
+Connections between the Client, Oblivious Relay Resource, and Oblivious Gateway
 Resource MUST use HTTPS in order to provide unlinkability in the presence of a
 network observer.  The scheme of the Encapsulated Request determines what is
 used between the Oblivious Gateway and Target Resources, though using HTTPS is
@@ -884,9 +884,9 @@ described above. Informally, this means:
 1. Requests and responses are known only to Clients and Target Resources, plus
    Oblivious Gateway Resources that possess the corresponding response
    encapsulation key and HPKE keying material.  In particular, the Oblivious
-   Relay knows the origin and destination of an Encapsulated Request and
+   Relay Resource knows the origin and destination of an Encapsulated Request and
    Response, yet does not know the decrypted contents. Likewise, Oblivious
-   Gateway Resources learns only the Oblivious Relay Resource and the decrypted
+   Gateway Resources learn only the Oblivious Relay Resource and the decrypted
    request.  No entity other than the Client can see the plaintext request and
    response and can attribute them to the Client.
 
@@ -1679,7 +1679,7 @@ are shown in hexadecimal. The request and response here are minimal; the purpose
 of this example is to show the cryptographic operations.  In this example, the
 Client is configured with the Oblivious Relay Resource URI of
 `https://proxy.example.org/request.example.net/proxy`, and the proxy is
-configured to map requests to this URI to the Oblivious Gateway URI
+configured to map requests to this URI to the Oblivious Gateway Resource URI
 `https://example.com/oblivious/request`. The Target Resource URI, i.e., the
 resource the Client ultimately wishes to query, is `https://example.com`.
 
