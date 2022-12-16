@@ -164,7 +164,7 @@ An Oblivious HTTP Client must initially know the following:
   are used with that key.
 
 * The identity of an Oblivious Relay Resource that will accept relay requests
-  carrying an encapsulated request as its content and forward the content in
+  carrying an Encapsulated Request as its content and forward the content in
   these requests to a single Oblivious Gateway Resource. See {{proxy-state}}
   for more information about the mapping between Oblivious Relay and Gateway
   Resources.
@@ -323,14 +323,14 @@ Encapsulated Response:
 
 Oblivious Relay Resource:
 
-: An intermediary that forwards encapsulated requests and responses between
+: An intermediary that forwards Encapsulated Requests and Responses between
   Clients and a single Oblivious Gateway Resource.  In context, this can be
   referred to as simply a "relay".
   {: anchor="dfn-relay"}
 
 Oblivious Gateway Resource:
 
-: A resource that can receive an encapsulated request, extract the contents of
+: A resource that can receive an Encapsulated Request, extract the contents of
   that request, forward it to a Target Resource, receive a response, encapsulate
   that response, then return that response.  In context, this can be referred to
   as simply a "gateway".
@@ -338,7 +338,7 @@ Oblivious Gateway Resource:
 
 Target Resource:
 
-: The resource that is the target of an encapsulated request.  This resource
+: The resource that is the target of an Encapsulated Request.  This resource
   logically handles only regular HTTP requests and responses and so might be
   ignorant of the use of Oblivious HTTP to reach it.
   {: anchor="dfn-target"}
@@ -363,7 +363,7 @@ mathematical function.
 *[key configurations]: #key-configuration
 
 A Client needs to acquire information about the key configuration of the
-Oblivious Gateway Resource in order to send encapsulated requests.
+Oblivious Gateway Resource in order to send Encapsulated Requests.
 In order to ensure that Clients do not encapsulate messages that other entities
 can intercept, the key configuration MUST be authenticated and have integrity
 protection.
@@ -797,12 +797,12 @@ without protection in response to the POST request made to that resource.
 
 Errors detected by the Oblivious Gateway Resource after successfully removing
 encapsulation and errors detected by the Target Resource MUST be sent in an
-Encapsulated Response.  This might be because the request is malformed or the
-Target Resource does not produce a response.  In either case the Oblivious
-Gateway Resource can generate a response with an appropriate error status code
-(such as 400 (Bad Request) or 504 (Gateway Timeout); see {{Section 15.5.1 of
-HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).  This response is
-encapsulated in the same way as a successful response.
+Encapsulated Response.  This might be because the Encapsulated Request is
+malformed or the Target Resource does not produce a response.  In either case
+the Oblivious Gateway Resource can generate a response with an appropriate error
+status code (such as 400 (Bad Request) or 504 (Gateway Timeout); see {{Section
+15.5.1 of HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).  This response
+is encapsulated in the same way as a successful response.
 
 Errors in the encapsulation of requests mean that responses cannot be
 encapsulated.  This includes cases where the key configuration is incorrect or
@@ -869,7 +869,7 @@ In this section, a deployment where there are three entities is considered:
 
 Connections between the Client, Oblvious Relay Resource, and Oblivious Gateway
 Resource MUST use HTTPS in order to provide unlinkability in the presence of a
-network observer.  The scheme of the encapsulated request determines what is
+network observer.  The scheme of the Encapsulated Request determines what is
 used between the Oblivious Gateway and Target Resources, though using HTTPS is
 RECOMMENDED; see {{server-responsibilities}}.
 
