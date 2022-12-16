@@ -438,13 +438,13 @@ HPKE Symmetric Algorithms:
 : One or more pairs of identifiers for the different HPKE KDF and AEAD:
   <dl>
   <dt>HPKE KDF ID:</dt>
-  <dd markdown="1" >
+  <dd markdown="1">
   A 16 bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
   HPKE KDF IANA
   registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kdf-ids).
   </dd>
   <dt>HPKE AEAD ID:</dt>
-  <dd markdown="1" >
+  <dd markdown="1">
   A 16 bit HPKE AEAD identifier as defined in {{Section 7.3 of HPKE}} or [the
   HPKE AEAD IANA
   registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).
