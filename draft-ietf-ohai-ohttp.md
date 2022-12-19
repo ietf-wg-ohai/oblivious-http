@@ -130,7 +130,7 @@ tracking, and systems like virtual private networks and the Tor network
 However, even when IP address tracking is mitigated using one of these techniques, each request
 needs to be on a completely new TLS connection to avoid the connection itself being used
 to correlate behavior. This imposes considerable performance and efficiency overheads, due
-to the additional round trip to the server (at a minumum), additional data exchanged, and
+to the additional round trip to the server (at a minimum), additional data exchanged, and
 additional CPU cost of cryptographic computations.
 
 To overcome these limitations, this document defines how binary HTTP messages
@@ -159,9 +159,9 @@ An Oblivious HTTP Client must initially know the following:
   information about what Target Resources the Oblivious Gateway Resource
   supports.
 
-* The details of an HPKE public key that the Oblivious Gateway Resource
-  accepts, including an identifier for that key and the HPKE algorithms that
-  are used with that key.
+* The details of an HPKE public key for the Oblivious Gateway Resource,
+  including an identifier for that key and the HPKE algorithms that are used
+  with that key.
 
 * The identity of an Oblivious Relay Resource that will accept relay requests
   carrying an Encapsulated Request as its content and forward the content in
@@ -332,8 +332,8 @@ Oblivious Gateway Resource:
 
 : A resource that can receive an Encapsulated Request, extract the contents of
   that request, forward it to a Target Resource, receive a response, encapsulate
-  that response, then return that response.  In context, this can be referred to
-  as simply a "gateway".
+  that response, then return the resulting Encapsulated Response.  In context,
+  this can be referred to as simply a "gateway".
   {: anchor="dfn-gateway"}
 
 Target Resource:
@@ -349,8 +349,7 @@ defined in {{HPKE}}.
 Encoding an integer to a sequence of bytes in network byte order is described
 using the function `encode(n, v)`, where `n` is the number of bytes and `v` is
 the integer value.  ASCII {{!ASCII=RFC0020}} encoding of a string `s` is
-indicated using the function `encode_str(s)`.  The function `len()` returns the
-length of a sequence of bytes.
+indicated using the function `encode_str(s)`.
 
 Formats are described using notation from {{Section 1.3 of QUIC}}.  An extension
 to that notation expresses the number of bits in a field using a simple
@@ -665,12 +664,12 @@ Given an HPKE context, `context`; a request message, `request`; and a response,
 2. Generate a random value of length `max(Nn, Nk)` bytes, called
    `response_nonce`.
 
-3. Extract a pseudorandom key `prk` using the `Extract` function provided by
+3. Extract a pseudorandom key, `prk`, using the `Extract` function provided by
    the KDF algorithm associated with `context`. The `ikm` input to this
    function is `secret`; the `salt` input is the concatenation of `enc` (from
    `enc_request`) and `response_nonce`.
 
-4. Use the `Expand` function provided by the same KDF to extract an AEAD key
+4. Use the `Expand` function provided by the same KDF to extract an AEAD key,
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
    with `context`. Generating `aead_key` uses a label of "key".
 
@@ -681,7 +680,7 @@ Given an HPKE context, `context`; a request message, `request`; and a response,
 6. Encrypt `response`, passing the AEAD function Seal the values of `aead_key`,
    `aead_nonce`, an empty `aad`, and a `pt` input of `response`, which yields `ct`.
 
-7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response
+7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response,
    `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
    ambiguity in parsing either `response_nonce` or `ct`.
 
@@ -706,7 +705,7 @@ The Client uses these values to decrypt `ct` using the Open function provided by
 the AEAD. Decrypting might produce an error, as follows:
 
 ~~~
-reponse, error = Open(aead_key, aead_nonce, "", ct)
+response, error = Open(aead_key, aead_nonce, "", ct)
 ~~~
 
 
@@ -1006,14 +1005,14 @@ Secondly, generic implementations are often configured to augment requests with
 information about the Client, such as the Via field or the Forwarded field
 {{?FORWARDED=RFC7239}}.  A relay MUST NOT add information when forwarding
 requests that might be used to identify Clients, with the exception of
-information that a Client is aware of.
+information that a Client is aware of; see {{differential}}.
 
 Finally, a relay can also generate responses, though it is assumed to not be able
 to examine the content of a request (other than to observe the choice of key
 identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
 Encapsulated Response.
 
-### Differential Treatment
+### Differential Treatment {#differential}
 
 A relay MAY add information to requests if the Client is aware of the nature of
 the information that could be added.  The Client does not need to be aware of
@@ -1159,7 +1158,7 @@ that might be employed are similar to TLS early data.
 
 It is the responsibility of the application that uses Oblivious HTTP to either
 reject replayed requests or to ensure that replayed requests have no adverse
-affects on their operation.  This section describes some approaches that are
+effects on their operation.  This section describes some approaches that are
 universally applicable and suggestions for more targeted techniques.
 
 A Client or Oblivious Relay Resource MUST NOT automatically attempt to retry a
@@ -1361,7 +1360,7 @@ allow for key rotation and server maintenance.
 
 Client privacy depends on having each configuration used by many other Clients.
 It is critical to prevent the use of unique Client configurations, which might
-be used to track of individual Clients, but it is also important to avoid
+be used to track individual Clients, but it is also important to avoid
 creating small groupings of Clients that might weaken privacy protections.
 
 A specific method for a Client to acquire configurations is not included in this
@@ -1802,7 +1801,7 @@ Content-Length: 78
 <content is the Encapsulated Request above>
 ~~~
 
-The Oblivous Gateway Resource receives this request, selects the key it
+The Oblivious Gateway Resource receives this request, selects the key it
 generated previously using the key identifier from the message, and decrypts the
 message. As this request is directed to the same server, the Oblivious Gateway
 Resource does not need to initiate an HTTP request to the Target Resource. The
