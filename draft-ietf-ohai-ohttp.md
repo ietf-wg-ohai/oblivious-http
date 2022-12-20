@@ -423,9 +423,8 @@ HPKE KEM ID:
 
 HPKE Public Key:
 
-: The public key used by the gateway, the length of which is determined by the
-  HPKE KEM ID.  The `Npk` parameter is determined by the choice of HPKE KEM,
-  which is defined in {{Section 4 of HPKE}}.
+: The public key used by the gateway. The length of the public key is `Npk`, which is
+  determined by the choice of HPKE KEM as defined in {{Section 4 of HPKE}}.
 
 HPKE Symmetric Algorithms Length:
 
