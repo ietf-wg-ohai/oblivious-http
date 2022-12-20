@@ -404,14 +404,51 @@ Key Config {
   HPKE KEM ID (16),
   HPKE Public Key (Npk * 8),
   HPKE Symmetric Algorithms Length (16),
-  HPKE Symmetric Algorithms (32..262136),
+  HPKE Symmetric Algorithms (32..524256),
 }
 ~~~
 {: #format-key-config title="A Single Key Configuration"}
 
-The definitions for the identifiers used in HPKE and the semantics of the
-algorithms they identify can be found in {{HPKE}}.  The `Npk` parameter is
-determined by the choice of HPKE KEM, which can also be found in {{HPKE}}.
+That is, a key configuration consists of the following fields:
+
+Key Identifier:
+
+: An 8 bit value that identifies the key used by the Oblivious Gateway Resource.
+
+HPKE KEM ID:
+
+: A 16 bit value that identifies the Key Encapsulation Method (KEM) used for the
+  identified key as defined in {{Section 7.1 of HPKE}} or [the HPKE KDF IANA
+  registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).
+
+HPKE Public Key:
+
+: The public key used by the gateway. The length of the public key is `Npk`, which is
+  determined by the choice of HPKE KEM as defined in {{Section 4 of HPKE}}.
+
+HPKE Symmetric Algorithms Length:
+
+: A 16 bit integer in network byte order that encodes the length, in bytes, of
+  the HPKE Symmetric Algorithms field that follows.
+
+HPKE Symmetric Algorithms:
+
+: One or more pairs of identifiers for the different combinations of HPKE KDF
+  and AEAD that the Oblivious Gateway Resource supports:
+  <dl>
+  <dt>HPKE KDF ID:</dt>
+  <dd markdown="1">
+  A 16 bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
+  HPKE KDF IANA
+  registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kdf-ids).
+  </dd>
+  <dt>HPKE AEAD ID:</dt>
+  <dd markdown="1">
+  A 16 bit HPKE AEAD identifier as defined in {{Section 7.3 of HPKE}} or [the
+  HPKE AEAD IANA
+  registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).
+  </dd>
+  </dl>
 
 
 ## Key Configuration Media Type {#ohttp-keys}
@@ -456,7 +493,7 @@ Request {
 This plaintext Request is encapsulated into a message in "`message/ohttp-req`"
 form by generating an Encapsulated Request.  An Encapsulated Request comprises a
 key identifier; HPKE parameters for the chosen KEM, KDF, and AEAD; the
-encapsulated KEM shared secret (or `enc`); and the HPKE-protected binary HTTP
+encapsulated KEM shared secret (or `enc`); and an HPKE-protected binary HTTP
 request message.
 
 An Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes
@@ -465,19 +502,21 @@ the process for constructing and processing an Encapsulated Request.
 ~~~
 Encapsulated Request {
   Key Identifier (8),
-  KEM Identifier (16),
-  KDF Identifier (16),
-  AEAD Identifier (16),
+  HPKE KEM ID (16),
+  HPKE KDF ID (16),
+  HPKE AEAD ID (16),
   Encapsulated KEM Shared Secret (8 * Nenc),
   HPKE-Protected Request (..),
 }
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
 
-The Nenc parameter corresponding to the KEM used in HPKE can be found in
-{{Section 7.1 of HPKE}} or [the HPKE KEM IANA
-registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).  Nenc
-refers to the size of the encapsulated KEM shared secret, in bytes.
+That is, an Encapsulated Request comprises a Key Identifier, HPKE KEM ID, HPKE
+KDF ID, HPKE AEAD ID, Encapsulated KEM Shared Secret, and HPKE-Protected
+Request.  The Key Identifier, HPKE KEM ID, HPKE KDF ID, and HPKE AEAD ID fields
+are defined in {{key-config}}.  The Encapsulated KEM Shared Secret is the output
+of the `Encap()` function for the KEM, which is `Nenc` bytes in length, as
+defined in {{Section 4 of HPKE}}.
 
 
 ## Response Format {#res-format}
@@ -507,12 +546,12 @@ Encapsulated Response {
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
 
-The Nn and Nk values correspond to parameters of the AEAD used in HPKE, which is
-defined in {{Section 7.3 of HPKE}} or [the HPKE AEAD IANA
-registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  Nn
-and Nk refer to the size of the AEAD nonce and key respectively, in bytes.  The
-Encapsulated Response nonce length is set to the larger of these two lengths,
-i.e., max(Nn, Nk).
+That is, an Encapsulated Response contains a Nonce and an AEAD-Protected
+Response.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is
+larger.  The `Nn` and `Nk` values correspond to parameters of the AEAD used in
+HPKE, which is defined in {{Section 7.3 of HPKE}} or [the HPKE AEAD IANA
+registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  `Nn`
+and `Nk` refer to the size of the AEAD nonce and key respectively, in bytes.
 
 
 ## Encapsulation of Requests {#request}
