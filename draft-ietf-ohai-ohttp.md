@@ -1015,11 +1015,15 @@ Encapsulated Response.
 ### Differential Treatment {#differential}
 
 A relay MAY add information to requests if the Client is aware of the nature of
-the information that could be added.  The Client does not need to be aware of
-the exact value added for each request, but needs to know the range of possible
-values the relay might use.  Importantly, information added by the relay - beyond
-what is already revealed through encapsulated requests from Clients - can reduce
-the size of the anonymity set of Clients at a gateway.
+the information that could be added.  Any addition MUST NOT include information
+that directly identifies the Client, including any pseudonymous identifier.
+Information added by the relay - beyond what is already revealed through
+encapsulated requests from Clients - can reduce the size of the anonymity set of
+Clients at a gateway.
+
+A Client does not need to be aware of the exact value added for each request,
+but needs to know the range of possible values the relay might use.  How
+a Client might learn about added information is not defined in this document.
 
 Moreover, relays MAY apply differential treatment to Clients that engage in abusive
 behavior, e.g., by sending too many requests in comparison to other Clients,
