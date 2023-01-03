@@ -1451,7 +1451,7 @@ Required parameters:
 
 Optional parameters:
 
-: None
+: N/A
 
 Encoding considerations:
 
@@ -1528,7 +1528,7 @@ Required parameters:
 
 Optional parameters:
 
-: None
+: N/A
 
 Encoding considerations:
 
@@ -1605,7 +1605,7 @@ Required parameters:
 
 Optional parameters:
 
-: None
+: N/A
 
 Encoding considerations:
 
