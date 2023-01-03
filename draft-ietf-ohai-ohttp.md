@@ -567,7 +567,7 @@ Clients encapsulate a request, `request`, using values from a key configuration:
   `aead_id`.
 
 The Client then constructs an Encapsulated Request, `enc_request`, from a binary
-encoded HTTP request, `request`, as follows:
+encoded HTTP request {{!BINARY}}, `request`, as follows:
 
 1. Construct a message header, `hdr`, by concatenating the values of `key_id`,
    `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
@@ -624,8 +624,8 @@ process. To decapsulate an Encapsulated Request, `enc_request`:
    request", a zero byte, `key_id` as an 8-bit integer, plus `kem_id`, `kdf_id`,
    and `aead_id` as three 16-bit integers.
 
-3. Create a receiving HPKE context by invoking `SetupBaseR()` ({{Section 5.1.1
-   of HPKE}}) with `skR`, `enc`, and `info`.  This produces a context `rctxt`.
+3. Create a receiving HPKE context, `rctxt`, by invoking `SetupBaseR()`
+   ({{Section 5.1.1 of HPKE}}) with `skR`, `enc`, and `info`.
 
 4. Decrypt `ct` by invoking the `Open()` method on `rctxt` ({{Section 5.2 of
    HPKE}}), with an empty associated data `aad`, yielding `request` or an error
@@ -646,12 +646,16 @@ rctxt = SetupBaseR(enc, skR, info)
 request, error = rctxt.Open("", ct)
 ~~~
 
+The Oblivious Gateway Resource retains the HPKE context, `rctxt`, so that it can
+encapsulate a response.
+
 
 ## Encapsulation of Responses {#response}
 
-Given an HPKE context, `context`; a request message, `request`; and a response,
-`response`, Oblivious Gateway Resources generate an Encapsulated Response,
-`enc_response`, as follows:
+Oblivious Gateway Resources generate an Encapsulated Response, `enc_response`,
+from a binary encoded HTTP response {{!BINARY}}, `response`.  The Oblivious
+Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
+`context`, as follows:
 
 1. Export a secret, `secret`, from `context`, using the string "message/bhttp
    response" as the `exporter_context` parameter to `context.Export`; see
@@ -696,9 +700,10 @@ ct = Seal(aead_key, aead_nonce, "", response)
 enc_response = concat(response_nonce, ct)
 ~~~
 
-Clients decrypt an Encapsulated Response by reversing this process. That is,
-they first parse `enc_response` into `response_nonce` and `ct`. They then
-follow the same process to derive values for `aead_key` and `aead_nonce`.
+Clients decrypt an Encapsulated Response by reversing this process.  That is,
+Clients first parse `enc_response` into `response_nonce` and `ct`. They then
+follow the same process to derive values for `aead_key` and `aead_nonce`, using
+their sending HPKE context, `sctxt`, as the HPKE context, `context`.
 
 The Client uses these values to decrypt `ct` using the Open function provided by
 the AEAD. Decrypting might produce an error, as follows:
