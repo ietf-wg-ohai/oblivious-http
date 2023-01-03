@@ -905,11 +905,12 @@ In this section, a deployment where there are three entities is considered:
 * A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the Target Resource
 
-Connections between the Client, Oblivious Relay Resource, and Oblivious Gateway
-Resource MUST use HTTPS in order to provide unlinkability in the presence of a
-network observer.  The scheme of the Encapsulated Request determines what is
-used between the Oblivious Gateway and Target Resources, though using HTTPS is
-RECOMMENDED; see {{server-responsibilities}}.
+Requests from the Client to Oblivious Relay Resource and from Oblivious Relay
+Resource to Oblivious Gateway Resource MUST use HTTPS in order to provide
+unlinkability in the presence of a network observer.  The scheme of the
+Encapsulated Request determines what is used between the Oblivious Gateway and
+Target Resources, though using HTTPS is RECOMMENDED; see
+{{server-responsibilities}}.
 
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
