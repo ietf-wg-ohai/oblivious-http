@@ -942,7 +942,7 @@ this document; see {{ta}}.
 A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 
-## Client Responsibilities
+## Client Responsibilities {#sec-client}
 
 Clients MUST ensure that the key configuration they select for generating
 Encapsulated Requests is integrity protected and authenticated so that it can
@@ -1340,6 +1340,27 @@ However, this increases the risk that their request is rejected as outside the
 acceptable window.
 
 
+## Media Type Security {#sec-media}
+
+The key configuration media type defined in {{ohttp-keys}} represents keying
+material.  The content of this media type is not active (see {{Section 4.6 of
+RFC6838}}), but it governs how a Client might interact with an Oblivious Gateway
+Resource.  The security implications of processing it are described in
+{{sec-client}}; privacy implications are described in {{privacy}}.
+
+The security implications of handling the message media types defined in
+{{req-res-media}} is covered in other parts of this section in more detail.
+However, these message media types are also encrypted encapsulations of HTTP
+requests and responses.
+
+HTTP messages contain content, which can use any media type.  In particular,
+requests are processed by an Oblivious Target Resource, which - as an HTTP
+resource - defines how content is processed; see {{Section 3.1 of HTTP}}.  HTTP
+clients can also use resource identity and response content to determine how
+content is processed.  Consequently, the security considerations of {{Section 17
+of HTTP}} also apply to the handling of the content of these media types.
+
+
 # Privacy Considerations {#privacy}
 
 One goal of this design is that independent Client requests are only linkable by
@@ -1430,7 +1451,8 @@ content is accessible to middleboxes.
 Please update the "Media Types" registry at
 <https://iana.org/assignments/media-types> for the media types
 "application/ohttp-keys" ({{iana-keys}}), "message/ohttp-req" ({{iana-req}}),
-and "message/ohttp-res" ({{iana-res}}).
+and "message/ohttp-res" ({{iana-res}}), following the procedures of
+{{!RFC6838}}.
 
 Please update the "HTTP Problem Types" registry at
 <https://iana.org/assignments/http-problem-types> for the types "date"
@@ -1464,7 +1486,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{security}}
+: see {{sec-media}}
 
 Interoperability considerations:
 
@@ -1541,7 +1563,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{security}}
+: see {{sec-media}}
 
 Interoperability considerations:
 
@@ -1618,7 +1640,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{security}}
+: see {{sec-media}}
 
 Interoperability considerations:
 
