@@ -567,7 +567,7 @@ Clients encapsulate a request, `request`, using values from a key configuration:
   `aead_id`.
 
 The Client then constructs an Encapsulated Request, `enc_request`, from a binary
-encoded HTTP request {{!BINARY}}, `request`, as follows:
+encoded HTTP request {{BINARY}}, `request`, as follows:
 
 1. Construct a message header, `hdr`, by concatenating the values of `key_id`,
    `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
@@ -653,7 +653,7 @@ encapsulate a response.
 ## Encapsulation of Responses {#response}
 
 Oblivious Gateway Resources generate an Encapsulated Response, `enc_response`,
-from a binary encoded HTTP response {{!BINARY}}, `response`.  The Oblivious
+from a binary encoded HTTP response {{BINARY}}, `response`.  The Oblivious
 Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
 `context`, as follows:
 
@@ -770,7 +770,7 @@ Resource and the Oblivious Gateway Resource also act as HTTP clients toward the
 Oblivious Gateway Resource and Target Resource respectively.
 
 In order to achieve the privacy and security goals of the protocol a Client also
-needs to observe the guidance in {{client-responsibilities}}.
+needs to observe the guidance in {{sec-client}}.
 
 The Oblivious Relay Resource interacts with the Oblivious Gateway Resource as an
 HTTP client by constructing a request using the same restrictions as the Client
