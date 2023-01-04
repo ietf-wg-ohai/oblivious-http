@@ -1016,7 +1016,7 @@ Encapsulated Response.
 
 A relay MAY add information to requests if the Client is aware of the nature of
 the information that could be added.  Any addition MUST NOT include information
-that directly identifies the Client, including any pseudonymous identifier.
+that uniquely and permanently identifies the Client, including any pseudonymous identifier.
 Information added by the relay - beyond what is already revealed through
 encapsulated requests from Clients - can reduce the size of the anonymity set of
 Clients at a gateway.
