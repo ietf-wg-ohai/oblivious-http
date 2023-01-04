@@ -905,11 +905,12 @@ In this section, a deployment where there are three entities is considered:
 * A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the Target Resource
 
-Connections between the Client, Oblivious Relay Resource, and Oblivious Gateway
-Resource MUST use HTTPS in order to provide unlinkability in the presence of a
-network observer.  The scheme of the Encapsulated Request determines what is
-used between the Oblivious Gateway and Target Resources, though using HTTPS is
-RECOMMENDED; see {{server-responsibilities}}.
+Requests from the Client to Oblivious Relay Resource and from Oblivious Relay
+Resource to Oblivious Gateway Resource MUST use HTTPS in order to provide
+unlinkability in the presence of a network observer.  The scheme of the
+Encapsulated Request determines what is used between the Oblivious Gateway and
+Target Resources, though using HTTPS is RECOMMENDED; see
+{{server-responsibilities}}.
 
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
@@ -1014,11 +1015,15 @@ Encapsulated Response.
 ### Differential Treatment {#differential}
 
 A relay MAY add information to requests if the Client is aware of the nature of
-the information that could be added.  The Client does not need to be aware of
-the exact value added for each request, but needs to know the range of possible
-values the relay might use.  Importantly, information added by the relay - beyond
-what is already revealed through encapsulated requests from Clients - can reduce
-the size of the anonymity set of Clients at a gateway.
+the information that could be added.  Any addition MUST NOT include information
+that uniquely and permanently identifies the Client, including any pseudonymous identifier.
+Information added by the relay - beyond what is already revealed through
+encapsulated requests from Clients - can reduce the size of the anonymity set of
+Clients at a gateway.
+
+A Client does not need to be aware of the exact value added for each request,
+but needs to know the range of possible values the relay might use.  How
+a Client might learn about added information is not defined in this document.
 
 Moreover, relays MAY apply differential treatment to Clients that engage in abusive
 behavior, e.g., by sending too many requests in comparison to other Clients,
