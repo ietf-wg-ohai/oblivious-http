@@ -567,7 +567,7 @@ Clients encapsulate a request, `request`, using values from a key configuration:
   `aead_id`.
 
 The Client then constructs an Encapsulated Request, `enc_request`, from a binary
-encoded HTTP request, `request`, as follows:
+encoded HTTP request {{BINARY}}, `request`, as follows:
 
 1. Construct a message header, `hdr`, by concatenating the values of `key_id`,
    `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
@@ -624,8 +624,8 @@ process. To decapsulate an Encapsulated Request, `enc_request`:
    request", a zero byte, `key_id` as an 8-bit integer, plus `kem_id`, `kdf_id`,
    and `aead_id` as three 16-bit integers.
 
-3. Create a receiving HPKE context by invoking `SetupBaseR()` ({{Section 5.1.1
-   of HPKE}}) with `skR`, `enc`, and `info`.  This produces a context `rctxt`.
+3. Create a receiving HPKE context, `rctxt`, by invoking `SetupBaseR()`
+   ({{Section 5.1.1 of HPKE}}) with `skR`, `enc`, and `info`.
 
 4. Decrypt `ct` by invoking the `Open()` method on `rctxt` ({{Section 5.2 of
    HPKE}}), with an empty associated data `aad`, yielding `request` or an error
@@ -646,12 +646,16 @@ rctxt = SetupBaseR(enc, skR, info)
 request, error = rctxt.Open("", ct)
 ~~~
 
+The Oblivious Gateway Resource retains the HPKE context, `rctxt`, so that it can
+encapsulate a response.
+
 
 ## Encapsulation of Responses {#response}
 
-Given an HPKE context, `context`; a request message, `request`; and a response,
-`response`, Oblivious Gateway Resources generate an Encapsulated Response,
-`enc_response`, as follows:
+Oblivious Gateway Resources generate an Encapsulated Response, `enc_response`,
+from a binary encoded HTTP response {{BINARY}}, `response`.  The Oblivious
+Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
+`context`, as follows:
 
 1. Export a secret, `secret`, from `context`, using the string "message/bhttp
    response" as the `exporter_context` parameter to `context.Export`; see
@@ -696,9 +700,10 @@ ct = Seal(aead_key, aead_nonce, "", response)
 enc_response = concat(response_nonce, ct)
 ~~~
 
-Clients decrypt an Encapsulated Response by reversing this process. That is,
-they first parse `enc_response` into `response_nonce` and `ct`. They then
-follow the same process to derive values for `aead_key` and `aead_nonce`.
+Clients decrypt an Encapsulated Response by reversing this process.  That is,
+Clients first parse `enc_response` into `response_nonce` and `ct`. They then
+follow the same process to derive values for `aead_key` and `aead_nonce`, using
+their sending HPKE context, `sctxt`, as the HPKE context, `context`.
 
 The Client uses these values to decrypt `ct` using the Open function provided by
 the AEAD. Decrypting might produce an error, as follows:
@@ -765,7 +770,7 @@ Resource and the Oblivious Gateway Resource also act as HTTP clients toward the
 Oblivious Gateway Resource and Target Resource respectively.
 
 In order to achieve the privacy and security goals of the protocol a Client also
-needs to observe the guidance in {{client-responsibilities}}.
+needs to observe the guidance in {{sec-client}}.
 
 The Oblivious Relay Resource interacts with the Oblivious Gateway Resource as an
 HTTP client by constructing a request using the same restrictions as the Client
@@ -938,7 +943,7 @@ this document; see {{ta}}.
 A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 
-## Client Responsibilities
+## Client Responsibilities {#sec-client}
 
 Clients MUST ensure that the key configuration they select for generating
 Encapsulated Requests is integrity protected and authenticated so that it can
@@ -1340,6 +1345,27 @@ However, this increases the risk that their request is rejected as outside the
 acceptable window.
 
 
+## Media Type Security {#sec-media}
+
+The key configuration media type defined in {{ohttp-keys}} represents keying
+material.  The content of this media type is not active (see {{Section 4.6 of
+RFC6838}}), but it governs how a Client might interact with an Oblivious Gateway
+Resource.  The security implications of processing it are described in
+{{sec-client}}; privacy implications are described in {{privacy}}.
+
+The security implications of handling the message media types defined in
+{{req-res-media}} is covered in other parts of this section in more detail.
+However, these message media types are also encrypted encapsulations of HTTP
+requests and responses.
+
+HTTP messages contain content, which can use any media type.  In particular,
+requests are processed by an Oblivious Target Resource, which - as an HTTP
+resource - defines how content is processed; see {{Section 3.1 of HTTP}}.  HTTP
+clients can also use resource identity and response content to determine how
+content is processed.  Consequently, the security considerations of {{Section 17
+of HTTP}} also apply to the handling of the content of these media types.
+
+
 # Privacy Considerations {#privacy}
 
 One goal of this design is that independent Client requests are only linkable by
@@ -1430,7 +1456,8 @@ content is accessible to middleboxes.
 Please update the "Media Types" registry at
 <https://iana.org/assignments/media-types> for the media types
 "application/ohttp-keys" ({{iana-keys}}), "message/ohttp-req" ({{iana-req}}),
-and "message/ohttp-res" ({{iana-res}}).
+and "message/ohttp-res" ({{iana-res}}), following the procedures of
+{{!RFC6838}}.
 
 Please update the "HTTP Problem Types" registry at
 <https://iana.org/assignments/http-problem-types> for the types "date"
@@ -1456,7 +1483,7 @@ Required parameters:
 
 Optional parameters:
 
-: None
+: N/A
 
 Encoding considerations:
 
@@ -1464,7 +1491,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{security}}
+: see {{sec-media}}
 
 Interoperability considerations:
 
@@ -1533,7 +1560,7 @@ Required parameters:
 
 Optional parameters:
 
-: None
+: N/A
 
 Encoding considerations:
 
@@ -1541,7 +1568,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{security}}
+: see {{sec-media}}
 
 Interoperability considerations:
 
@@ -1610,7 +1637,7 @@ Required parameters:
 
 Optional parameters:
 
-: None
+: N/A
 
 Encoding considerations:
 
@@ -1618,7 +1645,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{security}}
+: see {{sec-media}}
 
 Interoperability considerations:
 
