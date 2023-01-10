@@ -1207,9 +1207,9 @@ An Oblivious Gateway Resource can maintain state for requests for a small window
 of time over which it wishes to accept requests.  The Oblivious Gateway Resource
 can store all requests it processes within this window.  Storing just the `enc`
 field of a request, which should be unique to each request, is sufficient.  The
-Oblivious Gateway Resource then rejects requests if the request is the same as
-one that was previously answered within that time window, or if the `Date`
-header field from the decrypted request is outside of the current time window.
+Oblivious Gateway Resource can reject any request that is the same as one that
+was previously answered within that time window or if the `Date` header field
+from the decrypted request is outside of the current time window.
 
 Oblivious Gateway Resources might need to allow for the time it takes requests
 to arrive from the Client, with a time window that is large enough to allow for
