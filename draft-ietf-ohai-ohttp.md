@@ -1503,7 +1503,8 @@ Published specification:
 
 Applications that use this media type:
 
-: Oblivious HTTP and applications that use Oblivious HTTP
+: This type identifies a key configuration as used by Oblivious HTTP and
+  applications that use Oblivious HTTP.
 
 Fragment identifier considerations:
 
