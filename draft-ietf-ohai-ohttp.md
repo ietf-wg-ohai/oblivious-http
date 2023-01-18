@@ -1126,8 +1126,8 @@ Nonsecure requests - such as those with the "http" scheme as opposed to the
 "https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
 Resources are not on the same origin.  If messages are forwarded between these
 resources without the protections afforded by HTTPS, they could be inspected or
-modified by a network attacker.  Note that two resources that share an
-origin do not guarantee that requests are not forwarded without protection.
+modified by a network attacker.  Note that a request could be forwarded without
+protection even if the two resources share an origin.
 
 
 ## Key Management
