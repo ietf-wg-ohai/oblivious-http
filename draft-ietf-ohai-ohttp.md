@@ -165,9 +165,9 @@ An Oblivious HTTP Client must initially know the following:
 
 * The identity of an Oblivious Relay Resource that will accept relay requests
   carrying an Encapsulated Request as its content and forward the content in
-  these requests to a single Oblivious Gateway Resource. See {{proxy-state}}
-  for more information about the mapping between Oblivious Relay and Gateway
-  Resources.
+  these requests to a particular Oblivious Gateway Resource.  Oblivious HTTP
+  uses a one-to-one mapping between Oblivious Relay and Gateway Resources; see
+  {{proxy-state}} for more details.
 
 This information allows the Client to make a request of a Target Resource with
 that resource having only a limited ability to correlate that request with the
