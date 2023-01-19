@@ -165,9 +165,9 @@ An Oblivious HTTP Client must initially know the following:
 
 * The identity of an Oblivious Relay Resource that will accept relay requests
   carrying an Encapsulated Request as its content and forward the content in
-  these requests to a single Oblivious Gateway Resource. See {{proxy-state}}
-  for more information about the mapping between Oblivious Relay and Gateway
-  Resources.
+  these requests to a particular Oblivious Gateway Resource.  Oblivious HTTP
+  uses a one-to-one mapping between Oblivious Relay and Gateway Resources; see
+  {{proxy-state}} for more details.
 
 This information allows the Client to make a request of a Target Resource with
 that resource having only a limited ability to correlate that request with the
@@ -1126,8 +1126,8 @@ Nonsecure requests - such as those with the "http" scheme as opposed to the
 "https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
 Resources are not on the same origin.  If messages are forwarded between these
 resources without the protections afforded by HTTPS, they could be inspected or
-modified by a network attacker.  Note that two resources that share an
-origin do not guarantee that requests are not forwarded without protection.
+modified by a network attacker.  Note that a request could be forwarded without
+protection if the two resources share an origin.
 
 
 ## Key Management
