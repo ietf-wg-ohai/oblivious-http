@@ -1057,7 +1057,7 @@ might need an arrangement with Oblivious Relay Resources. This arrangement might
 be necessary to prevent having the large volume of requests being classified as
 an attack by the server.
 
-If a server accepts a larger volume of requests from a relay, it needs to
+If a gateway accepts a larger volume of requests from a relay, it needs to
 trust that the relay does not allow abusive levels of request volumes from
 Clients. That is, if a server allows requests from the relay to be exempt from
 rate limits, the server might want to ensure that the relay applies a rate
@@ -1154,7 +1154,7 @@ provides key diversity only within the HPKE context created using the
 
 ## Replay Attacks {#replay}
 
-A server is responsible for either rejecting replayed requests or ensuring that
+A gateway is responsible for either rejecting replayed requests or ensuring that
 the effect of replays does not adversely affect Clients or resources.
 
 Encrypted requests can be copied and replayed by the Oblivious Relay
