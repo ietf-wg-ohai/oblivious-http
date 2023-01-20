@@ -1122,7 +1122,7 @@ If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
 relay for managing denial of service; see {{dos}}.
 
-Insecure requests - such as those with the "http" scheme as opposed to the
+Non-secure requests - such as those with the "http" scheme as opposed to the
 "https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
 Resources are not on the same origin.  If messages are forwarded between these
 resources without the protections afforded by HTTPS, they could be inspected or
