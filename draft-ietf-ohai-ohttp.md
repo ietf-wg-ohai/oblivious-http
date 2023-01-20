@@ -1009,8 +1009,8 @@ information, removing unknown fields removes this privacy risk.
 Secondly, generic implementations are often configured to augment requests with
 information about the Client, such as the Via field or the Forwarded field
 {{?FORWARDED=RFC7239}}.  A relay MUST NOT add information when forwarding
-requests that might be used to identify Clients, with the exception of
-information that a Client is aware of; see {{differential}}.
+requests that might be used to identify Clients, except for information that
+a Client is aware of; see {{differential}}.
 
 Finally, a relay can also generate responses, though it is assumed to not be able
 to examine the content of a request (other than to observe the choice of key
@@ -1122,7 +1122,7 @@ If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
 relay for managing denial of service; see {{dos}}.
 
-Nonsecure requests - such as those with the "http" scheme as opposed to the
+Non-secure requests - such as those with the "http" scheme as opposed to the
 "https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
 Resources are not on the same origin.  If messages are forwarded between these
 resources without the protections afforded by HTTPS, they could be inspected or
@@ -1382,11 +1382,11 @@ run by the same operator.  If the Oblivious Gateway Resource is willing to use
 trial decryption, requests can be further separated into smaller groupings based
 on the keys that are used.
 
-Each active Client configuration partitions the Client anonymity set. In practice,
-it is infeasible to reduce the number of active configurations to one. Enabling diversity in choice of
-Oblivious Relay Resource naturally increases the number of active
-configurations.  A small number of configurations might need to be active to
-allow for key rotation and server maintenance.
+Each active Client configuration partitions the Client anonymity set. In
+practice, it is infeasible to reduce the number of active configurations to
+one. Enabling diversity in choice of Oblivious Relay Resource naturally
+increases the number of active configurations.  More than one configuration
+might need to be active to allow for key rotation and server maintenance.
 
 Client privacy depends on having each configuration used by many other Clients.
 It is critical to prevent the use of unique Client configurations, which might
@@ -1770,7 +1770,7 @@ corresponding public key as follows:
 79815500080001000100010003
 ~~~
 
-This key configuration is somehow obtained by the Client. Then when a Client
+This key configuration is somehow obtained by the Client. Then, when a Client
 wishes to send an HTTP GET request to the target `https://example.com`, it
 constructs the following binary HTTP message:
 
