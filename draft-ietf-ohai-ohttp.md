@@ -1096,11 +1096,12 @@ TLS connections from Clients, so they see message boundaries. This privileged
 position allows for richer feature extraction from encrypted data, which might
 improve traffic analysis.
 
-Clients can use padding to reduce the effectiveness of traffic analysis.
-Padding is a capability provided by binary HTTP messages; see {{Section 3.8 of
-BINARY}}.  If the encapsulation method described in this document is used to
-protect a different message type (see {{repurposing}}), that message format
-might need to include padding support.
+Clients and Oblivious Gateway Resources can use padding to reduce the
+effectiveness of traffic analysis.  Padding is a capability provided by binary
+HTTP messages; see {{Section 3.8 of BINARY}}.  If the encapsulation method
+described in this document is used to protect a different message type (see
+{{repurposing}}), that message format might need to include padding support.
+
 
 ## Server Responsibilities {#server-responsibilities}
 
