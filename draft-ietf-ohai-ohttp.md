@@ -47,7 +47,7 @@ informative:
     display: HTTP/3
   COOKIES: RFC6265
 
-  Dingledine2004:
+  DMS2004:
     title: "Tor: The Second-Generation Onion Router"
     date: 2004-08
     target: "https://svn.torproject.org/svn/projects/design-paper/tor-design.html"
@@ -64,7 +64,7 @@ informative:
       - ins: H. Corrigan-Gibbs
       - ins: D. Boneh
 
-  ODoH:
+  ODOH-PETS:
     title: "Oblivious DNS over HTTPS (ODoH): A Practical Privacy Enhancement to DNS"
     date: 2021-01-07
     target: https://www.petsymposium.org/2021/files/papers/issue4/popets-2021-0085.pdf
@@ -123,9 +123,9 @@ made from it can be correlated over time to assemble a profile of client behavio
 particular, connection reuse improves performance, but provides servers with
 the ability to correlate requests that share a connection.
 
-Client-configured HTTP proxies can provide a degree of protection against IP address
-tracking, and systems like virtual private networks and the Tor network
-{{Dingledine2004}} provide additional options for clients.
+Client-configured HTTP proxies can provide a degree of protection against IP
+address tracking, and systems like virtual private networks and the Tor network
+{{DMS2004}} provide additional options for clients.
 
 However, even when IP address tracking is mitigated using one of these techniques, each request
 needs to be on a completely new TLS connection to avoid the connection itself being used
@@ -246,11 +246,10 @@ at the transport layer, which is only useful for an application
 that does not carry state between requests.
 
 Oblivious HTTP is primarily useful where privacy risks associated with possible
-stateful treatment of requests are sufficiently large that the cost of
-deploying this protocol can be justified.  Oblivious HTTP is simpler and less
-costly than more robust systems, like Prio ({{PRIO}}) or Tor
-({{Dingledine2004}}), which can provide stronger guarantees at higher
-operational costs.
+stateful treatment of requests are sufficiently large that the cost of deploying
+this protocol can be justified.  Oblivious HTTP is simpler and less costly than
+more robust systems, like Prio ({{PRIO}}) or Tor ({{DMS2004}}), which can
+provide stronger guarantees at higher operational costs.
 
 Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
@@ -1412,11 +1411,12 @@ This section discusses various operational and deployment considerations.
 
 ## Performance Overhead
 
-Using Oblivious HTTP adds both cryptographic overhead and latency to requests relative to
-a simple HTTP request-response exchange.  Deploying relay services that are on
-path between Clients and servers avoids adding significant additional delay due
-to network topology.  A study of a similar system {{ODoH}} found that deploying
-proxies close to servers was most effective in minimizing additional latency.
+Using Oblivious HTTP adds both cryptographic overhead and latency to requests
+relative to a simple HTTP request-response exchange.  Deploying relay services
+that are on path between Clients and servers avoids adding significant
+additional delay due to network topology.  A study of a similar system
+{{ODOH-PETS}} found that deploying proxies close to servers was most effective
+in minimizing additional latency.
 
 ## Resource Mappings {#proxy-state}
 
