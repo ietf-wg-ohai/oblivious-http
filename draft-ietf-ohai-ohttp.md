@@ -1100,6 +1100,9 @@ effectiveness of traffic analysis.  Padding is a capability provided by binary
 HTTP messages; see {{Section 3.8 of BINARY}}.  If the encapsulation method
 described in this document is used to protect a different message type (see
 {{repurposing}}), that message format might need to include padding support.
+Oblivious Relay Resources can also use padding for the same reason, but need to
+operate at the HTTP layer since they cannot manipulate binary HTTP messages; for example,
+see {{Section 10.7 of HTTP2}} or {{Section 10.7 of HTTP3}}).
 
 
 ## Server Responsibilities {#server-responsibilities}
