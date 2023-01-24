@@ -1207,7 +1207,8 @@ replayed.
 ### Use of Date for Anti-Replay
 
 Clients SHOULD include a `Date` header field in Encapsulated Requests, unless
-the Oblivious Gateway Resource does not use `Date` for anti-replay purposes.
+the Client has prior knowledge that indicates that the Oblivious Gateway
+Resource does not use `Date` for anti-replay purposes.
 
 Though HTTP requests often do not include a `Date` header field, the value of
 this field might be used by a server to limit the amount of requests it needs to
