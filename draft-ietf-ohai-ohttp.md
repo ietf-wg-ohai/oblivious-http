@@ -386,7 +386,7 @@ decision.
 ## Key Configuration Encoding {#key-config}
 
 A single key configuration consists of a key identifier, a public key, an
-identifier for the KEM that the public key uses, and a set HPKE symmetric
+identifier for the KEM that the public key uses, and a set of HPKE symmetric
 algorithms. Each symmetric algorithm consists of an identifier for a KDF and an
 identifier for an AEAD.
 
