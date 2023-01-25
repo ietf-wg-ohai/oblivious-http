@@ -1210,7 +1210,8 @@ replayed.
 ### Use of Date for Anti-Replay
 
 Clients SHOULD include a `Date` header field in Encapsulated Requests, unless
-the Oblivious Gateway Resource does not use `Date` for anti-replay purposes.
+the Client has prior knowledge that indicates that the Oblivious Gateway
+Resource does not use `Date` for anti-replay purposes.
 
 Though HTTP requests often do not include a `Date` header field, the value of
 this field might be used by a server to limit the amount of requests it needs to
@@ -1227,7 +1228,11 @@ from the decrypted request is outside of the current time window.
 Oblivious Gateway Resources might need to allow for the time it takes requests
 to arrive from the Client, with a time window that is large enough to allow for
 differences in clocks.  Insufficient tolerance of time differences could result
-in valid requests being unnecessarily rejected.
+in valid requests being unnecessarily rejected.  Beyond allowing for multiple
+round trip times -- to account for retransmission -- network delays are unlikely
+to be significant in determining the size of the window, unless all potential
+Clients are known to have excellent time-keeping.  A specific window size might
+need to be determined experimentally.
 
 Oblivious Gateway Resources MUST NOT treat the time window as secret
 information. An attacker can actively probe with different values for the `Date`
