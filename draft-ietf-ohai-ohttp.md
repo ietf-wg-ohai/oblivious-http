@@ -1036,7 +1036,7 @@ differential treatment can reveal information to the gateway that would not
 be revealed otherwise and therefore reduce the size of the anonymity set of
 Clients using a gateway. For example, if a relay chooses to rate limit or
 block an abusive Client, this means that any Client requests which are not
-treated this way are known to be non-abusive by the gateway. Clients should
+treated this way are known to be non-abusive by the gateway. Clients need to
 consider the likelihood of such differential treatment and the privacy
 risks when using a relay.
 
