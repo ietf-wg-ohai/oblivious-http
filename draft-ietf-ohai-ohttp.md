@@ -35,7 +35,7 @@ normative:
 
 informative:
 
-  CONSISTENCY: I-D.wood-key-consistency
+  CONSISTENCY: I-D.ietf-privacypass-key-consistency
   HTTP11:
     =: RFC9112
     display: HTTP/1.1
