@@ -29,6 +29,7 @@ normative:
 
   BINARY: RFC9292
   HTTP: RFC9110
+  HTTP-CACHING: RFC9111
   QUIC: RFC9000
   TLS: RFC8446
   HPKE: RFC9180
@@ -1268,9 +1269,10 @@ differences are known to be commonplace; see Section 7.1 of
 Including a `Date` header field in the response allows the Client to correct
 clock errors by retrying the same request using the value of the `Date` field
 provided by the Oblivious Gateway Resource.  The value of the `Date` field can
-be copied if the request is fresh, with an adjustment based on the `Age` field
-otherwise.  When retrying a request, the Client MUST create a fresh encryption
-of the modified request, using a new HPKE context.
+be copied if the response is fresh, with an adjustment based on the `Age` field
+otherwise; see {{Section 4.2 of HTTP-CACHING}}.  When retrying a request, the
+Client MUST create a fresh encryption of the modified request, using a new HPKE
+context.
 
 ~~~ aasvg
 +---------+       +-------------------+      +----------+
@@ -1291,7 +1293,12 @@ of the modified request, using a new HPKE context.
      +============================>+------------->|
      |                 |           |              |
 ~~~
-{: #fig-retry-date title="Retrying with an Update Date Field"}
+{: #fig-retry-date title="Retrying with an Updated Date Field"}
+
+Retrying immediately allows the Oblivious Gateway Resource to measure the round
+trip time to the Client. The observed delay might reveal something about the
+location of the Client.  Clients could delay retries to add some uncertainty to
+any observed delay.
 
 Intermediaries can sometimes rewrite the `Date` field when forwarding responses.
 This might cause problems if the Oblivious Gateway Resource and intermediary
