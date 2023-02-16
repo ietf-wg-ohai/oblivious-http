@@ -979,8 +979,8 @@ Encapsulated Request and is sent to the Oblivious Relay Resource MUST NOT
 include identifying information unless the Client can trust that this
 information is removed by the relay. A Client MAY include information only for
 the Oblivious Relay Resource in header fields identified by the Connection
-header field if it trusts the relay to remove these as required by Section 7.6.1
-of {{HTTP}}. The Client needs to trust that the relay does not replicate the
+header field if it trusts the relay to remove these as required by {{Section
+7.6.1 of HTTP}}. The Client needs to trust that the relay does not replicate the
 source addressing information in the request it forwards.
 
 Clients rely on the Oblivious Relay Resource to forward Encapsulated Requests
