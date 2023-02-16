@@ -754,7 +754,7 @@ Encapsulated Request.  This Encapsulated Request is included as the content of a
 POST request to the Oblivious Relay Resource.  This request only needs those
 fields necessary to carry the Encapsulated Request: a method of POST, a target
 URI of the Oblivious Relay Resource, a header field containing the content type
-(see ({{iana-req}}), and the Encapsulated Request as the request content. In the
+(see {{iana-req}}), and the Encapsulated Request as the request content. In the
 request to the Oblivious Relay Resource, Clients MAY include additional
 fields. However, additional fields MUST be independent of the Encapsulated
 Request and MUST be fields that the Oblivious Relay Resource will remove before
