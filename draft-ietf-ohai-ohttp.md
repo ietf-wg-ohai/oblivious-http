@@ -563,8 +563,8 @@ Clients encapsulate a request, `request`, using values from a key configuration:
 
 * the public key from the configuration, `pkR`, and
 
-* a selected combination of KDF, identified by `kdf_id`, and AEAD, identified by
-  `aead_id`.
+* a combination of KDF, identified by `kdf_id`, and AEAD, identified by
+  `aead_id`, that the Client selects from those in the key configuration.
 
 The Client then constructs an Encapsulated Request, `enc_request`, from a binary
 encoded HTTP request {{BINARY}}, `request`, as follows:
