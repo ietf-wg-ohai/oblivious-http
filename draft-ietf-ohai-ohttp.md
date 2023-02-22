@@ -1860,7 +1860,7 @@ response (consisting of just a 200 status code) as follows:
 0140c8
 ~~~
 
-The response is constructed by extracting a secret from the HPKE context:
+The response is constructed by exporting a secret from the HPKE context:
 
 <!-- ikm for HKDF extract -->
 ~~~ hex-dump
