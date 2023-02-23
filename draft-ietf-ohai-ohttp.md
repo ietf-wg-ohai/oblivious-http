@@ -672,11 +672,11 @@ Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
    function is `secret`; the `salt` input is the concatenation of `enc` (from
    `enc_request`) and `response_nonce`.
 
-4. Use the `Expand` function provided by the same KDF to extract an AEAD key,
+4. Use the `Expand` function provided by the same KDF to create an AEAD key,
    `key`, of length `Nk` - the length of the keys used by the AEAD associated
    with `context`. Generating `aead_key` uses a label of "key".
 
-5. Use the same `Expand` function to extract a nonce, `nonce`, of length `Nn` -
+5. Use the same `Expand` function to create a nonce, `nonce`, of length `Nn` -
    the length of the nonce used by the AEAD. Generating `aead_nonce` uses a
    label of "nonce".
 
@@ -1860,7 +1860,7 @@ response (consisting of just a 200 status code) as follows:
 0140c8
 ~~~
 
-The response is constructed by extracting a secret from the HPKE context:
+The response is constructed by exporting a secret from the HPKE context:
 
 <!-- ikm for HKDF extract -->
 ~~~ hex-dump
