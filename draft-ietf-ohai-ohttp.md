@@ -403,8 +403,8 @@ Key Config {
   Key Identifier (8),
   HPKE KEM ID (16),
   HPKE Public Key (Npk * 8),
-  HPKE Symmetric Algorithms Length (16),
-  HPKE Symmetric Algorithms (32..524256),
+  HPKE Symmetric Algorithms Length (16) = 4..65532,
+  HPKE Symmetric Algorithms (32) ...,
 }
 ~~~
 {: #format-key-config title="A Single Key Configuration"}
