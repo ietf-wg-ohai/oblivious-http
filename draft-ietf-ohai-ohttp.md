@@ -1143,8 +1143,8 @@ the operator of the Oblivious Gateway Resource to only forward requests that
 meet the expectations of the Target Resource.
 
 For instance, an Oblivious Gateway Resource might -- possibly with the help of
-the Oblivious Relay Resource -- be trusted not to forward an excessive volume of
-requests, which might allow the Target Resource to accept a greater volume of
+Oblivious Relay Resources -- be trusted not to forward an excessive volume of
+requests. This might allow the Target Resource to accept a greater volume of
 requests from that Oblivious Gateway Resource relative to other HTTP clients.
 
 An Oblivious Gateway Resource could implement policies that improve the ability
