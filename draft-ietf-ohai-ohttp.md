@@ -1134,6 +1134,24 @@ modified by a network attacker.  Note that a request could be forwarded without
 protection if the two resources share an origin.
 
 
+## Separate Gateway and Target
+
+A Target Resource that is operated on a different server from the Oblivious
+Gateway Resource is an ordinary HTTP resource.  A Target Resource can privilege
+requests that are forwarded by a given Oblivious Gateway Resource if it trusts
+the operator of the Oblivious Gateway Resource to only forward requests that
+meet the expectations of the Target Resource.
+
+For instance, an Oblivious Gateway Resource might -- possibly with the help of
+the Oblivious Relay Resource -- be trusted not to forward an excessive volume of
+requests, which might allow the Target Resource to accept a greater volume of
+requests from that Oblivious Gateway Resource relative to other HTTP clients.
+
+An Oblivious Gateway Resource could implement policies that improve the ability
+of the Target Resource to implement policy exemptions, such as only forwarding
+requests toward specific Target Resources.
+
+
 ## Key Management
 
 An Oblivious Gateway Resource needs to have a plan for replacing keys. This
