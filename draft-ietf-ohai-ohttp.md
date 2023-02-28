@@ -134,17 +134,19 @@ to correlate behavior. This imposes considerable performance and efficiency over
 to the additional round trip to the server (at a minimum), additional data exchanged, and
 additional CPU cost of cryptographic computations.
 
-To overcome these limitations, this document defines how binary HTTP messages
-{{BINARY}} can be encapsulated using Hybrid Public Key Encryption (HPKE;
-{{HPKE}}) to protect their contents. Clients exchange these messages with an
-Oblivious Gateway Resource, which is responsible for forwarding decapsulated
-requests to the original Target Resource and encapsulating the corresponding
-responses and sending them back to the client. Critically, encapsulated messages
-are sent through a separate Oblivious Relay Resource to avoid exposing the
-client's IP address or allowing the connection to be used as a correlator
-between its requests.
+To overcome these limitations, this document defines Oblivious HTTP, a protocol for
+encrypting and sending HTTP messages from a client to a gateway through a trusted relay
+service. In particular, the protocol in this document describes: (1) an algorithm for
+encapsulating binary HTTP messages {{BINARY}} using Hybrid Public Key Encryption (HPKE;
+{{HPKE}}) to protect their contents, (2) a method for forwarding these encapsulated
+messages between clients and an Oblivious Gateway Resource through a trusted Oblivious
+Relay Resource using HTTP, and (3) requirements for how the Oblivious Gateway Resource
+handles encapsulated HTTP messages and produces encapsulated responses for the client.
+The combination of encapsulation and relaying ensures that Oblivious Gateway Resource
+never sees the client's IP address and the Oblivious Relay Resource never sees
+plaintext HTTP message content.
 
-Because it allows connection reuse between the client and Oblivious Relay
+Oblivious HTTP allows connection reuse between the client and Oblivious Relay
 Resource, as well as between that relay and the Oblivious Gateway Resource, this
 scheme represents a performance improvement over using just one request in each
 connection.  With limited trust placed in the Oblivious Relay Resource (see
@@ -170,9 +172,10 @@ An Oblivious HTTP Client must initially know the following:
   uses a one-to-one mapping between Oblivious Relay and Gateway Resources; see
   {{proxy-state}} for more details.
 
-This information allows the Client to make a request of a Target Resource with
-that resource having only a limited ability to correlate that request with the
-Client IP or other requests that the Client might make to that server.
+This information allows the Client to forward a request for some Target Resource
+to the Oblivious Gateway Resource without the Oblivious Gateway Resource learning the
+client's IP address or any other identifying information that might be revealed from
+the client at the transport layer.
 
 ~~~ aasvg
 +---------+       +----------+      +----------+      +----------+
@@ -205,8 +208,8 @@ Client IP or other requests that the Client might make to that server.
 ~~~
 {: #fig-overview title="Overview of Oblivious HTTP"}
 
-In order to make a request to a Target Resource, the following steps occur, as
-shown in {{fig-overview}}:
+In order to forward a request for a Target Resource to the Oblivious Gateway
+Resource, the following steps occur, as shown in {{fig-overview}}:
 
 1. The Client constructs an HTTP request for a Target Resource.
 
@@ -222,27 +225,31 @@ shown in {{fig-overview}}:
 5. The Oblivious Gateway Resource receives this request and removes
    the HPKE protection to obtain an HTTP request.
 
-6. The Oblivious Gateway Resource makes an HTTP request that includes the target
-   URI, method, fields, and content of the request it acquires.
+The Oblivious Gateway Resource then handles the HTTP request. This typically
+involves making an HTTP request that includes the target URI, method, fields,
+and content of the request acquired from the Encapsulated Request. Once the
+Oblivious Gateway Resource has an HTTP response for this request, the following
+steps occur to return this response to the client:
 
-7. The Target Resource answers this HTTP request with an HTTP response.
-
-8. The Oblivious Gateway Resource encapsulates the HTTP response following the
+1. The Oblivious Gateway Resource encapsulates the HTTP response following the
    process in {{response}} and sends this in response to the request from the
    Oblivious Relay Resource.
 
-9. The Oblivious Relay Resource forwards this response to the Client.
+2. The Oblivious Relay Resource forwards this response to the Client.
 
-10. The Client removes the encapsulation to obtain the response to the original
+3. The Client removes the encapsulation to obtain the response to the original
     request.
-
 
 ## Applicability
 
-Oblivious HTTP has limited applicability.  Many uses of HTTP benefit
-from being able to carry state between requests, such as with cookies
-({{COOKIES}}), authentication ({{Section 11 of HTTP}}), or even
-alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
+Oblivious HTTP has limited applicability.  Imporantly, it requires expicit
+support from a willing Oblivious Relay Resource and Oblivious Gateway Resource,
+thereby limiting the use of Oblivious HTTP for generic applications;
+see {{server-responsibilities}} for more information.
+
+Many uses of HTTP benefit from being able to carry state between requests,
+such as with cookies ({{COOKIES}}), authentication ({{Section 11 of HTTP}}),
+or even alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
 at the transport layer, which is only useful for an application
 that does not carry state between requests.
 
@@ -1124,7 +1131,9 @@ attacks; see {{ta}}.
 
 If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
-relay for managing denial of service; see {{dos}}.
+relay for managing denial of service; see {{dos}}. Moreover, the Oblivious Gateway
+Resource SHOULD apply some form of allowlist to ensure that the Oblivious Gateway
+Resource is not misused as a relay for HTTP messages to arbitrary Target Resources.
 
 Non-secure requests - such as those with the "http" scheme as opposed to the
 "https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
