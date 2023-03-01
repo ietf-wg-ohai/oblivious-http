@@ -231,8 +231,7 @@ Resource, the following steps occur, as shown in {{fig-overview}}:
    the HPKE protection to obtain an HTTP request.
 
 The Oblivious Gateway Resource then handles the HTTP request. This typically
-involves making an HTTP request that includes the target URI, method, fields,
-and content of the request acquired from the Encapsulated Request. Once the
+involves making an HTTP request using the content of the Encapsulated Request. Once the
 Oblivious Gateway Resource has an HTTP response for this request, the following
 steps occur to return this response to the client:
 
