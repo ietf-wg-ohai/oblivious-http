@@ -136,12 +136,17 @@ additional CPU cost of cryptographic computations.
 
 To overcome these limitations, this document defines Oblivious HTTP, a protocol for
 encrypting and sending HTTP messages from a client to a gateway through a trusted relay
-service. In particular, the protocol in this document describes: (1) an algorithm for
-encapsulating binary HTTP messages {{BINARY}} using Hybrid Public Key Encryption (HPKE;
-{{HPKE}}) to protect their contents, (2) a method for forwarding these encapsulated
-messages between clients and an Oblivious Gateway Resource through a trusted Oblivious
-Relay Resource using HTTP, and (3) requirements for how the Oblivious Gateway Resource
-handles encapsulated HTTP messages and produces encapsulated responses for the client.
+service. In particular, the protocol in this document describes: 
+
+1. an algorithm for encapsulating binary HTTP messages {{BINARY}} using Hybrid
+   Public Key Encryption (HPKE; {{HPKE}}) to protect their contents,
+
+2. a method for forwarding these encapsulated messages between clients and an
+   Oblivious Gateway Resource through a trusted Oblivious Relay Resource using
+   HTTP, and
+
+3. requirements for how the Oblivious Gateway Resource handles encapsulated HTTP
+   messages and produces encapsulated responses for the client.
 The combination of encapsulation and relaying ensures that Oblivious Gateway Resource
 never sees the client's IP address and the Oblivious Relay Resource never sees
 plaintext HTTP message content.
