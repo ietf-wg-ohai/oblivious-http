@@ -136,7 +136,7 @@ additional CPU cost of cryptographic computations.
 
 To overcome these limitations, this document defines Oblivious HTTP, a protocol for
 encrypting and sending HTTP messages from a client to a gateway through a trusted relay
-service. In particular, the protocol in this document describes: 
+service. In particular, the protocol in this document describes:
 
 1. an algorithm for encapsulating binary HTTP messages {{BINARY}} using Hybrid
    Public Key Encryption (HPKE; {{HPKE}}) to protect their contents,
