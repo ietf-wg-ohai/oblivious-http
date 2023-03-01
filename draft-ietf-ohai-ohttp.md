@@ -177,10 +177,12 @@ An Oblivious HTTP Client must initially know the following:
   uses a one-to-one mapping between Oblivious Relay and Gateway Resources; see
   {{proxy-state}} for more details.
 
-This information allows the Client to forward a request for some Target Resource
-to the Oblivious Gateway Resource without the Oblivious Gateway Resource learning the
-client's IP address or any other identifying information that might be revealed from
-the client at the transport layer.
+This information allows the Client to send HTTP requests to the Oblivious
+Gateway Resource for forwarding to a Target Resource.  The Oblivious Gateway
+Resource does not learn the client's IP address or any other identifying
+information that might be revealed from the client at the transport layer, nor
+does the Oblivious Gateway Resource learn which of the requests it receives are
+from the same Client.
 
 ~~~ aasvg
 +---------+       +----------+      +----------+      +----------+
