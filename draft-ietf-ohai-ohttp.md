@@ -1139,7 +1139,7 @@ If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
 relay for managing denial of service; see {{dos}}. Moreover, the Oblivious Gateway
 Resource SHOULD apply some form of allowlist to ensure that the Oblivious Gateway
-Resource is not misused as a relay for HTTP messages to arbitrary Target Resources.
+Resource is not misused as a relay for HTTP messages to an arbitrary Target Resource.
 
 Non-secure requests - such as those with the "http" scheme as opposed to the
 "https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
