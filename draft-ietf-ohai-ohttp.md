@@ -152,7 +152,7 @@ never sees the client's IP address and the Oblivious Relay Resource never sees
 plaintext HTTP message content.
 
 Oblivious HTTP allows connection reuse between the client and Oblivious Relay
-Resource, as well as between that relay and the Oblivious Gateway Resource, this
+Resource, as well as between that relay and the Oblivious Gateway Resource, so this
 scheme represents a performance improvement over using just one request in each
 connection.  With limited trust placed in the Oblivious Relay Resource (see
 {{security}}), Clients are assured that requests are not uniquely attributed to
