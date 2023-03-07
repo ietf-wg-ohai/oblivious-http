@@ -967,7 +967,8 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 ## Client Responsibilities {#sec-client}
 
-Clients MUST maintain an explicit allowlist of target resources that the client trusts
+Because Clients do not authenticate the Target Resource when using Oblivious HTTP,
+Clients MUST maintain an explicit allowlist of target resources that the Client trusts
 an Oblivious Gateway to respond for, and check requests against this allowlist before
 sending them. This ensures that Oblivious Gateway Resources are not abused to forward
 traffic to arbitrary Target Resources. See {{server-responsibilities}} for
