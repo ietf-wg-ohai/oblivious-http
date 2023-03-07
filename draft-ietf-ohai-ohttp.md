@@ -186,11 +186,12 @@ does the Oblivious Gateway Resource learn which of the requests it receives are
 from the same Client.
 
 ~~~ aasvg
-+---------+       +----------+      +----------+      +----------+
-| Client  |       | Relay    |      | Gateway  |      | Target   |
-|         |       | Resource |      | Resource |      | Resource |
-+----+----+       +----+-----+      +-------+--+      +----+-----+
-     |                 |                    |              |
+                                  /--------------------------------`
++---------+       +----------+   |  +----------+      +----------+  |
+| Client  |       | Relay    |   |  | Gateway  |      | Target   |  |
+|         |       | Resource |   |  | Resource |      | Resource |  |
++----+----+       +----+-----+   |  +-------+--+      +----+-----+  |
+     |                 |          `---------|--------------|-------'
      | Relay           |                    |              |
      | Request         |                    |              |
      | [+ Encapsulated |                    |              |
@@ -246,6 +247,15 @@ steps occur to return this response to the client:
 
 3. The Client removes the encapsulation to obtain the response to the original
     request.
+
+This interaction provides authentication and confidentiality protection between the
+Client and the Oblivious Gateway, but importantly not between the Client and the
+Target Resource. While the Target Resource is a distinct HTTP resource from the
+Oblivious Gateway Resource, they are both logically under the control of the Oblivious
+Gateway, since the Oblivious Gateway Resource can unilaterally dictate the responses
+returned from the Target Resource to the Client. This arrangement is shown in {{fig-overview}}.
+See {{security}} for more information about Client and Oblivious Relay, and Oblivous Gateway
+resources in running this protocol.
 
 ## Applicability
 
@@ -902,9 +912,9 @@ been encapsulated.
 
 # Security Considerations {#security}
 
-In this design, a Client wishes to make a request of a server that is
-authoritative for a Target Resource. The Client wishes to make this request
-without linking that request with either:
+In this design, a Client wishes to make a request to an Oblivious Gateway Resource
+that is forwarded to a Target Resource. The Client wishes to make this request without
+linking that request with either:
 
 1. The identity at the network and transport layer of the Client (that is, the
    Client IP address and TCP or UDP port number the Client uses to create a
@@ -939,17 +949,15 @@ interactions between those resources without affecting Client privacy.
 As a consequence of this configuration, Oblivious HTTP prevents linkability
 described above. Informally, this means:
 
-1. Requests and responses are known only to Clients and Target Resources, plus
-   Oblivious Gateway Resources that possess the corresponding response
-   encapsulation key and HPKE keying material.  In particular, the Oblivious
-   Relay Resource knows the origin and destination of an Encapsulated Request and
-   Response, yet does not know the decrypted contents. Likewise, Oblivious
-   Gateway Resources learn only the Oblivious Relay Resource and the decrypted
-   request.  No entity other than the Client can see the plaintext request and
-   response and can attribute them to the Client.
+1. Requests and responses are known only to Clients and Oblivious Gateway Resources.
+   In particular, the Oblivious Relay Resource knows the origin and destination
+   of an Encapsulated Request and Response, yet does not know the decrypted contents.
+   Likewise, Oblivious Gateway Resources learn only the Oblivious Relay Resource and
+   the decrypted request.  No entity other than the Client can see the plaintext
+   request and response and can attribute them to the Client.
 
-2. Targets cannot link requests from the same Client in the absence of unique
-   per-Client keys.
+2. Oblivous Gateway Resources, and therefore Target Resources, cannot link requests
+   from the same Client in the absence of unique per-Client keys.
 
 Traffic analysis that might affect these properties are outside the scope of
 this document; see {{ta}}.
@@ -958,6 +966,12 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 
 ## Client Responsibilities {#sec-client}
+
+Clients MUST maintain an explicit allowlist of target resources that the client trusts
+an Oblivious Gateway to respond for, and check requests against this allowlist before
+sending them. This ensures that Oblivious Gateway Resources are not abused to forward
+traffic to arbitrary Target Resources. See {{server-responsibilities}} for
+similar responsibilities that apply to Oblivious Gateway Resources.
 
 Clients MUST ensure that the key configuration they select for generating
 Encapsulated Requests is integrity protected and authenticated so that it can
