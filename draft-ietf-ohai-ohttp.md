@@ -147,6 +147,7 @@ service. In particular, the protocol in this document describes:
 
 3. requirements for how the Oblivious Gateway Resource handles encapsulated HTTP
    messages and produces encapsulated responses for the client.
+
 The combination of encapsulation and relaying ensures that Oblivious Gateway Resource
 never sees the client's IP address and the Oblivious Relay Resource never sees
 plaintext HTTP message content.
