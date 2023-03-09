@@ -910,12 +910,12 @@ In this section, a deployment where there are three entities is considered:
 * A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the Target Resource
 
+{{separate-target}} discusses the security implications for a case where
+different servers operate the Oblivious Gateway Resource and Target Resource.
+
 Requests from the Client to Oblivious Relay Resource and from Oblivious Relay
 Resource to Oblivious Gateway Resource MUST use HTTPS in order to provide
-unlinkability in the presence of a network observer.  The scheme of the
-Encapsulated Request determines what is used between the Oblivious Gateway and
-Target Resources, though using HTTPS is RECOMMENDED; see
-{{server-responsibilities}}.
+unlinkability in the presence of a network observer.
 
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
@@ -1381,7 +1381,16 @@ content is processed.  Consequently, the security considerations of {{Section 17
 of HTTP}} also apply to the handling of the content of these media types.
 
 
-## Separate Gateway and Target
+## Separate Gateway and Target {#separate-target}
+
+This document generally assumes that the same entity operates the Oblivious
+Gateway Resource and the Target Resource.  However, as the Oblivious Gateway
+Resource performs generic HTTP processing, the use of forwarding cannot be
+completely precluded.
+
+The scheme specified in the Encapsulated Request determines the security
+requirements for any protocol that is used between the Oblivious Gateway and
+Target Resources.  Using HTTPS is RECOMMENDED; see {{server-responsibilities}}.
 
 A Target Resource that is operated on a different server from the Oblivious
 Gateway Resource is an ordinary HTTP resource.  A Target Resource can privilege
