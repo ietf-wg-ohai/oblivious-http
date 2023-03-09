@@ -1140,7 +1140,9 @@ A Target Resource that is operated on a different server from the Oblivious
 Gateway Resource is an ordinary HTTP resource.  A Target Resource can privilege
 requests that are forwarded by a given Oblivious Gateway Resource if it trusts
 the operator of the Oblivious Gateway Resource to only forward requests that
-meet the expectations of the Target Resource.
+meet the expectations of the Target Resource.  Otherwise, the Target Resource
+treats requests from an Oblivious Gateway Resource no differently than any
+other HTTP client.
 
 For instance, an Oblivious Gateway Resource might -- possibly with the help of
 Oblivious Relay Resources -- be trusted not to forward an excessive volume of
