@@ -1441,7 +1441,7 @@ requests from that Oblivious Gateway Resource relative to other HTTP clients.
 
 An Oblivious Gateway Resource could implement policies that improve the ability
 of the Target Resource to implement policy exemptions, such as only forwarding
-requests toward specific Target Resources.
+requests toward specific Target Resources according to an allowlist; see {{server-responsibilities}}.
 
 
 # Privacy Considerations {#privacy}
