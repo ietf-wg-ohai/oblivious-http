@@ -248,14 +248,14 @@ steps occur to return this response to the client:
 3. The Client removes the encapsulation to obtain the response to the original
     request.
 
-This interaction provides authentication and confidentiality protection between the
-Client and the Oblivious Gateway, but importantly not between the Client and the
-Target Resource. While the Target Resource is a distinct HTTP resource from the
-Oblivious Gateway Resource, they are both logically under the control of the Oblivious
-Gateway, since the Oblivious Gateway Resource can unilaterally dictate the responses
-returned from the Target Resource to the Client. This arrangement is shown in {{fig-overview}}.
-See {{security}} for more information about Client and Oblivious Relay, and Oblivous Gateway
-resources in running this protocol.
+This interaction provides authentication and confidentiality protection between
+the Client and the Oblivious Gateway, but importantly not between the Client and
+the Target Resource. While the Target Resource is a distinct HTTP resource from
+the Oblivious Gateway Resource, they are both logically under the control of the
+Oblivious Gateway, since the Oblivious Gateway Resource can unilaterally dictate
+the responses returned from the Target Resource to the Client. This arrangement
+is shown in {{fig-overview}}.
+
 
 ## Applicability
 
@@ -305,6 +305,9 @@ something about that user even if the identity of the user is pseudonymous.
 Other examples include the submission of anonymous surveys, making search
 queries, or requesting location-specific content (such as retrieving tiles of a
 map display).
+
+In addition to these limitations, {{security}} describes operational constraints
+that are necessary to realize the goals of the protocol.
 
 
 ## Conventions and Definitions
@@ -934,12 +937,12 @@ In this section, a deployment where there are three entities is considered:
 * A relay operates the Oblivious Relay Resource
 * A server operates both the Oblivious Gateway Resource and the Target Resource
 
+{{separate-target}} discusses the security implications for a case where
+different servers operate the Oblivious Gateway Resource and Target Resource.
+
 Requests from the Client to Oblivious Relay Resource and from Oblivious Relay
 Resource to Oblivious Gateway Resource MUST use HTTPS in order to provide
-unlinkability in the presence of a network observer.  The scheme of the
-Encapsulated Request determines what is used between the Oblivious Gateway and
-Target Resources, though using HTTPS is RECOMMENDED; see
-{{server-responsibilities}}.
+unlinkability in the presence of a network observer.
 
 To achieve the stated privacy goals, the Oblivious Relay Resource cannot be
 operated by the same entity as the Oblivious Gateway Resource. However,
@@ -1410,6 +1413,35 @@ resource - defines how content is processed; see {{Section 3.1 of HTTP}}.  HTTP
 clients can also use resource identity and response content to determine how
 content is processed.  Consequently, the security considerations of {{Section 17
 of HTTP}} also apply to the handling of the content of these media types.
+
+
+## Separate Gateway and Target {#separate-target}
+
+This document generally assumes that the same entity operates the Oblivious
+Gateway Resource and the Target Resource.  However, as the Oblivious Gateway
+Resource performs generic HTTP processing, the use of forwarding cannot be
+completely precluded.
+
+The scheme specified in the Encapsulated Request determines the security
+requirements for any protocol that is used between the Oblivious Gateway and
+Target Resources.  Using HTTPS is RECOMMENDED; see {{server-responsibilities}}.
+
+A Target Resource that is operated on a different server from the Oblivious
+Gateway Resource is an ordinary HTTP resource.  A Target Resource can privilege
+requests that are forwarded by a given Oblivious Gateway Resource if it trusts
+the operator of the Oblivious Gateway Resource to only forward requests that
+meet the expectations of the Target Resource.  Otherwise, the Target Resource
+treats requests from an Oblivious Gateway Resource no differently than any
+other HTTP client.
+
+For instance, an Oblivious Gateway Resource might -- possibly with the help of
+Oblivious Relay Resources -- be trusted not to forward an excessive volume of
+requests. This might allow the Target Resource to accept a greater volume of
+requests from that Oblivious Gateway Resource relative to other HTTP clients.
+
+An Oblivious Gateway Resource could implement policies that improve the ability
+of the Target Resource to implement policy exemptions, such as only forwarding
+requests toward specific Target Resources according to an allowlist; see {{server-responsibilities}}.
 
 
 # Privacy Considerations {#privacy}
