@@ -248,14 +248,14 @@ steps occur to return this response to the client:
 3. The Client removes the encapsulation to obtain the response to the original
     request.
 
-This interaction provides authentication and confidentiality protection between the
-Client and the Oblivious Gateway, but importantly not between the Client and the
-Target Resource. While the Target Resource is a distinct HTTP resource from the
-Oblivious Gateway Resource, they are both logically under the control of the Oblivious
-Gateway, since the Oblivious Gateway Resource can unilaterally dictate the responses
-returned from the Target Resource to the Client. This arrangement is shown in {{fig-overview}}.
-See {{security}} for more information about Client and Oblivious Relay, and Oblivous Gateway
-resources in running this protocol.
+This interaction provides authentication and confidentiality protection between
+the Client and the Oblivious Gateway, but importantly not between the Client and
+the Target Resource. While the Target Resource is a distinct HTTP resource from
+the Oblivious Gateway Resource, they are both logically under the control of the
+Oblivious Gateway, since the Oblivious Gateway Resource can unilaterally dictate
+the responses returned from the Target Resource to the Client. This arrangement
+is shown in {{fig-overview}}.
+
 
 ## Applicability
 
@@ -305,6 +305,9 @@ something about that user even if the identity of the user is pseudonymous.
 Other examples include the submission of anonymous surveys, making search
 queries, or requesting location-specific content (such as retrieving tiles of a
 map display).
+
+In addition to these limitations, {{security}} describes operational constraints
+that are necessary to realize the goals of the protocol.
 
 
 ## Conventions and Definitions
