@@ -1134,26 +1134,6 @@ modified by a network attacker.  Note that a request could be forwarded without
 protection if the two resources share an origin.
 
 
-## Separate Gateway and Target
-
-A Target Resource that is operated on a different server from the Oblivious
-Gateway Resource is an ordinary HTTP resource.  A Target Resource can privilege
-requests that are forwarded by a given Oblivious Gateway Resource if it trusts
-the operator of the Oblivious Gateway Resource to only forward requests that
-meet the expectations of the Target Resource.  Otherwise, the Target Resource
-treats requests from an Oblivious Gateway Resource no differently than any
-other HTTP client.
-
-For instance, an Oblivious Gateway Resource might -- possibly with the help of
-Oblivious Relay Resources -- be trusted not to forward an excessive volume of
-requests. This might allow the Target Resource to accept a greater volume of
-requests from that Oblivious Gateway Resource relative to other HTTP clients.
-
-An Oblivious Gateway Resource could implement policies that improve the ability
-of the Target Resource to implement policy exemptions, such as only forwarding
-requests toward specific Target Resources.
-
-
 ## Key Management
 
 An Oblivious Gateway Resource needs to have a plan for replacing keys. This
@@ -1399,6 +1379,26 @@ resource - defines how content is processed; see {{Section 3.1 of HTTP}}.  HTTP
 clients can also use resource identity and response content to determine how
 content is processed.  Consequently, the security considerations of {{Section 17
 of HTTP}} also apply to the handling of the content of these media types.
+
+
+## Separate Gateway and Target
+
+A Target Resource that is operated on a different server from the Oblivious
+Gateway Resource is an ordinary HTTP resource.  A Target Resource can privilege
+requests that are forwarded by a given Oblivious Gateway Resource if it trusts
+the operator of the Oblivious Gateway Resource to only forward requests that
+meet the expectations of the Target Resource.  Otherwise, the Target Resource
+treats requests from an Oblivious Gateway Resource no differently than any
+other HTTP client.
+
+For instance, an Oblivious Gateway Resource might -- possibly with the help of
+Oblivious Relay Resources -- be trusted not to forward an excessive volume of
+requests. This might allow the Target Resource to accept a greater volume of
+requests from that Oblivious Gateway Resource relative to other HTTP clients.
+
+An Oblivious Gateway Resource could implement policies that improve the ability
+of the Target Resource to implement policy exemptions, such as only forwarding
+requests toward specific Target Resources.
 
 
 # Privacy Considerations {#privacy}
