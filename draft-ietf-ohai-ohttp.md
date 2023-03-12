@@ -972,8 +972,8 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 Because Clients do not authenticate the Target Resource when using Oblivious
 HTTP, Clients MUST have some mechanism to authorize an Oblivious Gateway
-Resource for use with a Target Resource. For example, a Client might use an
-allowlist.  This ensures that Oblivious Gateway Resources are not abused to
+Resource for use with a Target Resource. One possible means of authorization is
+an allowlist.  This ensures that Oblivious Gateway Resources are not abused to
 forward traffic to arbitrary Target Resources. {{server-responsibilities}}
 describes similar responsibilities that apply to Oblivious Gateway Resources.
 
