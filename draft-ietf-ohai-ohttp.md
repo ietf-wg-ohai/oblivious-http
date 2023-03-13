@@ -970,12 +970,12 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
 ## Client Responsibilities {#sec-client}
 
-Because Clients do not authenticate the Target Resource when using Oblivious HTTP,
-Clients MUST maintain an explicit allowlist of target resources that the Client trusts
-an Oblivious Gateway to respond for, and check requests against this allowlist before
-sending them. This ensures that Oblivious Gateway Resources are not abused to forward
-traffic to arbitrary Target Resources. See {{server-responsibilities}} for
-similar responsibilities that apply to Oblivious Gateway Resources.
+Because Clients do not authenticate the Target Resource when using Oblivious
+HTTP, Clients MUST have some mechanism to authorize an Oblivious Gateway
+Resource for use with a Target Resource. One possible means of authorization is
+an allowlist.  This ensures that Oblivious Gateway Resources are not abused to
+forward traffic to arbitrary Target Resources. {{server-responsibilities}}
+describes similar responsibilities that apply to Oblivious Gateway Resources.
 
 Clients MUST ensure that the key configuration they select for generating
 Encapsulated Requests is integrity protected and authenticated so that it can
@@ -1156,9 +1156,10 @@ attacks; see {{ta}}.
 
 If separate entities provide the Oblivious Gateway Resource and Target Resource,
 these entities might need an arrangement similar to that between server and
-relay for managing denial of service; see {{dos}}. Moreover, the Oblivious Gateway
-Resource SHOULD apply some form of allowlist to ensure that the Oblivious Gateway
-Resource is not misused as a relay for HTTP messages to an arbitrary Target Resource.
+relay for managing denial of service; see {{dos}}. Moreover, the Oblivious
+Gateway Resource SHOULD have some mechanism to ensure that the Oblivious Gateway
+Resource is not misused as a relay for HTTP messages to an arbitrary Target
+Resource, such as an allowlist.
 
 Non-secure requests - such as those with the "http" scheme as opposed to the
 "https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
