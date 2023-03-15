@@ -186,12 +186,12 @@ does the Oblivious Gateway Resource learn which of the requests it receives are
 from the same Client.
 
 ~~~ aasvg
-                                  .--------------------------------.
-+---------+       +----------+   |  +----------+      +----------+  |
-| Client  |       | Relay    |   |  | Gateway  |      | Target   |  |
-|         |       | Resource |   |  | Resource |      | Resource |  |
-+----+----+       +----+-----+   |  +-------+--+      +----+-----+  |
-     |                 |          `---------|--------------|-------'
+                                    .------------------------------.
++---------+       +----------+     |  +----------+    +----------+  |
+| Client  |       | Relay    |     |  | Gateway  |    | Target   |  |
+|         |       | Resource |     |  | Resource |    | Resource |  |
++----+----+       +----+-----+     |  +-----+----+    +----+-----+  |
+     |                 |            `-------|--------------|-------'
      | Relay           |                    |              |
      | Request         |                    |              |
      | [+ Encapsulated |                    |              |
