@@ -485,7 +485,7 @@ collection of key configurations. The content of this media type comprises one
 or more key configuration encodings (see {{key-config}}).  Each encoded
 configuration is prefixed with a two byte integer in network byte order that
 indicates the length of the key configuration in bytes.  The length-prefixed
-encodings are concatenated.  See {{iana-keys}} for a definition of the media
+encodings are concatenated to form a list.  See {{iana-keys}} for a definition of the media
 type.
 
 Evolution of the key configuration format is supported through the definition of
