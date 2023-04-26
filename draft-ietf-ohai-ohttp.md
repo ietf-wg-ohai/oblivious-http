@@ -491,6 +491,11 @@ of the media type.
 Evolution of the key configuration format is supported through the definition of
 new formats that are identified by new media types.
 
+A Client that receives an "application/ohttp-keys" object with encoding errors
+might be able to recover one or more key configurations.  Differences in how key
+configurations are recovered might be exploited to segregate Clients, so Clients
+MUST discard invalid objects.
+
 
 # HPKE Encapsulation
 
