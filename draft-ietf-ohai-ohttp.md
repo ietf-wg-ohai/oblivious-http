@@ -494,7 +494,7 @@ new formats that are identified by new media types.
 A Client that receives an "application/ohttp-keys" object with encoding errors
 might be able to recover one or more key configurations.  Differences in how key
 configurations are recovered might be exploited to segregate Clients, so Clients
-MUST discard invalid objects.
+MUST discard incorrectly encoded key configuration collections.
 
 
 # HPKE Encapsulation
