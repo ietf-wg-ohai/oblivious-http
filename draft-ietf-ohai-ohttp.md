@@ -116,7 +116,7 @@ same client, while placing only limited trust in the nodes used to forward the m
 
 HTTP requests reveal information about client identities to servers. While the actual content of
 the request message is under the control of the client, other information that is more difficult to
-control can still be used to identify the client. 
+control can still be used to identify the client.
 
 For example, the source IP address of the underlying connection reveals information that the client
 has only limited control over. While client-configured HTTP proxies can provide a degree of
