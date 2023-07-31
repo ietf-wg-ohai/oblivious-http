@@ -118,7 +118,7 @@ HTTP requests reveal information about client identities to servers. While the a
 the request message is under the control of the client, other information that is more difficult to
 control can still be used to identify the client.
 
-For example, the source IP address of the underlying connection reveals information that the client
+For example, the source IP address of the underlying connection reveals identifying information that the client
 has only limited control over. While client-configured HTTP proxies can provide a degree of
 protection against IP address tracking, they present an unfortunate tradeoff: if they are used
 without TLS, the contents of communication are revealed to the proxy; if they are used with TLS, a
