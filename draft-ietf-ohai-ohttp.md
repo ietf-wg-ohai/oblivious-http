@@ -104,39 +104,31 @@ informative:
 
 --- abstract
 
-This document describes a system for forwarding encrypted HTTP messages.
-This allows a client to make multiple requests to an origin server without that server being able
-to link those requests to the client or to identify the requests as having come
-from the same client, while placing only limited trust in the nodes used to forward the messages.
+This document describes Oblivious HTTP, a protocol for forwarding encrypted HTTP messages.
+Oblivious HTTP allows a client to make multiple requests to an origin server without that server
+being able to link those requests to the client or to identify the requests as having come from the
+same client, while placing only limited trust in the nodes used to forward the messages.
 
 
 --- middle
 
 # Introduction
 
-An HTTP request reveals information about the client's identity to the server.
-Some of that information is in the request content, and therefore under the control
-of the client. However, the source IP address of the underlying connection reveals
-information that the client has only limited control over.
+HTTP requests reveal information about client identities to servers. While the actual content of
+the request message is under the control of the client, other information that is more difficult to
+control can still be used to identify the client.
 
-Even where an IP address is not directly associated with an individual, the requests
-made from it can be correlated over time to assemble a profile of client behavior. In
-particular, connection reuse improves performance, but provides servers with
-the ability to correlate requests that share a connection.
+For example, the source IP address of the underlying connection reveals identifying information that the client
+has only limited control over. While client-configured HTTP proxies can provide a degree of
+protection against IP address tracking, they present an unfortunate tradeoff: if they are used
+without TLS, the contents of communication are revealed to the proxy; if they are used with TLS, a
+new connection needs to be used for each request to assure that the origin server cannot use the
+connection as a way to correlate requests, incurring significant performance overheads.
 
-Client-configured HTTP proxies can provide a degree of protection against IP
-address tracking, and systems like virtual private networks and the Tor network
-{{DMS2004}} provide additional options for clients.
-
-However, even when IP address tracking is mitigated using one of these techniques, each request
-needs to be on a completely new TLS connection to avoid the connection itself being used
-to correlate behavior. This imposes considerable performance and efficiency overheads, due
-to the additional round trip to the server (at a minimum), additional data exchanged, and
-additional CPU cost of cryptographic computations.
-
-To overcome these limitations, this document defines Oblivious HTTP, a protocol for
-encrypting and sending HTTP messages from a client to a gateway through a trusted relay
-service. In particular, the protocol in this document describes:
+To overcome these limitations, this document defines Oblivious HTTP, a protocol for encrypting and
+sending HTTP messages from a client to a gateway through a trusted relay service in a manner that
+mitigates the use of metadata such as IP address and connection information for client identification, with reasonable performance characteristics. In particular, this
+document describes:
 
 1. an algorithm for encapsulating binary HTTP messages {{BINARY}} using Hybrid
    Public Key Encryption (HPKE; {{HPKE}}) to protect their contents,
