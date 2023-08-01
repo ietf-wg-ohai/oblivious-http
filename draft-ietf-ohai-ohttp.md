@@ -114,21 +114,25 @@ same client, while placing only limited trust in the nodes used to forward the m
 
 # Introduction
 
-HTTP requests reveal information about client identities to servers. While the actual content of
-the request message is under the control of the client, other information that is more difficult to
-control can still be used to identify the client.
+HTTP requests reveal information about client identities to servers. While the
+actual content of the request message is under the control of the client, other
+information that is more difficult to control can still be used to identify the
+client.
 
-For example, the source IP address of the underlying connection reveals identifying information that the client
-has only limited control over. While client-configured HTTP proxies can provide a degree of
-protection against IP address tracking, they present an unfortunate tradeoff: if they are used
-without TLS, the contents of communication are revealed to the proxy; if they are used with TLS, a
-new connection needs to be used for each request to assure that the origin server cannot use the
-connection as a way to correlate requests, incurring significant performance overheads.
+In particular, the source IP address of the underlying connection reveals
+identifying information that the client has only limited control over. While
+client-configured HTTP proxies can provide a degree of protection against IP
+address tracking, they present an unfortunate tradeoff: if they are used without
+TLS, the contents of communication are revealed to the proxy; if they are used
+with TLS, a new connection needs to be used for each request to assure that the
+origin server cannot use the connection as a way to correlate requests,
+incurring significant performance overheads.
 
-To overcome these limitations, this document defines Oblivious HTTP, a protocol for encrypting and
-sending HTTP messages from a client to a gateway through a trusted relay service in a manner that
-mitigates the use of metadata such as IP address and connection information for client identification, with reasonable performance characteristics. In particular, this
-document describes:
+To overcome these limitations, this document defines Oblivious HTTP, a protocol
+for encrypting and sending HTTP messages from a client to a gateway. This uses a
+trusted relay service in a manner that mitigates the use of metadata such as IP
+address and connection information for client identification, with reasonable
+performance characteristics.  This document describes:
 
 1. an algorithm for encapsulating binary HTTP messages {{BINARY}} using Hybrid
    Public Key Encryption (HPKE; {{HPKE}}) to protect their contents,
