@@ -721,7 +721,7 @@ Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
 In pseudocode, this procedure is as follows:
 
 ~~~
-secret = context.Export("message/bhttp response", Nk)
+secret = context.Export("message/bhttp response", max(Nn, Nk))
 response_nonce = random(max(Nn, Nk))
 salt = concat(enc, response_nonce)
 prk = Extract(salt, secret)
