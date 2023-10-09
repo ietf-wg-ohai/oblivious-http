@@ -142,18 +142,18 @@ performance characteristics.  This document describes:
 1. an algorithm for encapsulating binary HTTP messages {{BINARY}} using Hybrid
    Public Key Encryption (HPKE; {{HPKE}}) to protect their contents,
 
-2. a method for forwarding these encapsulated messages between clients and an
+2. a method for forwarding these encapsulated messages between Clients and an
    Oblivious Gateway Resource through a trusted Oblivious Relay Resource using
    HTTP, and
 
 3. requirements for how the Oblivious Gateway Resource handles encapsulated HTTP
-   messages and produces encapsulated responses for the client.
+   messages and produces encapsulated responses for the Client.
 
 The combination of encapsulation and relaying ensures that Oblivious Gateway Resource
-never sees the client's IP address and the Oblivious Relay Resource never sees
+never sees the Client's IP address and the Oblivious Relay Resource never sees
 plaintext HTTP message content.
 
-Oblivious HTTP allows connection reuse between the client and Oblivious Relay
+Oblivious HTTP allows connection reuse between the Client and Oblivious Relay
 Resource, as well as between that relay and the Oblivious Gateway Resource, so this
 scheme represents a performance improvement over using just one request in each
 connection.  With limited trust placed in the Oblivious Relay Resource (see
@@ -181,8 +181,8 @@ An Oblivious HTTP Client must initially know the following:
 
 This information allows the Client to send HTTP requests to the Oblivious
 Gateway Resource for forwarding to a Target Resource.  The Oblivious Gateway
-Resource does not learn the client's IP address or any other identifying
-information that might be revealed from the client at the transport layer, nor
+Resource does not learn the Client's IP address or any other identifying
+information that might be revealed from the Client at the transport layer, nor
 does the Oblivious Gateway Resource learn which of the requests it receives are
 from the same Client.
 
@@ -238,7 +238,7 @@ Resource, the following steps occur, as shown in {{fig-overview}}:
 The Oblivious Gateway Resource then handles the HTTP request. This typically
 involves making an HTTP request using the content of the Encapsulated Request. Once the
 Oblivious Gateway Resource has an HTTP response for this request, the following
-steps occur to return this response to the client:
+steps occur to return this response to the Client:
 
 1. The Oblivious Gateway Resource encapsulates the HTTP response following the
    process in {{response}} and sends this in response to the request from the
@@ -890,7 +890,7 @@ outdated.  The Oblivious Gateway Resource can generate and send a response with
 a 4xx status code to the Oblivious Relay Resource.  This response MAY be
 forwarded to the Client or treated by the Oblivious Relay Resource as a failure.
 If a Client receives a response that is not an Encapsulated Response, this could
-indicate that the client configuration used to construct the request is
+indicate that the Client configuration used to construct the request is
 incorrect or out of date.
 
 ## Signaling Key Configuration Problems {#ohttp-key-problem}
