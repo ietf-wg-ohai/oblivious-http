@@ -142,12 +142,12 @@ performance characteristics.  This document describes:
 1. an algorithm for encapsulating binary HTTP messages {{BINARY}} using Hybrid
    Public Key Encryption (HPKE; {{HPKE}}) to protect their contents,
 
-2. a method for forwarding these encapsulated messages between Clients and an
+2. a method for forwarding Encapsulated Requests between Clients and an
    Oblivious Gateway Resource through a trusted Oblivious Relay Resource using
    HTTP, and
 
-3. requirements for how the Oblivious Gateway Resource handles encapsulated HTTP
-   messages and produces encapsulated responses for the Client.
+3. requirements for how the Oblivious Gateway Resource handles Encapsulated
+   Requests and produces Encapsulated Responses for the Client.
 
 The combination of encapsulation and relaying ensures that Oblivious Gateway Resource
 never sees the Client's IP address and the Oblivious Relay Resource never sees
@@ -321,7 +321,9 @@ follows:
 *[Client]: #dfn-client
 *[Clients]: #dfn-client
 *[Encapsulated Request]: #dfn-enc-req
+*[Encapsulated Requests]: #dfn-enc-req
 *[Encapsulated Response]: #dfn-enc-res
+*[Encapsulated Responses]: #dfn-enc-res
 *[Oblivious Relay Resource]: #dfn-relay
 *[Oblivious Gateway Resource]: #dfn-gateway
 *[Oblivious Relay Resources]: #dfn-relay
@@ -833,15 +835,15 @@ An Oblivious Gateway Resource acts as a gateway for requests to the Target
 Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
 information it might forward in a response MUST be encapsulated, unless it is
 responding to errors that do not relate to processing the contents of the
-encapsulated request; see {{errors}}.
+Encapsulated Request; see {{errors}}.
 
 An Oblivious Gateway Resource, if it receives any response from the Target
-Resource, sends a single 200 response containing the encapsulated response.
+Resource, sends a single 200 response containing the Encapsulated Response.
 Like the request from the Client, this response MUST only contain those fields
-necessary to carry the encapsulated response: a 200 status code, a header field
-indicating the content type, and the encapsulated response as the response
+necessary to carry the Encapsulated Response: a 200 status code, a header field
+indicating the content type, and the Encapsulated Response as the response
 content.  As with requests, additional fields MAY be used to convey information
-that does not reveal information about the encapsulated response.
+that does not reveal information about the Encapsulated Response.
 
 An Oblivious Gateway Resource that does not receive a response can itself
 generate a response with an appropriate error status code (such as 504 (Gateway
@@ -1028,7 +1030,7 @@ header field if it trusts the relay to remove these as required by {{Section
 source addressing information in the request it forwards.
 
 Clients rely on the Oblivious Relay Resource to forward Encapsulated Requests
-and responses. However, the relay can only refuse to forward messages, it
+and Responses. However, the relay can only refuse to forward messages, it
 cannot inspect or modify the contents of Encapsulated Requests or responses.
 
 
@@ -1067,7 +1069,7 @@ A relay MAY add information to requests if the Client is aware of the nature of
 the information that could be added.  Any addition MUST NOT include information
 that uniquely and permanently identifies the Client, including any pseudonymous identifier.
 Information added by the relay - beyond what is already revealed through
-encapsulated requests from Clients - can reduce the size of the anonymity set of
+Encapsulated Requests from Clients - can reduce the size of the anonymity set of
 Clients at a gateway.
 
 A Client does not need to be aware of the exact value added for each request,
