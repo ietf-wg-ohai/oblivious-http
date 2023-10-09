@@ -266,22 +266,22 @@ is shown in {{fig-overview}}.
 
 ## Applicability
 
-Oblivious HTTP has limited applicability.  Imporantly, it requires expicit
+Oblivious HTTP has limited applicability.  Importantly, it requires explicit
 support from a willing Oblivious Relay Resource and Oblivious Gateway Resource,
 thereby limiting the use of Oblivious HTTP for generic applications;
 see {{server-responsibilities}} for more information.
 
-Many uses of HTTP benefit from being able to carry state between requests,
-such as with cookies ({{COOKIES}}), authentication ({{Section 11 of HTTP}}),
-or even alternative services ({{?RFC7838}}).  Oblivious HTTP removes linkage
-at the transport layer, which is only useful for an application
-that does not carry state between requests.
+Many uses of HTTP benefit from being able to carry state between requests, such
+as with cookies {{COOKIES}}, authentication ({{Section 11 of HTTP}}), or even
+alternative services {{?RFC7838}}.  Oblivious HTTP removes linkage at the
+transport layer, which is only useful for an application that does not carry
+state between requests.
 
-Oblivious HTTP is primarily useful where privacy risks associated with possible
-stateful treatment of requests are sufficiently large that the cost of deploying
-this protocol can be justified.  Oblivious HTTP is simpler and less costly than
-more robust systems, like Prio ({{PRIO}}) or Tor ({{DMS2004}}), which can
-provide stronger guarantees at higher operational costs.
+Oblivious HTTP is primarily useful where the privacy risks associated with
+possible stateful treatment of requests are sufficiently large that the cost of
+deploying this protocol can be justified.  Oblivious HTTP is simpler and less
+costly than more robust systems, like Prio {{PRIO}} or Tor {{DMS2004}}, which
+can provide stronger guarantees at higher operational costs.
 
 Oblivious HTTP is more costly than a direct connection to a server.  Some costs,
 like those involved with connection setup, can be amortized, but there are
@@ -291,7 +291,8 @@ several ways in which Oblivious HTTP is more expensive than a direct request:
   increase latency.
 
 * Each request is expanded in size with additional HTTP fields,
-  encryption-related metadata, and AEAD expansion.
+  encryption-related metadata, and Authenticated Encryption with Associated Data
+  (AEAD) expansion.
 
 * Deriving cryptographic keys and applying them for request and
   response protection takes non-negligible computational resources.
@@ -299,19 +300,22 @@ several ways in which Oblivious HTTP is more expensive than a direct request:
 Examples of where preventing the linking of requests might justify these costs
 include:
 
-* DNS queries.  DNS queries made to a recursive resolver reveal information
-  about the requester, particularly if linked to other queries.
+DNS queries:
 
-* Telemetry submission.  Applications that submit reports about their usage to
-  their developers might use Oblivious HTTP for some types of moderately
-  sensitive data.
+: DNS queries made to a recursive resolver reveal information about the
+  requester, particularly if linked to other queries.
 
-These are examples of requests where there is information in a request that - if
-it were connected to the identity of the user - might allow a server to learn
-something about that user even if the identity of the user is pseudonymous.
-Other examples include the submission of anonymous surveys, making search
-queries, or requesting location-specific content (such as retrieving tiles of a
-map display).
+Telemetry submission:
+
+: Applications that submit reports about their usage to their developers might
+  use Oblivious HTTP for some types of moderately sensitive data.
+
+These are examples of requests where there is information in a request that --
+if it were connected to the identity of the user -- might allow a server to
+learn something about that user even if the identity of the user were
+pseudonymous.  Other examples include submission of anonymous surveys, making
+search queries, or requesting location-specific content (such as retrieving
+tiles of a map display).
 
 In addition to these limitations, {{security}} describes operational constraints
 that are necessary to realize the goals of the protocol.
@@ -337,47 +341,43 @@ follows:
 *[Oblivious Relay and Gateway Resources]: #dfn-relay
 *[Target Resource]: #dfn-target
 
-Client:
+{: newline="true"}
+{:#dfn-client} Client:
 
 : A Client originates Oblivious HTTP requests.  A Client is also an HTTP client
   in two ways: for the Target Resource and for the Oblivious Relay
   Resource. However, when referring to the HTTP definition of client ({{Section
   3.3 of HTTP}}), the term "HTTP client" is used; see {{http-usage}}.
-  {: anchor="dfn-client"}
 
-Encapsulated Request:
+{:#dfn-enc-req}Encapsulated Request:
 
 : An HTTP request that is encapsulated in an HPKE-encrypted message; see
   {{request}}.
-  {: anchor="dfn-enc-req"}
 
-Encapsulated Response:
+{:#dfn-enc-res} Encapsulated Response:
 
 : An HTTP response that is encapsulated in an HPKE-encrypted message; see
   {{response}}.
-  {: anchor="dfn-enc-res"}
 
-Oblivious Relay Resource:
+{:#dfn-relay} Oblivious Relay Resource:
 
 : An intermediary that forwards Encapsulated Requests and Responses between
   Clients and a single Oblivious Gateway Resource.  In context, this can be
-  referred to as simply a "relay".
-  {: anchor="dfn-relay"}
+  referred to simply as a "relay".
 
-Oblivious Gateway Resource:
+{:#dfn-gateway} Oblivious Gateway Resource:
 
 : A resource that can receive an Encapsulated Request, extract the contents of
   that request, forward it to a Target Resource, receive a response, encapsulate
-  that response, then return the resulting Encapsulated Response.  In context,
-  this can be referred to as simply a "gateway".
-  {: anchor="dfn-gateway"}
+  that response, and then return the resulting Encapsulated Response.  In
+  context, this can be referred to simply as a "gateway".
 
-Target Resource:
+{:#dfn-target} Target Resource:
 
 : The resource that is the target of an Encapsulated Request.  This resource
-  logically handles only regular HTTP requests and responses and so might be
+  logically handles only regular HTTP requests and responses, so it might be
   ignorant of the use of Oblivious HTTP to reach it.
-  {: anchor="dfn-target"}
+
 
 This document includes pseudocode that uses the functions and conventions
 defined in {{HPKE}}.
@@ -403,22 +403,20 @@ In order to ensure that Clients do not encapsulate messages that other entities
 can intercept, the key configuration MUST be authenticated and have integrity
 protection.
 
-This document does not define how that acquisition occurs. However, in
-order to help facilitate interoperability, it does specify a format
-for the keys. This ensures that different
-Client implementations can be configured in the same way and also
-enables advertising key configurations in a consistent format.  This
-format might be used, for example with HTTPS, as part of a system for
-configuring or discovering key configurations.  Note however that such
-a system needs to consider the potential for key configuration to be
-used to compromise Client privacy; see {{privacy}}.
+This document does not define how that acquisition occurs. However, in order to
+help facilitate interoperability, it does specify a format for the keys. This
+ensures that different Client implementations can be configured in the same way
+and also enables advertising key configurations in a consistent format.  This
+format might be used, for example, with HTTPS, as part of a system for
+configuring or discovering key configurations.  Note however that such a system
+needs to consider the potential for key configuration to be used to compromise
+Client privacy; see {{privacy}}.
 
 A Client might have multiple key configurations to select from when
 encapsulating a request. Clients are responsible for selecting a preferred key
-configuration from those it supports. Clients need to consider both the key
-encapsulation method (KEM) and the combinations of key derivation function
-(KDF) and authenticated encryption with associated data (AEAD) in this
-decision.
+configuration from those it supports. Clients need to consider both the Key
+Encapsulation Method (KEM) and the combinations of Key Derivation Function (KDF)
+and AEAD in this decision.
 
 ## Key Configuration Encoding {#key-config}
 
@@ -447,14 +445,15 @@ Key Config {
 
 That is, a key configuration consists of the following fields:
 
+{: newline="true"}
 Key Identifier:
 
-: An 8 bit value that identifies the key used by the Oblivious Gateway Resource.
+: An 8-bit value that identifies the key used by the Oblivious Gateway Resource.
 
 HPKE KEM ID:
 
-: A 16 bit value that identifies the KEM used for the
-  identified key as defined in {{Section 7.1 of HPKE}} or [the HPKE KDF IANA
+: A 16-bit value that identifies the KEM used for the identified key as defined
+  in {{Section 7.1 of HPKE}} or [the "HPKE KEM Identifiers" IANA
   registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).
 
 HPKE Public Key:
@@ -464,24 +463,24 @@ HPKE Public Key:
 
 HPKE Symmetric Algorithms Length:
 
-: A 16 bit integer in network byte order that encodes the length, in bytes, of
+: A 16-bit integer in network byte order that encodes the length, in bytes, of
   the HPKE Symmetric Algorithms field that follows.
 
 HPKE Symmetric Algorithms:
 
 : One or more pairs of identifiers for the different combinations of HPKE KDF
   and AEAD that the Oblivious Gateway Resource supports:
-  <dl>
+  <dl newline="true">
   <dt>HPKE KDF ID:</dt>
   <dd markdown="1">
-  A 16 bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
-  HPKE KDF IANA
+  A 16-bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
+  "HPKE KDF Idnetifiers" IANA
   registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kdf-ids).
   </dd>
   <dt>HPKE AEAD ID:</dt>
   <dd markdown="1">
-  A 16 bit HPKE AEAD identifier as defined in {{Section 7.3 of HPKE}} or [the
-  HPKE AEAD IANA
+  A 16-bit HPKE AEAD identifier as defined in {{Section 7.3 of HPKE}} or [the
+  "HPKE AEAD Identifiers" IANA
   registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).
   </dd>
   </dl>
@@ -492,7 +491,7 @@ HPKE Symmetric Algorithms:
 The "application/ohttp-keys" format is a media type that identifies a serialized
 collection of key configurations. The content of this media type comprises one
 or more key configuration encodings (see {{key-config}}).  Each encoded
-configuration is prefixed with a two byte integer in network byte order that
+configuration is prefixed with a 2-byte integer in network byte order that
 indicates the length of the key configuration in bytes.  The length-prefixed
 encodings are concatenated to form a list.  See {{iana-keys}} for a definition
 of the media type.
@@ -513,13 +512,13 @@ encapsulated using HPKE {{HPKE}}.  Separate media types are defined to
 distinguish request and response messages:
 
 * An Encapsulated Request format defined in {{req-format}} is identified by the
-  ["`message/ohttp-req`" media type](#iana-req){: format="title"}.
+  ["`message/ohttp-req`" media type](#iana-req).
 
 * An Encapsulated Response format defined in {{res-format}} is identified by the
   ["`message/ohttp-res`" media type](#iana-res).
 
 Alternative encapsulations or message formats are indicated using the media
-type; see {{req-res-media}} and {{repurposing}}.
+type; see Sections {{<req-res-media}} and {{<repurposing}}.
 
 
 ## Request Format {#req-format}
@@ -555,12 +554,12 @@ Encapsulated Request {
 ~~~
 {: #fig-enc-request title="Encapsulated Request"}
 
-That is, an Encapsulated Request comprises a Key Identifier, HPKE KEM ID, HPKE
-KDF ID, HPKE AEAD ID, Encapsulated KEM Shared Secret, and HPKE-Protected
-Request.  The Key Identifier, HPKE KEM ID, HPKE KDF ID, and HPKE AEAD ID fields
-are defined in {{key-config}}.  The Encapsulated KEM Shared Secret is the output
-of the `Encap()` function for the KEM, which is `Nenc` bytes in length, as
-defined in {{Section 4 of HPKE}}.
+That is, an Encapsulated Request comprises a Key Identifier, an HPKE KEM ID, an
+HPKE KDF ID, an HPKE AEAD ID, an Encapsulated KEM Shared Secret, and an
+HPKE-Protected Request.  The Key Identifier, HPKE KEM ID, HPKE KDF ID, and HPKE
+AEAD ID fields are defined in {{key-config}}.  The Encapsulated KEM Shared
+Secret is the output of the `Encap()` function for the KEM, which is `Nenc`
+bytes in length, as defined in {{Section 4 of HPKE}}.
 
 
 ## Response Format {#res-format}
@@ -591,10 +590,11 @@ Encapsulated Response {
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
 
-That is, an Encapsulated Response contains Nonce and AEAD-Protected Response
-fields.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is larger.
-The `Nn` and `Nk` values correspond to parameters of the AEAD used in HPKE,
-which is defined in {{Section 7.3 of HPKE}} or [the HPKE AEAD IANA
+That is, an Encapsulated Response contains a Nonce and an AEAD-Protected
+Response.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is
+larger.  The `Nn` and `Nk` values correspond to parameters of the AEAD used in
+HPKE, which is defined in {{Section 7.3 of HPKE}} or [the "HPKE AEAD
+Identifiers" IANA
 registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  `Nn`
 and `Nk` refer to the size of the AEAD nonce and key respectively, in bytes.
 
@@ -613,15 +613,15 @@ configuration:
   `aead_id`) that the Client selects from those in the key configuration.
 
 The Client then constructs an Encapsulated Request, `enc_request`, from a binary
-encoded HTTP request {{BINARY}}, `request`, as follows:
+encoded HTTP request {{BINARY}} (`request`) as follows:
 
 1. Construct a message header (`hdr`) by concatenating the values of `key_id`,
    `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
    integers, respectively, each in network byte order.
 
-2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
-   request", a zero byte, and the header.  Note: {{repurposing}} discusses how
-   alternative message formats might use a different `info` value.
+2. Build an `info` string by concatenating the ASCII-encoded string
+   "message/bhttp request", a zero byte, and the header.  Note: {{repurposing}}
+   discusses how alternative message formats might use a different `info` value.
 
 3. Create a sending HPKE context by invoking `SetupBaseS()` ({{Section 5.1.1 of
    HPKE}}) with the public key of the receiver `pkR` and `info`.  This yields
@@ -630,10 +630,10 @@ encoded HTTP request {{BINARY}}, `request`, as follows:
 4. Encrypt `request` by invoking the `Seal()` method on `sctxt` ({{Section 5.2
    of HPKE}}) with empty associated data `aad`, yielding ciphertext `ct`.
 
-5. Concatenate the values of `hdr`, `enc`, and `ct`, yielding an Encapsulated
+5. Concatenate the values of `hdr`, `enc`, and `ct`. This yields an Encapsulated
    Request (`enc_request`).
 
-Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
+Note that `enc` is of fixed length, so there is no ambiguity in parsing this
 structure.
 
 In pseudocode, this procedure is as follows:
@@ -659,10 +659,11 @@ process. To decapsulate an Encapsulated Request, `enc_request`:
    Gateway Resource is then able to find the HPKE private key, `skR`,
    corresponding to `key_id`.
 
-   a. If `key_id` does not identify a key matching the type of `kem_id`, the
+   {: type="a"}
+   1. If `key_id` does not identify a key matching the type of `kem_id`, the
       Oblivious Gateway Resource returns an error.
 
-   b. If `kdf_id` and `aead_id` identify a combination of KDF and AEAD that the
+   2. If `kdf_id` and `aead_id` identify a combination of KDF and AEAD that the
       Oblivious Gateway Resource is unwilling to use with `skR`, the Oblivious
       Gateway Resource returns an error.
 
@@ -698,12 +699,12 @@ encapsulate a response.
 
 ## Encapsulation of Responses {#response}
 
-Oblivious Gateway Resources generate an Encapsulated Response, `enc_response`,
-from a binary encoded HTTP response {{BINARY}}, `response`.  The Oblivious
-Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
-`context`, as follows:
+Oblivious Gateway Resources generate an Encapsulated Response (`enc_response`)
+from a binary-encoded HTTP response {{BINARY}} (`response`).  The Oblivious
+Gateway Resource uses the HPKE receiver context (`rctxt`) as the HPKE context
+(`context`) as follows:
 
-1. Export a secret, `secret`, from `context`, using the string "message/bhttp
+1. Export a secret (`secret`) from `context`, using the string "message/bhttp
    response" as the `exporter_context` parameter to `context.Export`; see
    {{Section 5.3 of HPKE}}.  The length of this secret is `max(Nn, Nk)`, where
    `Nn` and `Nk` are the length of AEAD key and nonce associated with `context`.
@@ -713,20 +714,20 @@ Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
 2. Generate a random value of length `max(Nn, Nk)` bytes, called
    `response_nonce`.
 
-3. Extract a pseudorandom key, `prk`, using the `Extract` function provided by
+3. Extract a pseudorandom key (`prk`) using the `Extract` function provided by
    the KDF algorithm associated with `context`. The `ikm` input to this
    function is `secret`; the `salt` input is the concatenation of `enc` (from
    `enc_request`) and `response_nonce`.
 
 4. Use the `Expand` function provided by the same KDF to create an AEAD key,
-   `key`, of length `Nk` - the length of the keys used by the AEAD associated
+   `key`, of length `Nk` -- the length of the keys used by the AEAD associated
    with `context`. Generating `aead_key` uses a label of "key".
 
 5. Use the same `Expand` function to create a nonce, `nonce`, of length `Nn` -
    the length of the nonce used by the AEAD. Generating `aead_nonce` uses a
    label of "nonce".
 
-6. Encrypt `response` by passing the AEAD function Seal the values of
+6. Encrypt `response`, passing the AEAD function Seal the values of
    `aead_key`, `aead_nonce`, an empty `aad`, and a `pt` input of
    `response`. This yields `ct`.
 
