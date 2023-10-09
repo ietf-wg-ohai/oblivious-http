@@ -12,6 +12,11 @@ venue:
   arch: "https://mailarchive.ietf.org/arch/browse/ohai/"
   github: "ietf-wg-ohai/oblivious-http"
   latest: "https://ietf-wg-ohai.github.io/oblivious-http/draft-ietf-ohai-ohttp.html"
+keyword:
+  - privacy
+  - proxy
+  - partitioning
+  - tunnel
 
 author:
   -
