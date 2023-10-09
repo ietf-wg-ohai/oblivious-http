@@ -445,7 +445,7 @@ Key Identifier:
 
 HPKE KEM ID:
 
-: A 16 bit value that identifies the Key Encapsulation Method (KEM) used for the
+: A 16 bit value that identifies the KEM used for the
   identified key as defined in {{Section 7.1 of HPKE}} or [the HPKE KDF IANA
   registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).
 
@@ -592,20 +592,21 @@ and `Nk` refer to the size of the AEAD nonce and key respectively, in bytes.
 
 ## Encapsulation of Requests {#request}
 
-Clients encapsulate a request, `request`, using values from a key configuration:
+Clients encapsulate a request, identified as `request`, using values from a key
+configuration:
 
-* the key identifier from the configuration, `key_id`, with the corresponding KEM
-  identified by `kem_id`,
+* the key identifier from the configuration (`key_id`) with the corresponding
+  KEM identified by `kem_id`,
 
-* the public key from the configuration, `pkR`, and
+* the public key from the configuration (`pkR`), and
 
-* a combination of KDF, identified by `kdf_id`, and AEAD, identified by
-  `aead_id`, that the Client selects from those in the key configuration.
+* a combination of KDF (identified by `kdf_id`) and AEAD (identified by
+  `aead_id`) that the Client selects from those in the key configuration.
 
 The Client then constructs an Encapsulated Request, `enc_request`, from a binary
 encoded HTTP request {{BINARY}}, `request`, as follows:
 
-1. Construct a message header, `hdr`, by concatenating the values of `key_id`,
+1. Construct a message header (`hdr`) by concatenating the values of `key_id`,
    `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
    integers, respectively, each in network byte order.
 
@@ -657,7 +658,7 @@ process. To decapsulate an Encapsulated Request, `enc_request`:
       Gateway Resource returns an error.
 
 2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
-   request", a zero byte, `key_id` as an 8-bit integer, plus `kem_id`, `kdf_id`,
+   request"; a zero byte; `key_id` as an 8-bit integer; plus `kem_id`, `kdf_id`,
    and `aead_id` as three 16-bit integers.
 
 3. Create a receiving HPKE context, `rctxt`, by invoking `SetupBaseR()`
@@ -716,8 +717,9 @@ Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
    the length of the nonce used by the AEAD. Generating `aead_nonce` uses a
    label of "nonce".
 
-6. Encrypt `response`, passing the AEAD function Seal the values of `aead_key`,
-   `aead_nonce`, an empty `aad`, and a `pt` input of `response`, which yields `ct`.
+6. Encrypt `response` by passing the AEAD function Seal the values of
+   `aead_key`, `aead_nonce`, an empty `aad`, and a `pt` input of
+   `response`. This yields `ct`.
 
 7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response,
    `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
@@ -798,8 +800,8 @@ forwarding the Encapsulated Request towards the target, such as the `Connection`
 or `Proxy-Authorization` header fields {{HTTP}}.
 
 The Client role in this protocol acts as an HTTP client both with respect to the
-Oblivious Relay Resource and the Target Resource.  For the request, the Clients
-makes to the Target Resource, this diverges from typical HTTP assumptions about
+Oblivious Relay Resource and the Target Resource.  The request, which the Client
+makes to the Target Resource, diverges from typical HTTP assumptions about
 the use of a connection (see {{Section 3.3 of HTTP}}) in that the request and
 response are encrypted rather than sent over a connection.  The Oblivious Relay
 Resource and the Oblivious Gateway Resource also act as HTTP clients toward the
@@ -894,9 +896,10 @@ incorrect or out of date.
 ## Signaling Key Configuration Problems {#ohttp-key-problem}
 
 The problem type {{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
-"https://iana.org/assignments/http-problem-types#ohttp-key" is defined.  An
-Oblivious Gateway Resource MAY use this problem type in a response to indicate
-that an Encapsulated Request used an outdated or incorrect key configuration.
+"https://iana.org/assignments/http-problem-types#ohttp-key" is defined in this
+section.  An Oblivious Gateway Resource MAY use this problem type in a response
+to indicate that an Encapsulated Request used an outdated or incorrect key
+configuration.
 
 {{fig-key-problem}} shows an example response in HTTP/1.1 format.
 
@@ -981,7 +984,7 @@ A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 Because Clients do not authenticate the Target Resource when using Oblivious
 HTTP, Clients MUST have some mechanism to authorize an Oblivious Gateway
 Resource for use with a Target Resource. One possible means of authorization is
-an allowlist.  This ensures that Oblivious Gateway Resources are not abused to
+an allowlist.  This ensures that Oblivious Gateway Resources are not misused to
 forward traffic to arbitrary Target Resources. {{server-responsibilities}}
 describes similar responsibilities that apply to Oblivious Gateway Resources.
 
@@ -1529,7 +1532,7 @@ Oblivious Relay Resources could be constructed.
 Oblivious HTTP might be incompatible with network interception regimes, such as
 those that rely on configuring Clients with trust anchors and intercepting TLS
 connections.  While TLS might be intercepted successfully, interception
-middleboxes devices might not receive updates that would allow Oblivious HTTP to
+middlebox devices might not receive updates that would allow Oblivious HTTP to
 be correctly identified using the media types defined in {{iana-req}} and
 {{iana-res}}.
 
