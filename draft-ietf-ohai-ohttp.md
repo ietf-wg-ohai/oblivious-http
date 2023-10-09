@@ -416,7 +416,7 @@ identifier for an AEAD.
 
 {{format-key-config}} shows a single key configuration.
 
-~~~ tls-syntax
+~~~ tls-presentation
 HPKE Symmetric Algorithms {
   HPKE KDF ID (16),
   HPKE AEAD ID (16),
