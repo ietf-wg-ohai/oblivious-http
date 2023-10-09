@@ -100,7 +100,7 @@ informative:
     date: 2015-07-17
     target: https://www.w3.org/2001/tag/doc/unsanctioned-tracking/
     seriesinfo:
-      W3C: TAG
+      W3C: TAG Finding
 
   FIELDING:
     title: "Architectural Styles and the Design of Network-based Software Architectures"
