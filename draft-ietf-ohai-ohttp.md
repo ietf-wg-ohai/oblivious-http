@@ -624,8 +624,8 @@ encoded HTTP request {{BINARY}}, `request`, as follows:
 4. Encrypt `request` by invoking the `Seal()` method on `sctxt` ({{Section 5.2
    of HPKE}}) with empty associated data `aad`, yielding ciphertext `ct`.
 
-5. Concatenate the values of `hdr`, `enc`, and `ct`, yielding an Encrypted
-   Request `enc_request`.
+5. Concatenate the values of `hdr`, `enc`, and `ct`, yielding an Encapsulated
+   Request (`enc_request`).
 
 Note that `enc` is of fixed-length, so there is no ambiguity in parsing this
 structure.
@@ -1210,7 +1210,7 @@ provides key diversity only within the HPKE context created using the
 A server is responsible for either rejecting replayed requests or ensuring that
 the effect of replays does not adversely affect Clients or resources.
 
-Encrypted requests can be copied and replayed by the Oblivious Relay
+Encapsulated Requests can be copied and replayed by the Oblivious Relay
 resource. The threat model for Oblivious HTTP allows the possibility that an
 Oblivious Relay Resource might replay requests. Furthermore, if a Client sends
 an Encapsulated Request in TLS early data (see {{Section 8 of TLS}} and
@@ -1516,8 +1516,8 @@ in minimizing additional latency.
 ## Resource Mappings {#proxy-state}
 
 This protocol assumes a fixed, one-to-one mapping between the Oblivious Relay
-Resource and the Oblivious Gateway Resource. This means that any encrypted
-request sent to the Oblivious Relay Resource will always be forwarded to the
+Resource and the Oblivious Gateway Resource. This means that any Encapsulated
+Request sent to the Oblivious Relay Resource will always be forwarded to the
 Oblivious Gateway Resource. This constraint was imposed to simplify relay
 configuration and mitigate against the Oblivious Relay Resource being used as
 a generic relay for unknown Oblivious Gateway Resources. The relay will only
