@@ -628,7 +628,7 @@ structure.
 
 In pseudocode, this procedure is as follows:
 
-~~~
+~~~ pseudocode
 hdr = concat(encode(1, key_id),
              encode(2, kem_id),
              encode(2, kdf_id),
@@ -670,7 +670,7 @@ process. To decapsulate an Encapsulated Request, `enc_request`:
 
 In pseudocode, this procedure is as follows:
 
-~~~
+~~~ pseudocode
 key_id, kem_id, kdf_id, aead_id, enc, ct = parse(enc_request)
 info = concat(encode_str("message/bhttp request"),
               encode(1, 0),
@@ -725,7 +725,7 @@ Gateway Resource uses the HPKE receiver context, `rctxt`, as the HPKE context,
 
 In pseudocode, this procedure is as follows:
 
-~~~
+~~~ pseudocode
 secret = context.Export("message/bhttp response", max(Nn, Nk))
 response_nonce = random(max(Nn, Nk))
 salt = concat(enc, response_nonce)
@@ -744,7 +744,7 @@ their sending HPKE context, `sctxt`, as the HPKE context, `context`.
 The Client uses these values to decrypt `ct` using the `Open` function provided
 by the AEAD. Decrypting might produce an error, as follows:
 
-~~~
+~~~ pseudocode
 response, error = Open(aead_key, aead_nonce, "", ct)
 ~~~
 
