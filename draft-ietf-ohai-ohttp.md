@@ -582,10 +582,10 @@ Encapsulated Response {
 ~~~
 {: #fig-enc-response title="Encapsulated Response"}
 
-That is, an Encapsulated Response contains a Nonce and an AEAD-Protected
-Response.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is
-larger.  The `Nn` and `Nk` values correspond to parameters of the AEAD used in
-HPKE, which is defined in {{Section 7.3 of HPKE}} or [the HPKE AEAD IANA
+That is, an Encapsulated Response contains Nonce and AEAD-Protected Response
+fields.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is larger.
+The `Nn` and `Nk` values correspond to parameters of the AEAD used in HPKE,
+which is defined in {{Section 7.3 of HPKE}} or [the HPKE AEAD IANA
 registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  `Nn`
 and `Nk` refer to the size of the AEAD nonce and key respectively, in bytes.
 
