@@ -99,6 +99,8 @@ informative:
       fullname: Mark Nottingham
     date: 2015-07-17
     target: https://www.w3.org/2001/tag/doc/unsanctioned-tracking/
+    seriesinfo:
+      W3C: TAG
 
   FIELDING:
     title: "Architectural Styles and the Design of Network-based Software Architectures"
@@ -619,7 +621,7 @@ encoded HTTP request {{BINARY}} (`request`) as follows:
    `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
    integers, respectively, each in network byte order.
 
-2. Build an `info` string by concatenating the ASCII-encoded string
+2. Build a sequence of bytes (`info`) by concatenating the ASCII-encoded string
    "message/bhttp request", a zero byte, and the header.  Note: {{repurposing}}
    discusses how alternative message formats might use a different `info` value.
 
@@ -667,9 +669,9 @@ process. To decapsulate an Encapsulated Request, `enc_request`:
       Oblivious Gateway Resource is unwilling to use with `skR`, the Oblivious
       Gateway Resource returns an error.
 
-2. Build `info` by concatenating the ASCII-encoded string "message/bhttp
-   request"; a zero byte; `key_id` as an 8-bit integer; plus `kem_id`, `kdf_id`,
-   and `aead_id` as three 16-bit integers.
+2. Build a sequence of bytes (`info`) by concatenating the ASCII-encoded string
+   "message/bhttp request"; a zero byte; `key_id` as an 8-bit integer; plus
+   `kem_id`, `kdf_id`, and `aead_id` as three 16-bit integers.
 
 3. Create a receiving HPKE context, `rctxt`, by invoking `SetupBaseR()`
    ({{Section 5.1.1 of HPKE}}) with `skR`, `enc`, and `info`.
@@ -723,7 +725,7 @@ Gateway Resource uses the HPKE receiver context (`rctxt`) as the HPKE context
    `key`, of length `Nk` -- the length of the keys used by the AEAD associated
    with `context`. Generating `aead_key` uses a label of "key".
 
-5. Use the same `Expand` function to create a nonce, `nonce`, of length `Nn` -
+5. Use the same `Expand` function to create a nonce, `nonce`, of length `Nn` --
    the length of the nonce used by the AEAD. Generating `aead_nonce` uses a
    label of "nonce".
 
@@ -749,7 +751,7 @@ enc_response = concat(response_nonce, ct)
 ~~~
 
 Clients decrypt an Encapsulated Response by reversing this process.  That is,
-Clients first parse `enc_response` into `response_nonce` and `ct`. They then
+Clients first parse `enc_response` into `response_nonce` and `ct`. Then, they
 follow the same process to derive values for `aead_key` and `aead_nonce`, using
 their sending HPKE context, `sctxt`, as the HPKE context, `context`.
 
@@ -764,14 +766,14 @@ response, error = Open(aead_key, aead_nonce, "", ct)
 ## Request and Response Media Types {#req-res-media}
 
 Media types are used to identify Encapsulated Requests and Responses; see
-{{iana-req}} and {{iana-res}} for definitions of these media types.
+Sections {{<iana-req}} and {{<iana-res}} for definitions of these media types.
 
 Evolution of the format of Encapsulated Requests and Responses is supported
 through the definition of new formats that are identified by new media types.
-New media types might be defined to use similar encapsulation with a different
+New media types might be defined to use a similar encapsulation with a different
 HTTP message format than in {{BINARY}}; see {{repurposing}} for guidance on
-reusing this encapsulation.  Alternatively, a new encapsulation method might be
-defined.
+reusing this encapsulation method.  Alternatively, a new encapsulation method
+might be defined.
 
 
 ## Repurposing the Encapsulation Format {#repurposing}
@@ -815,10 +817,10 @@ makes to the Target Resource, diverges from typical HTTP assumptions about
 the use of a connection (see {{Section 3.3 of HTTP}}) in that the request and
 response are encrypted rather than sent over a connection.  The Oblivious Relay
 Resource and the Oblivious Gateway Resource also act as HTTP clients toward the
-Oblivious Gateway Resource and Target Resource respectively.
+Oblivious Gateway Resource and Target Resource, respectively.
 
-In order to achieve the privacy and security goals of the protocol a Client also
-needs to observe the guidance in {{sec-client}}.
+In order to achieve the privacy and security goals of the protocol, a Client
+also needs to observe the guidance in {{sec-client}}.
 
 The Oblivious Relay Resource interacts with the Oblivious Gateway Resource as an
 HTTP client by constructing a request using the same restrictions as the Client
@@ -834,9 +836,8 @@ Relay Resource forwards the response according to the rules of an HTTP proxy;
 see {{Section 7.6 of HTTP}}.  In case of timeout or error, the Oblivious Relay
 Resource can generate a response with an appropriate status code.
 
-In order to achieve the privacy and security goals of the protocol an Oblivious
-Relay Resource also needs to observe the guidance in
-{{relay-responsibilities}}.
+In order to achieve the privacy and security goals of the protocol, an Oblivious
+Relay Resource also needs to observe the guidance in {{relay-responsibilities}}.
 
 An Oblivious Gateway Resource acts as a gateway for requests to the Target
 Resource (see {{Section 7.6 of HTTP}}).  The one exception is that any
@@ -857,17 +858,17 @@ generate a response with an appropriate error status code (such as 504 (Gateway
 Timeout); see {{Section 15.6.5 of HTTP}}), which is then encapsulated in the
 same way as a successful response.
 
-In order to achieve the privacy and security goals of the protocol an Oblivious
+In order to achieve the privacy and security goals of the protocol, an Oblivious
 Gateway Resource also needs to observe the guidance in
 {{server-responsibilities}}.
 
 
 ## Informational Responses
 
-This encapsulation does not permit progressive processing of responses.  Though
-the binary HTTP response format does support the inclusion of informational
-(1xx) status codes, the AEAD encapsulation cannot be removed until the entire
-message is received.
+This encapsulation does not permit the progressive processing of responses.
+Though the binary HTTP response format does support the inclusion of
+informational (1xx) status codes, the AEAD encapsulation cannot be removed until
+the entire message is received.
 
 In particular, the `Expect` header field with 100-continue (see {{Section 10.1.1
 of HTTP}}) cannot be used.  Clients MUST NOT construct a request that includes a
@@ -888,11 +889,11 @@ without protection in response to the POST request made to that resource.
 Errors detected by the Oblivious Gateway Resource after successfully removing
 encapsulation and errors detected by the Target Resource MUST be sent in an
 Encapsulated Response.  This might be because the Encapsulated Request is
-malformed or the Target Resource does not produce a response.  In either case
+malformed or the Target Resource does not produce a response.  In either case,
 the Oblivious Gateway Resource can generate a response with an appropriate error
-status code (such as 400 (Bad Request) or 504 (Gateway Timeout); see {{Section
-15.5.1 of HTTP}} and {{Section 15.6.5 of HTTP}}, respectively).  This response
-is encapsulated in the same way as a successful response.
+status code (such as 400 (Bad Request) or 504 (Gateway Timeout); see {{Sections
+15.5.1 and 15.6.5 of HTTP}}, respectively).  This response is encapsulated in
+the same way as a successful response.
 
 Errors in the encapsulation of requests mean that responses cannot be
 encapsulated.  This includes cases where the key configuration is incorrect or
@@ -936,16 +937,16 @@ been encapsulated.
 
 # Security Considerations {#security}
 
-In this design, a Client wishes to make a request to an Oblivious Gateway Resource
-that is forwarded to a Target Resource. The Client wishes to make this request without
-linking that request with either:
+In this design, a Client wishes to make a request to an Oblivious Gateway
+Resource that is forwarded to a Target Resource. The Client wishes to make this
+request without linking that request with either of the following:
 
-1. The identity at the network and transport layer of the Client (that is, the
-   Client IP address and TCP or UDP port number the Client uses to create a
-   connection).
+* The identity at the network and transport layer of the Client (that is, the
+  Client IP address and TCP or UDP port number the Client uses to create a
+  connection).
 
-2. Any other request the Client might have made in the past or might make in
-   the future.
+* Any other request the Client might have made in the past or might make in the
+  future.
 
 In order to ensure this, the Client selects a relay (that serves the
 Oblivious Relay Resource) that it trusts will protect this information
@@ -954,9 +955,11 @@ to the server (that serves the Oblivious Gateway Resource).
 
 In this section, a deployment where there are three entities is considered:
 
-* A Client makes requests and receives responses
-* A relay operates the Oblivious Relay Resource
-* A server operates both the Oblivious Gateway Resource and the Target Resource
+* A Client makes requests and receives responses.
+
+* A relay operates the Oblivious Relay Resource.
+
+* A server operates both the Oblivious Gateway Resource and the Target Resource.
 
 {{separate-target}} discusses the security implications for a case where
 different servers operate the Oblivious Gateway Resource and Target Resource.
@@ -973,18 +976,19 @@ interactions between those resources without affecting Client privacy.
 As a consequence of this configuration, Oblivious HTTP prevents linkability
 described above. Informally, this means:
 
-1. Requests and responses are known only to Clients and Oblivious Gateway Resources.
-   In particular, the Oblivious Relay Resource knows the origin and destination
-   of an Encapsulated Request and Response, yet does not know the decrypted contents.
-   Likewise, Oblivious Gateway Resources learn only the Oblivious Relay Resource and
-   the decrypted request.  No entity other than the Client can see the plaintext
-   request and response and can attribute them to the Client.
+1. Requests and responses are known only to Clients and Oblivious Gateway
+   Resources.  In particular, the Oblivious Relay Resource knows the origin and
+   destination of an Encapsulated Request and Response, yet it does not know the
+   decrypted contents.  Likewise, Oblivious Gateway Resources learn only the
+   Oblivious Relay Resource and the decrypted request.  No entity other than the
+   Client can see the plaintext request and response and can attribute them to
+   the Client.
 
-2. Oblivous Gateway Resources, and therefore Target Resources, cannot link requests
-   from the same Client in the absence of unique per-Client keys.
+2. Oblivious Gateway Resources, and therefore Target Resources, cannot link
+   requests from the same Client in the absence of unique per-Client keys.
 
-Traffic analysis that might affect these properties are outside the scope of
-this document; see {{ta}}.
+Traffic analysis that might affect these properties is outside the scope of this
+document; see {{ta}}.
 
 A formal analysis of Oblivious HTTP is in {{OHTTP-ANALYSIS}}.
 
@@ -1002,42 +1006,42 @@ Clients MUST ensure that the key configuration they select for generating
 Encapsulated Requests is integrity protected and authenticated so that it can
 be attributed to the Oblivious Gateway Resource; see {{key-configuration}}.
 
-Since Clients connect directly to the Oblivious Relay Resource instead of the Target Resource, application
-configurations wherein Clients make policy decisions about target connections,
-e.g., to apply certificate pinning, are incompatible with Oblivious HTTP.  In
-such cases, alternative technologies such as HTTP CONNECT
-({{Section 9.3.6 of HTTP}}) can be used. Applications could implement related
-policies on key configurations and relay connections, though these might not
-provide the same properties as policies enforced directly on target
-connections. When this difference is relevant, applications can instead connect
-directly to the target at the cost of either privacy or performance.
+Since Clients connect directly to the Oblivious Relay Resource instead of the
+Target Resource, application configurations wherein Clients make policy
+decisions about target connections, e.g., to apply certificate pinning, are
+incompatible with Oblivious HTTP.  In such cases, alternative technologies such
+as HTTP CONNECT ({{Section 9.3.6 of HTTP}}) can be used. Applications could
+implement related policies on key configurations and relay connections, though
+these might not provide the same properties as policies enforced directly on
+target connections. Instead, when this difference is relevant, applications can
+connect directly to the target at the cost of either privacy or performance.
 
 Clients cannot carry connection-level state between requests as they only
 establish direct connections to the relay responsible for the Oblivious Relay
-resource.  However, the content of requests might be used by a server to
-correlate requests.  Cookies {{COOKIES}} are the most obvious feature
-that might be used to correlate requests, but any identity information and
-authentication credentials might have the same effect.  Clients also need to
-treat information learned from responses with similar care when constructing
-subsequent requests, which includes the identity of resources.
+Resource.  However, the content of requests might be used by a server to
+correlate requests.  Cookies {{COOKIES}} are the most obvious feature that might
+be used to correlate requests, but any identity information and authentication
+credentials might have the same effect.  Clients also need to treat information
+learned from responses with similar care when constructing subsequent requests,
+which includes the identity of resources.
 
 Clients MUST generate a new HPKE context for every request, using a good source
-of entropy ({{?RANDOM=RFC4086}}) for generating keys. Key reuse not only risks
+of entropy {{?RANDOM=RFC4086}} for generating keys. Key reuse not only risks
 requests being linked, reuse could expose request and response contents to the
 relay.
 
 The request the Client sends to the Oblivious Relay Resource only requires
 minimal information; see {{http-usage}}. The request that carries the
-Encapsulated Request and is sent to the Oblivious Relay Resource MUST NOT
+Encapsulated Request and that is sent to the Oblivious Relay Resource MUST NOT
 include identifying information unless the Client can trust that this
 information is removed by the relay. A Client MAY include information only for
 the Oblivious Relay Resource in header fields identified by the `Connection`
-header field if it trusts the relay to remove these as required by {{Section
+header field if it trusts the relay to remove these, as required by {{Section
 7.6.1 of HTTP}}. The Client needs to trust that the relay does not replicate the
 source addressing information in the request it forwards.
 
 Clients rely on the Oblivious Relay Resource to forward Encapsulated Requests
-and Responses. However, the relay can only refuse to forward messages, it
+and Responses. However, the relay can only refuse to forward messages; it
 cannot inspect or modify the contents of Encapsulated Requests or responses.
 
 
@@ -1065,42 +1069,42 @@ information about the Client, such as the Via field or the Forwarded field
 requests that might be used to identify Clients, except for information that
 a Client is aware of; see {{differential}}.
 
-Finally, a relay can also generate responses, though it is assumed to not be able
-to examine the content of a request (other than to observe the choice of key
-identifier, KDF, and AEAD), so it is also assumed that it cannot generate an
-Encapsulated Response.
+Finally, a relay can also generate responses, though it is assumed to not be
+able to examine the content of a request (other than to observe the choice of
+key identifier, KDF, and AEAD); therefore, it is also assumed that it cannot
+generate an Encapsulated Response.
 
 ### Differential Treatment {#differential}
 
 A relay MAY add information to requests if the Client is aware of the nature of
 the information that could be added.  Any addition MUST NOT include information
 that uniquely and permanently identifies the Client, including any pseudonymous identifier.
-Information added by the relay - beyond what is already revealed through
-Encapsulated Requests from Clients - can reduce the size of the anonymity set of
+Information added by the relay -- beyond what is already revealed through
+Encapsulated Requests from Clients -- can reduce the size of the anonymity set of
 Clients at a gateway.
 
-A Client does not need to be aware of the exact value added for each request,
+A Client does not need to be aware of the exact value added for each request
 but needs to know the range of possible values the relay might use.  How
 a Client might learn about added information is not defined in this document.
 
-Moreover, relays MAY apply differential treatment to Clients that engage in abusive
-behavior, e.g., by sending too many requests in comparison to other Clients,
-or as a response to rate limits signalled from the gateway. Any such
-differential treatment can reveal information to the gateway that would not
-be revealed otherwise and therefore reduce the size of the anonymity set of
-Clients using a gateway. For example, if a relay chooses to rate limit or
-block an abusive Client, this means that any Client requests which are not
-treated this way are known to be non-abusive by the gateway. Clients need to
-consider the likelihood of such differential treatment and the privacy
-risks when using a relay.
+Moreover, relays MAY apply differential treatment to Clients that engage in
+abusive behavior, e.g., by sending too many requests in comparison to other
+Clients, or as a response to rate limits signaled from the gateway. Any such
+differential treatment can reveal information to the gateway that would not be
+revealed otherwise and therefore reduce the size of the anonymity set of Clients
+using a gateway. For example, if a relay chooses to rate limit or block an
+abusive Client, this means that any Client requests that are not treated this
+way are known to be non-abusive by the gateway. Clients need to consider the
+likelihood of such differential treatment and the privacy risks when using a
+relay.
 
-Some patterns of abuse cannot be detected without access to the request that
-is made to the target. This means that only the gateway or target are in a
+Some patterns of abuse cannot be detected without access to the request that is
+made to the target. This means that only the gateway or the target is in a
 position to identify abuse. A gateway MAY send signals toward the relay to
 provide feedback about specific requests. For example, a gateway could respond
 differently to requests it cannot decapsulate, as mentioned in {{errors}}. A
-relay that acts on this feedback could - either inadvertently or by
-design - lead to Client deanonymization.
+relay that acts on this feedback could -- either inadvertently or by design --
+lead to Client deanonymization.
 
 ### Denial of Service {#dos}
 
@@ -1110,11 +1114,11 @@ might need an arrangement with Oblivious Relay Resources. This arrangement might
 be necessary to prevent having the large volume of requests being classified as
 an attack by the server.
 
-If a server accepts a larger volume of requests from a relay, it needs to
-trust that the relay does not allow abusive levels of request volumes from
+If a server accepts a larger volume of requests from a relay, it needs to trust
+that the relay does not allow abusive levels of request volumes from
 Clients. That is, if a server allows requests from the relay to be exempt from
-rate limits, the server might want to ensure that the relay applies a rate
-limiting policy that is acceptable to the server.
+rate limits, the server might want to ensure that the relay applies a
+rate-limiting policy that is acceptable to the server.
 
 Servers that enter into an agreement with a relay that enables a higher request
 rate might choose to authenticate the relay to enable the higher rate.
@@ -1136,8 +1140,8 @@ forwarded by the relay.
 A relay could, as part of its function, delay requests before forwarding them.
 Delays might increase the anonymity set into which each request is
 attributed. Any delay also increases the time that a Client waits for a
-response, so delays SHOULD only be added with the consent - or at least
-awareness - of Clients.
+response, so delays SHOULD only be added with the consent -- or at least
+awareness -- of Clients.
 
 A relay that forwards large volumes of exchanges can provide better privacy by
 providing larger sets of messages that need to be matched.
@@ -1154,9 +1158,9 @@ effectiveness of traffic analysis.  Padding is a capability provided by binary
 HTTP messages; see {{Section 3.8 of BINARY}}.  If the encapsulation method
 described in this document is used to protect a different message type (see
 {{repurposing}}), that message format might need to include padding support.
-Oblivious Relay Resources can also use padding for the same reason, but need to
-operate at the HTTP layer since they cannot manipulate binary HTTP messages; for example,
-see {{Section 10.7 of HTTP2}} or {{Section 10.7 of HTTP3}}).
+Oblivious Relay Resources can also use padding for the same reason but need to
+operate at the HTTP layer since they cannot manipulate binary HTTP messages; for
+example, see {{Section 10.7 of HTTP2}} or {{Section 10.7 of HTTP3}}).
 
 
 ## Server Responsibilities {#server-responsibilities}
@@ -1182,8 +1186,8 @@ Gateway Resource SHOULD have some mechanism to ensure that the Oblivious Gateway
 Resource is not misused as a relay for HTTP messages to an arbitrary Target
 Resource, such as an allowlist.
 
-Non-secure requests - such as those with the "http" scheme as opposed to the
-"https" scheme - SHOULD NOT be used if the Oblivious Gateway and Target
+Non-secure requests -- such as those with the "http" scheme as opposed to the
+"https" scheme -- SHOULD NOT be used if the Oblivious Gateway and Target
 Resources are not on the same origin.  If messages are forwarded between these
 resources without the protections afforded by HTTPS, they could be inspected or
 modified by a network attacker.  Note that a request could be forwarded without
@@ -1218,7 +1222,7 @@ A server is responsible for either rejecting replayed requests or ensuring that
 the effect of replays does not adversely affect Clients or resources.
 
 Encapsulated Requests can be copied and replayed by the Oblivious Relay
-resource. The threat model for Oblivious HTTP allows the possibility that an
+Resource. The threat model for Oblivious HTTP allows the possibility that an
 Oblivious Relay Resource might replay requests. Furthermore, if a Client sends
 an Encapsulated Request in TLS early data (see {{Section 8 of TLS}} and
 {{!RFC8470}}), a network-based adversary might be able to cause the request to
@@ -1226,8 +1230,8 @@ be replayed. In both cases, the effect of a replay attack and the mitigations
 that might be employed are similar to TLS early data.
 
 It is the responsibility of the application that uses Oblivious HTTP to either
-reject replayed requests or to ensure that replayed requests have no adverse
-effects on their operation.  This section describes some approaches that are
+reject replayed requests or ensure that replayed requests have no adverse
+effect on their operation.  This section describes some approaches that are
 universally applicable and suggestions for more targeted techniques.
 
 A Client or Oblivious Relay Resource MUST NOT automatically attempt to retry a
@@ -1286,9 +1290,9 @@ Oblivious Gateway Resources might need to allow for the time it takes requests
 to arrive from the Client, with a time window that is large enough to allow for
 differences in clocks.  Insufficient tolerance of time differences could result
 in valid requests being unnecessarily rejected.  Beyond allowing for multiple
-round trip times -- to account for retransmission -- network delays are unlikely
+round-trip times -- to account for retransmission -- network delays are unlikely
 to be significant in determining the size of the window, unless all potential
-Clients are known to have excellent time-keeping.  A specific window size might
+Clients are known to have excellent timekeeping.  A specific window size might
 need to be determined experimentally.
 
 Oblivious Gateway Resources MUST NOT treat the time window as secret
@@ -1351,10 +1355,10 @@ context.
 ~~~
 {: #fig-retry-date title="Retrying with an Updated Date Field"}
 
-Retrying immediately allows the Oblivious Gateway Resource to measure the round
-trip time to the Client. The observed delay might reveal something about the
-location of the Client.  Clients could delay retries to add some uncertainty to
-any observed delay.
+Retrying immediately allows the Oblivious Gateway Resource to measure the
+round-trip time to the Client. The observed delay might reveal something about
+the location of the Client.  Clients could delay retries to add some uncertainty
+to any observed delay.
 
 Intermediaries can sometimes rewrite the `Date` field when forwarding responses.
 This might cause problems if the Oblivious Gateway Resource and intermediary
@@ -1411,7 +1415,7 @@ clock.  This might be used to fingerprint Clients {{UWT}} or to identify Clients
 that are vulnerable to attacks that depend on incorrect clocks.
 
 Clients can randomize the value that they provide for `Date` to obscure the true
-value of their clock and reduce the chance of linking of requests over time.
+value of their clock and reduce the chance of linking requests over time.
 However, this increases the risk that their request is rejected as outside the
 acceptable window.
 
@@ -1430,8 +1434,8 @@ However, these message media types are also encrypted encapsulations of HTTP
 requests and responses.
 
 HTTP messages contain content, which can use any media type.  In particular,
-requests are processed by an Oblivious Target Resource, which - as an HTTP
-resource - defines how content is processed; see {{Section 3.1 of HTTP}}.  HTTP
+requests are processed by an Oblivious Target Resource, which -- as an HTTP
+resource -- defines how content is processed; see {{Section 3.1 of HTTP}}.  HTTP
 clients can also use resource identity and response content to determine how
 content is processed.  Consequently, the security considerations of {{Section 17
 of HTTP}} also apply to the handling of the content of these media types.
@@ -1471,7 +1475,7 @@ requests toward specific Target Resources according to an allowlist; see {{serve
 One goal of this design is that independent Client requests are only linkable by
 their content.  However, the choice of Client configuration might be used to
 correlate requests.  A Client configuration includes the Oblivious Relay
-Resource URI, the Oblivious Gateway key configuration, and Oblivious Gateway
+Resource URI, the Oblivious Gateway key configuration, and the Oblivious Gateway
 Resource URI. A configuration is active if Clients can successfully use it for
 interacting with a target.
 
@@ -1544,8 +1548,8 @@ Oblivious HTTP might be incompatible with network interception regimes, such as
 those that rely on configuring Clients with trust anchors and intercepting TLS
 connections.  While TLS might be intercepted successfully, interception
 middlebox devices might not receive updates that would allow Oblivious HTTP to
-be correctly identified using the media types defined in {{iana-req}} and
-{{iana-res}}.
+be correctly identified using the media types defined in Sections {{<iana-req}}
+and {{<iana-res}}.
 
 Oblivious HTTP has a simple key management design that is not trivially altered
 to enable interception by intermediaries.  Clients that are configured to enable
@@ -1555,20 +1559,19 @@ content is accessible to middleboxes.
 
 # IANA Considerations
 
-Please update the "Media Types" registry at
-<https://iana.org/assignments/media-types> for the media types
-"application/ohttp-keys" ({{iana-keys}}), "message/ohttp-req" ({{iana-req}}),
-and "message/ohttp-res" ({{iana-res}}), following the procedures of
-{{!RFC6838}}.
+IANA has registered following media types in the "Media Types" registry at
+<https://iana.org/assignments/media-types>, following the procedures of
+{{!RFC6838}}: "`application/ohttp-keys`" ({{iana-keys}}), "`message/ohttp-req`"
+({{iana-req}}), and "`message/ohttp-res`" ({{iana-res}}).
 
-Please update the "HTTP Problem Types" registry at
-<https://iana.org/assignments/http-problem-types> for the types "date"
+IANA has added the following types to the "HTTP Problem Types" registry at
+<https://iana.org/assignments/http-problem-types>: "date"
 ({{iana-problem-date}}) and "ohttp-key" ({{iana-problem-ohttp-key}}).
 
 
 ## application/ohttp-keys Media Type {#iana-keys}
 
-The "application/ohttp-keys" media type identifies a key configuration used by
+The "`application/ohttp-keys`" media type identifies a key configuration used by
 Oblivious HTTP.
 
 Type name:
@@ -1593,7 +1596,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{sec-media}}
+: See {{sec-media}}
 
 Interoperability considerations:
 
@@ -1601,7 +1604,7 @@ Interoperability considerations:
 
 Published specification:
 
-: this specification
+: RFC 9458
 
 Applications that use this media type:
 
@@ -1614,7 +1617,7 @@ Fragment identifier considerations:
 
 Additional information:
 
-: <dl spacing="compact">
+: <t><br/></t><dl spacing="compact">
   <dt>Magic number(s):</dt><dd>N/A</dd>
   <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
   <dt>File extension(s):</dt><dd>N/A</dd>
@@ -1623,7 +1626,7 @@ Additional information:
 
 Person and email address to contact for further information:
 
-: see Authors' Addresses section
+: <br/>See Authors' Addresses section
 
 Intended usage:
 
@@ -1635,7 +1638,7 @@ Restrictions on usage:
 
 Author:
 
-: see Authors' Addresses section
+: See Authors' Addresses section
 
 Change controller:
 
@@ -1646,7 +1649,7 @@ Change controller:
 
 ## message/ohttp-req Media Type {#iana-req}
 
-The "message/ohttp-req" identifies an encrypted binary HTTP request.  This
+The "`message/ohttp-req`" identifies an encrypted binary HTTP request.  This
 is a binary format that is defined in {{request}}.
 
 Type name:
@@ -1671,7 +1674,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{sec-media}}
+: See {{sec-media}}
 
 Interoperability considerations:
 
@@ -1679,7 +1682,7 @@ Interoperability considerations:
 
 Published specification:
 
-: this specification
+: RFC 9458
 
 Applications that use this media type:
 
@@ -1692,7 +1695,7 @@ Fragment identifier considerations:
 
 Additional information:
 
-: <dl spacing="compact">
+: <t><br/></t><dl spacing="compact">
   <dt>Magic number(s):</dt><dd>N/A</dd>
   <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
   <dt>File extension(s):</dt><dd>N/A</dd>
@@ -1701,7 +1704,7 @@ Additional information:
 
 Person and email address to contact for further information:
 
-: see Authors' Addresses section
+: <br/>See Authors' Addresses section
 
 Intended usage:
 
@@ -1713,7 +1716,7 @@ Restrictions on usage:
 
 Author:
 
-: see Authors' Addresses section
+: See Authors' Addresses section
 
 Change controller:
 
@@ -1723,7 +1726,7 @@ Change controller:
 
 ## message/ohttp-res Media Type {#iana-res}
 
-The "message/ohttp-res" identifies an encrypted binary HTTP response. This
+The "`message/ohttp-res`" identifies an encrypted binary HTTP response. This
 is a binary format that is defined in {{response}}.
 
 Type name:
@@ -1748,7 +1751,7 @@ Encoding considerations:
 
 Security considerations:
 
-: see {{sec-media}}
+: See {{sec-media}}
 
 Interoperability considerations:
 
@@ -1756,7 +1759,7 @@ Interoperability considerations:
 
 Published specification:
 
-: this specification
+: RFC 9458
 
 Applications that use this media type:
 
@@ -1769,7 +1772,7 @@ Fragment identifier considerations:
 
 Additional information:
 
-: <dl spacing="compact">
+: <t><br/></t><dl spacing="compact">
   <dt>Magic number(s):</dt><dd>N/A</dd>
   <dt>Deprecated alias names for this type:</dt><dd>N/A</dd>
   <dt>File extension(s):</dt><dd>N/A</dd>
@@ -1778,7 +1781,7 @@ Additional information:
 
 Person and email address to contact for further information:
 
-: see Authors' Addresses section
+: <br/>See Authors' Addresses section
 
 Intended usage:
 
@@ -1790,7 +1793,7 @@ Restrictions on usage:
 
 Author:
 
-: see Authors' Addresses section
+: See Authors' Addresses section
 
 Change controller:
 
@@ -1800,8 +1803,8 @@ Change controller:
 
 ## Registration of "date" Problem Type {#iana-problem-date}
 
-IANA are requested to create a new entry in the "HTTP Problem Type" registry
-established by {{!PROBLEM}}.
+IANA has added a new entry in the "HTTP Problem Type" registry established by
+{{!PROBLEM}}.
 
 Type URI:
 : https://iana.org/assignments/http-problem-types#date
@@ -1813,14 +1816,14 @@ Recommended HTTP Status Code:
 : 400
 
 Reference:
-: {{date-fix}} of this document
+: {{date-fix}} of RFC 9458
 {: spacing="compact"}
 
 
 ## Registration of "ohttp-key" Problem Type {#iana-problem-ohttp-key}
 
-IANA are requested to create a new entry in the "HTTP Problem Type" registry
-established by {{!PROBLEM}}.
+IANA has added a new entry in the "HTTP Problem Type" registry established by
+{{!PROBLEM}}.
 
 Type URI:
 : https://iana.org/assignments/http-problem-types#ohttp-key
@@ -1832,7 +1835,7 @@ Recommended HTTP Status Code:
 : 400
 
 Reference:
-: {{ohttp-key-problem}} of this document
+: {{ohttp-key-problem}} of RFC 9458
 {: spacing="compact"}
 
 
@@ -1857,7 +1860,7 @@ configured to map requests to this URI to the Oblivious Gateway Resource URI
 resource the Client ultimately wishes to query, is `https://example.com`.
 
 To begin the process, the Oblivious Gateway Resource generates a key pair.
-In this example the server chooses DHKEM(X25519, HKDF-SHA256) and generates
+In this example, the server chooses DHKEM(X25519, HKDF-SHA256) and generates
 an X25519 key pair {{?X25519=RFC7748}}. The X25519 secret key is:
 
 ~~~ hex-dump
@@ -1896,7 +1899,7 @@ The corresponding public key is:
 4b28f881333e7c164ffc499ad9796f877f4e1051ee6d31bad19dec96c208b472
 ~~~
 
-And an `info` parameter of:
+The context is created with an `info` parameter of:
 
 ~~~ hex-dump
 6d6573736167652f626874747020726571756573740001002000010001
@@ -2002,7 +2005,7 @@ Content-Length: 38
 <content is the Encapsulated Response>
 ~~~
 
-The same response might then be generated by the Oblivious Relay Resource which
+The same response might then be generated by the Oblivious Relay Resource, which
 might change as little as the `Date` header. The Client is then able to use the
 HPKE context it created and the nonce from the Encapsulated Response to
 construct the AEAD key and nonce and decrypt the response.
@@ -2011,7 +2014,8 @@ construct the AEAD key and nonce and decrypt the response.
 # Acknowledgments
 {: numbered="false"}
 
-This design is based on a design for Oblivious DoH, described in
-{{?ODOH=RFC9230}}. {{{David Benjamin}}}, {{{Mark Nottingham}}}, and {{{Eric
-Rescorla}}} made technical contributions.  The authors also thank {{{Ralph
-Giles}}}, {{{Lucas Pardue}}}, and {{{Tommy Pauly}}} for invaluable assistance.
+This design is based on a design for Oblivious DNS (queries) over HTTPS (DoH),
+described in {{?ODOH=RFC9230}}. {{{David Benjamin}}}, {{{Mark Nottingham}}}, and
+{{{Eric Rescorla}}} made technical contributions.  The authors also thank
+{{{Ralph Giles}}}, {{{Lucas Pardue}}}, and {{{Tommy Pauly}}} for invaluable
+assistance.
