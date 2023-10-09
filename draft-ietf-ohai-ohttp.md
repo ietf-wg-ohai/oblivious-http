@@ -524,13 +524,13 @@ Request {
   Binary HTTP Message (..),
 }
 ~~~
-{: #fig-req-pt title="Plaintext Request Content"}
+{: #fig-req-pt title="Plaintext Request Structure"}
 
-This plaintext Request is encapsulated into a message in "`message/ohttp-req`"
-form by generating an Encapsulated Request.  An Encapsulated Request comprises a
-key identifier; HPKE parameters for the chosen KEM, KDF, and AEAD; the
-encapsulated KEM shared secret (or `enc`); and an HPKE-protected binary HTTP
-request message.
+This plaintext Request structure is encapsulated into a message in
+"`message/ohttp-req`" form by generating an Encapsulated Request.  An
+Encapsulated Request comprises a key identifier; HPKE parameters for the chosen
+KEM, KDF, and AEAD; the encapsulated KEM shared secret (or `enc`); and an
+HPKE-protected binary HTTP request message.
 
 An Encapsulated Request is shown in {{fig-enc-request}}. {{request}} describes
 the process for constructing and processing an Encapsulated Request.
@@ -565,11 +565,12 @@ Response {
   Binary HTTP Message (..),
 }
 ~~~
-{: #fig-res-pt title="Plaintext Response Content"}
+{: #fig-res-pt title="Plaintext Response Structure"}
 
-This plaintext Response is encapsulated into a message in "`message/ohttp-res`"
-form by generating an Encapsulated Response.  An Encapsulated Response comprises
-a nonce and the AEAD-protected binary HTTP response message.
+This plaintext Response structure is encapsulated into a message in
+"`message/ohttp-res`" form by generating an Encapsulated Response.  An
+Encapsulated Response comprises a nonce and the AEAD-protected binary HTTP
+response message.
 
 An Encapsulated Response is shown in {{fig-enc-response}}. {{response}} describes
 the process for constructing and processing an Encapsulated Response.
