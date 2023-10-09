@@ -125,12 +125,17 @@ actual content of the request message is under the control of the client, other
 information that is more difficult to control can still be used to identify the
 client.
 
+Even where an IP address is not directly associated with an individual, the
+requests made from it can be correlated over time to assemble a profile of
+client behavior.  In particular, connection reuse improves performance but
+provides servers with the ability to correlate requests that share a connection.
+
 In particular, the source IP address of the underlying connection reveals
 identifying information that the client has only limited control over. While
 client-configured HTTP proxies can provide a degree of protection against IP
-address tracking, they present an unfortunate tradeoff: if they are used without
+address tracking, they present an unfortunate trade-off: if they are used without
 TLS, the contents of communication are revealed to the proxy; if they are used
-with TLS, a new connection needs to be used for each request to assure that the
+with TLS, a new connection needs to be used for each request to ensure that the
 origin server cannot use the connection as a way to correlate requests,
 incurring significant performance overheads.
 
@@ -141,7 +146,7 @@ address and connection information for client identification, with reasonable
 performance characteristics.  This document describes:
 
 1. an algorithm for encapsulating binary HTTP messages {{BINARY}} using Hybrid
-   Public Key Encryption (HPKE; {{HPKE}}) to protect their contents,
+   Public Key Encryption (HPKE) {{HPKE}} to protect their contents,
 
 2. a method for forwarding Encapsulated Requests between Clients and an
    Oblivious Gateway Resource through a trusted Oblivious Relay Resource using
@@ -150,9 +155,9 @@ performance characteristics.  This document describes:
 3. requirements for how the Oblivious Gateway Resource handles Encapsulated
    Requests and produces Encapsulated Responses for the Client.
 
-The combination of encapsulation and relaying ensures that Oblivious Gateway Resource
-never sees the Client's IP address and the Oblivious Relay Resource never sees
-plaintext HTTP message content.
+The combination of encapsulation and relaying ensures that Oblivious Gateway
+Resource never sees the Client's IP address and that the Oblivious Relay
+Resource never sees plaintext HTTP message content.
 
 Oblivious HTTP allows connection reuse between the Client and Oblivious Relay
 Resource, as well as between that relay and the Oblivious Gateway Resource, so this
@@ -231,7 +236,7 @@ Resource, the following steps occur, as shown in {{fig-overview}}:
    Encapsulated Request as the content of that message.
 
 4. The Oblivious Relay Resource forwards this request to the Oblivious Gateway
-   resource.
+   Resource.
 
 5. The Oblivious Gateway Resource receives this request and removes
    the HPKE protection to obtain an HTTP request.
