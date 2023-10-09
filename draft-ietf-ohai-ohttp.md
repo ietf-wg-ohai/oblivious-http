@@ -1258,7 +1258,7 @@ ensures that responses have unique AEAD keys and nonces even when requests are
 replayed.
 
 
-### Use of Date for Anti-Replay
+### Use of Date for Anti-replay
 
 Clients SHOULD include a `Date` header field in Encapsulated Requests, unless
 the Client has prior knowledge that indicates that the Oblivious Gateway
