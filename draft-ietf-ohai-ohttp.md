@@ -130,7 +130,7 @@ client.
 Even where an IP address is not directly associated with an individual, the
 requests made from it can be correlated over time to assemble a profile of
 client behavior.  In particular, connection reuse improves performance but
-provides servers with the ability to correlate requests that share a connection.
+provides servers with the ability to link requests that share a connection.
 
 In particular, the source IP address of the underlying connection reveals
 identifying information that the client has only limited control over. While
@@ -476,7 +476,7 @@ HPKE Symmetric Algorithms:
   <dt>HPKE KDF ID:</dt>
   <dd markdown="1">
   A 16-bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
-  "HPKE KDF Idnetifiers" IANA
+  "HPKE KDF Identifiers" IANA
   registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kdf-ids).
   </dd>
   <dt>HPKE AEAD ID:</dt>
@@ -755,8 +755,8 @@ Clients first parse `enc_response` into `response_nonce` and `ct`. Then, they
 follow the same process to derive values for `aead_key` and `aead_nonce`, using
 their sending HPKE context, `sctxt`, as the HPKE context, `context`.
 
-The Client uses these values to decrypt `ct` using the `Open` function provided
-by the AEAD. Decrypting might produce an error, as follows:
+The Client uses these values to decrypt `ct` using the AEAD function `Open`.
+Decrypting might produce an error, as follows:
 
 ~~~ pseudocode
 response, error = Open(aead_key, aead_nonce, "", ct)
@@ -865,7 +865,7 @@ Gateway Resource also needs to observe the guidance in
 
 ## Informational Responses
 
-This encapsulation does not permit the progressive processing of responses.
+This encapsulation does not permit progressive processing of responses.
 Though the binary HTTP response format does support the inclusion of
 informational (1xx) status codes, the AEAD encapsulation cannot be removed until
 the entire message is received.
@@ -1485,7 +1485,7 @@ Oblivious Gateway Resource URI.  The Oblivious Gateway Resource might use the
 source address of requests to correlate requests that use an Oblivious Relay
 Resource run by the same operator.  If the Oblivious Gateway Resource is willing
 to use trial decryption, requests can be further separated into smaller
-groupings based on the keys that are used.
+groupings based on active configurations that clients use.
 
 Each active Client configuration partitions the Client anonymity set. In
 practice, it is infeasible to reduce the number of active configurations to
