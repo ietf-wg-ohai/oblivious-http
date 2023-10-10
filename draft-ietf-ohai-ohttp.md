@@ -56,7 +56,7 @@ informative:
 
   DMS2004:
     title: "Tor: The Second-Generation Onion Router"
-    date: 2004-08
+    date: 2004-05
     target: "https://svn.torproject.org/svn/projects/design-paper/tor-design.html"
     author:
       - ins: R. Dingledine
@@ -65,7 +65,7 @@ informative:
 
   PRIO:
     title: "Prio: Private, Robust, and Scalable Computation of Aggregate Statistics"
-    date: 2017-03-14
+    date: 2017-03
     target: "https://crypto.stanford.edu/prio/paper.pdf"
     author:
       - ins: H. Corrigan-Gibbs
@@ -73,7 +73,7 @@ informative:
 
   ODOH-PETS:
     title: "Oblivious DNS over HTTPS (ODoH): A Practical Privacy Enhancement to DNS"
-    date: 2021-01-07
+    date: 2021-01
     target: https://www.petsymposium.org/2021/files/papers/issue4/popets-2021-0085.pdf
     author:
       - fullname: Sudheesh Singanamalla
@@ -85,19 +85,24 @@ informative:
       - fullname: Kurtis Heimerl
       - fullname: Nick Sullivan
       - fullname: Christopher A. Wood
+    seriesinfo:
+      PoPETS: Volume 2021, Issue 4, pp. 575-592
+      DOI: 10.2478/popets-2021-0085
 
   OHTTP-ANALYSIS:
     title: "Tamarin Model of Oblivious HTTP"
-    date: 2021-08-23
+    date: 2021-08
     target: https://github.com/cloudflare/ohttp-analysis
     author:
       - fullname: Jonathan Hoyland
+    seriesinfo:
+      commit: 6824eee
 
   UWT:
     title: "Unsanctioned Web Tracking"
     author:
       fullname: Mark Nottingham
-    date: 2015-07-17
+    date: 2015-07
     target: https://www.w3.org/2001/tag/doc/unsanctioned-tracking/
     seriesinfo:
       W3C: TAG Finding
@@ -106,7 +111,7 @@ informative:
     title: "Architectural Styles and the Design of Network-based Software Architectures"
     author:
       fullname: Roy Thomas Fielding
-    date: 2000
+    date: 2000-01
     target: "https://www.ics.uci.edu/~fielding/pubs/dissertation/fielding_dissertation.pdf"
 
 
