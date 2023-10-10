@@ -1027,7 +1027,7 @@ which includes the identity of resources.
 
 Clients MUST generate a new HPKE context for every request, using a good source
 of entropy {{?RANDOM=RFC4086}} for generating keys. Key reuse not only risks
-requests being linked, reuse could expose request and response contents to the
+requests being linked but also could expose request and response contents to the
 relay.
 
 The request the Client sends to the Oblivious Relay Resource only requires
