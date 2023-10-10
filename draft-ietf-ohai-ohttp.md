@@ -1803,7 +1803,7 @@ Change controller:
 
 ## Registration of "date" Problem Type {#iana-problem-date}
 
-IANA has added a new entry in the "HTTP Problem Type" registry established by
+IANA has added a new entry in the "HTTP Problem Types" registry established by
 {{!PROBLEM}}.
 
 Type URI:
@@ -1822,7 +1822,7 @@ Reference:
 
 ## Registration of "ohttp-key" Problem Type {#iana-problem-ohttp-key}
 
-IANA has added a new entry in the "HTTP Problem Type" registry established by
+IANA has added a new entry in the "HTTP Problem Types" registry established by
 {{!PROBLEM}}.
 
 Type URI:
