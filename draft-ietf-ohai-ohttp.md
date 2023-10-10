@@ -315,7 +315,7 @@ Telemetry submission:
 These are examples of requests where there is information in a request that --
 if it were connected to the identity of the user -- might allow a server to
 learn something about that user even if the identity of the user were
-pseudonymous.  Other examples include submission of anonymous surveys, making
+pseudonymous.  Other examples include submitting anonymous surveys, making
 search queries, or requesting location-specific content (such as retrieving
 tiles of a map display).
 
@@ -410,15 +410,15 @@ help facilitate interoperability, it does specify a format for the keys. This
 ensures that different Client implementations can be configured in the same way
 and also enables advertising key configurations in a consistent format.  This
 format might be used, for example, with HTTPS, as part of a system for
-configuring or discovering key configurations.  Note however that such a system
+configuring or discovering key configurations.  However, note that such a system
 needs to consider the potential for key configuration to be used to compromise
 Client privacy; see {{privacy}}.
 
 A Client might have multiple key configurations to select from when
 encapsulating a request. Clients are responsible for selecting a preferred key
 configuration from those it supports. Clients need to consider both the Key
-Encapsulation Method (KEM) and the combinations of Key Derivation Function (KDF)
-and AEAD in this decision.
+Encapsulation Method (KEM) and the combinations of the Key Derivation Function
+(KDF) and AEAD in this decision.
 
 ## Key Configuration Encoding {#key-config}
 
