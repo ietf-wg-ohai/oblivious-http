@@ -461,7 +461,7 @@ HPKE KEM ID:
 
 : A 16-bit value that identifies the KEM used for the identified key as defined
   in {{Section 7.1 of HPKE}} or [the "HPKE KEM Identifiers" IANA
-  registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kem-ids).
+  registry](https://www.iana.org/assignments/hpke).
 
 HPKE Public Key:
 
@@ -481,14 +481,12 @@ HPKE Symmetric Algorithms:
   <dt>HPKE KDF ID:</dt>
   <dd markdown="1">
   A 16-bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
-  "HPKE KDF Identifiers" IANA
-  registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-kdf-ids).
+  "HPKE KDF Identifiers" IANA registry](https://www.iana.org/assignments/hpke).
   </dd>
   <dt>HPKE AEAD ID:</dt>
   <dd markdown="1">
   A 16-bit HPKE AEAD identifier as defined in {{Section 7.3 of HPKE}} or [the
-  "HPKE AEAD Identifiers" IANA
-  registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).
+  "HPKE AEAD Identifiers" IANA registry](https://www.iana.org/assignments/hpke).
   </dd>
   </dl>
 
@@ -601,9 +599,8 @@ That is, an Encapsulated Response contains a Nonce and an AEAD-Protected
 Response.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is
 larger.  The `Nn` and `Nk` values correspond to parameters of the AEAD used in
 HPKE, which is defined in {{Section 7.3 of HPKE}} or [the "HPKE AEAD
-Identifiers" IANA
-registry](https://www.iana.org/assignments/hpke/hpke.xhtml#hpke-aead-ids).  `Nn`
-and `Nk` refer to the size of the AEAD nonce and key respectively, in bytes.
+Identifiers" IANA registry](https://www.iana.org/assignments/hpke).  `Nn` and
+`Nk` refer to the size of the AEAD nonce and key respectively, in bytes.
 
 
 ## Encapsulation of Requests {#request}
