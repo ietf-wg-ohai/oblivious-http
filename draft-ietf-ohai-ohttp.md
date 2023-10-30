@@ -78,7 +78,8 @@ informative:
     author:
       - fullname: Sudheesh Singanamalla
       - fullname: Suphanat Chunhapanya
-      - fullname: Marek Vavrusa
+      - fullname: Jonathan Hoyland
+      - fullname: Marek Vavruša
       - fullname: Tanya Verma
       - fullname: Peter Wu
       - fullname: Marwan Fayed
@@ -91,7 +92,7 @@ informative:
 
   OHTTP-ANALYSIS:
     title: "Tamarin Model of Oblivious HTTP"
-    date: 2021-08
+    date: 2022-10
     target: https://github.com/cloudflare/ohttp-analysis
     author:
       - fullname: Jonathan Hoyland
@@ -110,7 +111,7 @@ informative:
   FIELDING:
     title: "Architectural Styles and the Design of Network-based Software Architectures"
     author:
-      fullname: Roy Thomas Fielding
+      fullname: Roy Fielding
     date: 2000-01
     target: "https://www.ics.uci.edu/~fielding/pubs/dissertation/fielding_dissertation.pdf"
 
@@ -600,7 +601,7 @@ Response.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is
 larger.  The `Nn` and `Nk` values correspond to parameters of the AEAD used in
 HPKE, which is defined in {{Section 7.3 of HPKE}} or [the "HPKE AEAD
 Identifiers" IANA registry](https://www.iana.org/assignments/hpke).  `Nn` and
-`Nk` refer to the size of the AEAD nonce and key respectively, in bytes.
+`Nk` refer to the size of the AEAD nonce and key, respectively, in bytes.
 
 
 ## Encapsulation of Requests {#request}
@@ -616,12 +617,12 @@ configuration:
 * a combination of KDF (identified by `kdf_id`) and AEAD (identified by
   `aead_id`) that the Client selects from those in the key configuration.
 
-The Client then constructs an Encapsulated Request, `enc_request`, from a binary
-encoded HTTP request {{BINARY}} (`request`) as follows:
+The Client then constructs an Encapsulated Request, `enc_request`, from a
+binary-encoded HTTP request {{BINARY}} (`request`) as follows:
 
 1. Construct a message header (`hdr`) by concatenating the values of `key_id`,
-   `kem_id`, `kdf_id`, and `aead_id`, as one 8-bit integer and three 16-bit
-   integers, respectively, each in network byte order.
+   `kem_id`, `kdf_id`, and `aead_id` as one 8-bit integer and three 16-bit
+   integers, respectively, with each in network byte order.
 
 2. Build a sequence of bytes (`info`) by concatenating the ASCII-encoded string
    "message/bhttp request", a zero byte, and the header.  Note: {{repurposing}}
@@ -658,7 +659,7 @@ enc_request = concat(hdr, enc, ct)
 An Oblivious Gateway Resource decrypts an Encapsulated Request by reversing this
 process. To decapsulate an Encapsulated Request, `enc_request`:
 
-1. Parses `enc_request` into `key_id`, `kem_id`, `kdf_id`, `aead_id`, `enc`, and
+1. Parse `enc_request` into `key_id`, `kem_id`, `kdf_id`, `aead_id`, `enc`, and
    `ct` (indicated using the function `parse()` in pseudocode). The Oblivious
    Gateway Resource is then able to find the HPKE private key, `skR`,
    corresponding to `key_id`.
@@ -711,9 +712,9 @@ Gateway Resource uses the HPKE receiver context (`rctxt`) as the HPKE context
 1. Export a secret (`secret`) from `context`, using the string "message/bhttp
    response" as the `exporter_context` parameter to `context.Export`; see
    {{Section 5.3 of HPKE}}.  The length of this secret is `max(Nn, Nk)`, where
-   `Nn` and `Nk` are the length of AEAD key and nonce associated with `context`.
-   Note: {{repurposing}} discusses how alternative message formats might use a
-   different `context` value.
+   `Nn` and `Nk` are the length of the AEAD key and nonce that are associated
+   with `context`.  Note: {{repurposing}} discusses how alternative message
+   formats might use a different `context` value.
 
 2. Generate a random value of length `max(Nn, Nk)` bytes, called
    `response_nonce`.
@@ -736,7 +737,7 @@ Gateway Resource uses the HPKE receiver context (`rctxt`) as the HPKE context
    `response`. This yields `ct`.
 
 7. Concatenate `response_nonce` and `ct`, yielding an Encapsulated Response,
-   `enc_response`. Note that `response_nonce` is of fixed-length, so there is no
+   `enc_response`. Note that `response_nonce` is of fixed length, so there is no
    ambiguity in parsing either `response_nonce` or `ct`.
 
 In pseudocode, this procedure is as follows:
@@ -908,7 +909,7 @@ incorrect or out of date.
 
 ## Signaling Key Configuration Problems {#ohttp-key-problem}
 
-The problem type {{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
+The problem type {{!PROBLEM=RFC9457}} of
 "https://iana.org/assignments/http-problem-types#ohttp-key" is defined in this
 section.  An Oblivious Gateway Resource MAY use this problem type in a response
 to indicate that an Encapsulated Request used an outdated or incorrect key
@@ -1044,7 +1045,7 @@ source addressing information in the request it forwards.
 
 Clients rely on the Oblivious Relay Resource to forward Encapsulated Requests
 and Responses. However, the relay can only refuse to forward messages; it
-cannot inspect or modify the contents of Encapsulated Requests or responses.
+cannot inspect or modify the contents of Encapsulated Requests or Responses.
 
 
 ## Relay Responsibilities
@@ -1133,8 +1134,8 @@ request and prevents a network observer from being able to trivially correlate
 messages on either side of a relay.  However, using HTTPS does not prevent
 traffic analysis by such network observers.
 
-The time at which Encapsulated Request or response messages are sent can
-reveal information to a network observer. Though messages exchanged between the
+The time at which Encapsulated Request or Response messages are sent can reveal
+information to a network observer. Though messages exchanged between the
 Oblivious Relay Resource and the Oblivious Gateway Resource might be sent in a
 single connection, traffic analysis could be used to match messages that are
 forwarded by the relay.
@@ -1306,9 +1307,9 @@ field to determine the time window over which the server will accept responses.
 
 An Oblivious Gateway Resource can reject requests that contain a `Date` value
 that is outside of its active window with a 400 series status code.  The problem
-type {{!PROBLEM=I-D.ietf-httpapi-rfc7807bis}} of
-"https://iana.org/assignments/http-problem-types#date" is defined to allow the
-server to signal that the `Date` value in the request was unacceptable.
+type {{!PROBLEM}} of "https://iana.org/assignments/http-problem-types#date" is
+defined to allow the server to signal that the `Date` value in the request was
+unacceptable.
 
 {{fig-date-reject}} shows an example response in HTTP/1.1 format.
 
@@ -1561,13 +1562,13 @@ content is accessible to middleboxes.
 
 # IANA Considerations
 
-IANA has registered following media types in the "Media Types" registry at
-<https://iana.org/assignments/media-types>, following the procedures of
+IANA has registered the following media types in the "Media Types" registry at
+[](https://iana.org/assignments/media-types), following the procedures of
 {{!RFC6838}}: "`application/ohttp-keys`" ({{iana-keys}}), "`message/ohttp-req`"
 ({{iana-req}}), and "`message/ohttp-res`" ({{iana-res}}).
 
 IANA has added the following types to the "HTTP Problem Types" registry at
-<https://iana.org/assignments/http-problem-types>: "date"
+[](https://iana.org/assignments/http-problem-types): "date"
 ({{iana-problem-date}}) and "ohttp-key" ({{iana-problem-ohttp-key}}).
 
 
