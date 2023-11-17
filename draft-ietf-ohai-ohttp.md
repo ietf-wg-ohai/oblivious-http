@@ -86,8 +86,9 @@ informative:
       - fullname: Kurtis Heimerl
       - fullname: Nick Sullivan
       - fullname: Christopher A. Wood
+    refcontent:
+      - "PoPETS Volume 2021, Issue 4, pp. 575-592"
     seriesinfo:
-      PoPETS: Volume 2021, Issue 4, pp. 575-592
       DOI: 10.2478/popets-2021-0085
 
   OHTTP-ANALYSIS:
@@ -96,8 +97,8 @@ informative:
     target: https://github.com/cloudflare/ohttp-analysis
     author:
       - fullname: Jonathan Hoyland
-    seriesinfo:
-      commit: 6824eee
+    refcontent:
+      - commit 6824eee
 
   UWT:
     title: "Unsanctioned Web Tracking"
@@ -105,8 +106,8 @@ informative:
       fullname: Mark Nottingham
     date: 2015-07
     target: https://www.w3.org/2001/tag/doc/unsanctioned-tracking/
-    seriesinfo:
-      W3C: TAG Finding
+    refcontent:
+      - W3C TAG Finding
 
   FIELDING:
     title: "Architectural Styles and the Design of Network-based Software Architectures"
@@ -462,7 +463,7 @@ HPKE KEM ID:
 
 : A 16-bit value that identifies the KEM used for the identified key as defined
   in {{Section 7.1 of HPKE}} or [the "HPKE KEM Identifiers" IANA
-  registry](https://www.iana.org/assignments/hpke).
+  registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
 
 HPKE Public Key:
 
@@ -482,12 +483,12 @@ HPKE Symmetric Algorithms:
   <dt>HPKE KDF ID:</dt>
   <dd markdown="1">
   A 16-bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
-  "HPKE KDF Identifiers" IANA registry](https://www.iana.org/assignments/hpke).
+  "HPKE KDF Identifiers" IANA registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
   </dd>
   <dt>HPKE AEAD ID:</dt>
   <dd markdown="1">
   A 16-bit HPKE AEAD identifier as defined in {{Section 7.3 of HPKE}} or [the
-  "HPKE AEAD Identifiers" IANA registry](https://www.iana.org/assignments/hpke).
+  "HPKE AEAD Identifiers" IANA registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
   </dd>
   </dl>
 
@@ -600,8 +601,9 @@ That is, an Encapsulated Response contains a Nonce and an AEAD-Protected
 Response.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is
 larger.  The `Nn` and `Nk` values correspond to parameters of the AEAD used in
 HPKE, which is defined in {{Section 7.3 of HPKE}} or [the "HPKE AEAD
-Identifiers" IANA registry](https://www.iana.org/assignments/hpke).  `Nn` and
-`Nk` refer to the size of the AEAD nonce and key, respectively, in bytes.
+Identifiers" IANA registry](https://www.iana.org/assignments/hpke){:
+brackets="angle"}.  `Nn` and `Nk` refer to the size of the AEAD nonce and key,
+respectively, in bytes.
 
 
 ## Encapsulation of Requests {#request}
@@ -1563,12 +1565,12 @@ content is accessible to middleboxes.
 # IANA Considerations
 
 IANA has registered the following media types in the "Media Types" registry at
-[](https://iana.org/assignments/media-types), following the procedures of
-{{!RFC6838}}: "`application/ohttp-keys`" ({{iana-keys}}), "`message/ohttp-req`"
-({{iana-req}}), and "`message/ohttp-res`" ({{iana-res}}).
+[](https://iana.org/assignments/media-types){: brackets="angle"}, following the
+procedures of {{!RFC6838}}: "`application/ohttp-keys`" ({{iana-keys}}),
+"`message/ohttp-req`" ({{iana-req}}), and "`message/ohttp-res`" ({{iana-res}}).
 
 IANA has added the following types to the "HTTP Problem Types" registry at
-[](https://iana.org/assignments/http-problem-types): "date"
+[](https://iana.org/assignments/http-problem-types){: brackets="angle"}: "date"
 ({{iana-problem-date}}) and "ohttp-key" ({{iana-problem-ohttp-key}}).
 
 
