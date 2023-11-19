@@ -255,7 +255,7 @@ is shown in {{fig-overview}}.
 
 ## Applicability
 
-Oblivious HTTP has limited applicability.  Imporantly, it requires expicit
+Oblivious HTTP has limited applicability.  Importantly, it requires explicit
 support from a willing Oblivious Relay Resource and Oblivious Gateway Resource,
 thereby limiting the use of Oblivious HTTP for generic applications;
 see {{server-responsibilities}} for more information.
