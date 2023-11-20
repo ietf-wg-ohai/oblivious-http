@@ -930,10 +930,10 @@ linking that request with either:
 2. Any other request the Client might have made in the past or might make in
    the future.
 
-In order to ensure this, the Client selects a relay (that serves the
+In order to ensure this, the Client selects a relay (that serves as the
 Oblivious Relay Resource) that it trusts will protect this information
-by forwarding the Encapsulated Request and Response without passing it
-to the server (that serves the Oblivious Gateway Resource).
+by forwarding only the Encapsulated Request and Response without passing any
+other information to the server (that serves as the Oblivious Gateway Resource).
 
 In this section, a deployment where there are three entities is considered:
 
