@@ -4,6 +4,7 @@ docname: draft-ietf-ohai-ohttp-latest
 category: std
 number: 9458
 v: 3
+date: 2024-01
 area: "Security"
 workgroup: "Oblivious HTTP Application Intermediation"
 venue:
@@ -462,7 +463,7 @@ Key Identifier:
 HPKE KEM ID:
 
 : A 16-bit value that identifies the KEM used for the identified key as defined
-  in {{Section 7.1 of HPKE}} or [the "HPKE KEM Identifiers" IANA
+  in {{Section 7.1 of HPKE}} or [the "HPKE KEM Identifiers"
   registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
 
 HPKE Public Key:
@@ -483,12 +484,12 @@ HPKE Symmetric Algorithms:
   <dt>HPKE KDF ID:</dt>
   <dd markdown="1">
   A 16-bit HPKE KDF identifier as defined in {{Section 7.2 of HPKE}} or [the
-  "HPKE KDF Identifiers" IANA registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
+  "HPKE KDF Identifiers" registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
   </dd>
   <dt>HPKE AEAD ID:</dt>
   <dd markdown="1">
   A 16-bit HPKE AEAD identifier as defined in {{Section 7.3 of HPKE}} or [the
-  "HPKE AEAD Identifiers" IANA registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
+  "HPKE AEAD Identifiers" registry](https://www.iana.org/assignments/hpke){: brackets="angle"}.
   </dd>
   </dl>
 
@@ -601,7 +602,7 @@ That is, an Encapsulated Response contains a Nonce and an AEAD-Protected
 Response.  The Nonce field is either `Nn` or `Nk` bytes long, whichever is
 larger.  The `Nn` and `Nk` values correspond to parameters of the AEAD used in
 HPKE, which is defined in {{Section 7.3 of HPKE}} or [the "HPKE AEAD
-Identifiers" IANA registry](https://www.iana.org/assignments/hpke){:
+Identifiers" registry](https://www.iana.org/assignments/hpke){:
 brackets="angle"}.  `Nn` and `Nk` refer to the size of the AEAD nonce and key,
 respectively, in bytes.
 
@@ -817,12 +818,12 @@ forwarding the Encapsulated Request towards the target, such as the `Connection`
 or `Proxy-Authorization` header fields {{HTTP}}.
 
 The Client role in this protocol acts as an HTTP client both with respect to the
-Oblivious Relay Resource and the Target Resource.  The request, which the Client
-makes to the Target Resource, diverges from typical HTTP assumptions about
-the use of a connection (see {{Section 3.3 of HTTP}}) in that the request and
+Oblivious Relay Resource and Target Resource.  The request, which the Client
+makes to the Target Resource, diverges from typical HTTP assumptions about the
+use of a connection (see {{Section 3.3 of HTTP}}) in that the request and
 response are encrypted rather than sent over a connection.  The Oblivious Relay
 Resource and the Oblivious Gateway Resource also act as HTTP clients toward the
-Oblivious Gateway Resource and Target Resource, respectively.
+Oblivious Gateway Resource and the Target Resource, respectively.
 
 In order to achieve the privacy and security goals of the protocol, a Client
 also needs to observe the guidance in {{sec-client}}.
