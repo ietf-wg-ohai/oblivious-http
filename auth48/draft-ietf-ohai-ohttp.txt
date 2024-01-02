@@ -6,7 +6,7 @@ Internet Engineering Task Force (IETF)                        M. Thomson
 Request for Comments: 9458                                       Mozilla
 Category: Standards Track                                     C. A. Wood
 ISSN: 2070-1721                                               Cloudflare
-                                                        17 November 2023
+                                                            January 2024
 
 
                              Oblivious HTTP
@@ -36,7 +36,7 @@ Status of This Memo
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -429,7 +429,7 @@ Table of Contents
    HPKE KEM ID:
       A 16-bit value that identifies the KEM used for the identified key
       as defined in Section 7.1 of [HPKE] or the "HPKE KEM Identifiers"
-      IANA registry <https://www.iana.org/assignments/hpke>.
+      registry <https://www.iana.org/assignments/hpke>.
 
    HPKE Public Key:
       The public key used by the gateway.  The length of the public key
@@ -446,12 +446,12 @@ Table of Contents
 
       HPKE KDF ID:
          A 16-bit HPKE KDF identifier as defined in Section 7.2 of
-         [HPKE] or the "HPKE KDF Identifiers" IANA registry
+         [HPKE] or the "HPKE KDF Identifiers" registry
          <https://www.iana.org/assignments/hpke>.
 
       HPKE AEAD ID:
          A 16-bit HPKE AEAD identifier as defined in Section 7.3 of
-         [HPKE] or the "HPKE AEAD Identifiers" IANA registry
+         [HPKE] or the "HPKE AEAD Identifiers" registry
          <https://www.iana.org/assignments/hpke>.
 
 3.2.  Key Configuration Media Type
@@ -558,7 +558,7 @@ Table of Contents
    Protected Response.  The Nonce field is either Nn or Nk bytes long,
    whichever is larger.  The Nn and Nk values correspond to parameters
    of the AEAD used in HPKE, which is defined in Section 7.3 of [HPKE]
-   or the "HPKE AEAD Identifiers" IANA registry
+   or the "HPKE AEAD Identifiers" registry
    <https://www.iana.org/assignments/hpke>.  Nn and Nk refer to the size
    of the AEAD nonce and key, respectively, in bytes.
 
@@ -774,13 +774,13 @@ Table of Contents
    header fields [HTTP].
 
    The Client role in this protocol acts as an HTTP client both with
-   respect to the Oblivious Relay Resource and the Target Resource.  The
+   respect to the Oblivious Relay Resource and Target Resource.  The
    request, which the Client makes to the Target Resource, diverges from
    typical HTTP assumptions about the use of a connection (see
    Section 3.3 of [HTTP]) in that the request and response are encrypted
    rather than sent over a connection.  The Oblivious Relay Resource and
    the Oblivious Gateway Resource also act as HTTP clients toward the
-   Oblivious Gateway Resource and Target Resource, respectively.
+   Oblivious Gateway Resource and the Target Resource, respectively.
 
    In order to achieve the privacy and security goals of the protocol, a
    Client also needs to observe the guidance in Section 6.1.
@@ -2015,82 +2015,57 @@ Index
 
          Client  Section 1, Paragraph 5.3.1; Section 1, Paragraph 6;
             Section 1, Paragraph 7; Section 2, Paragraph 1; Section 2,
-            Paragraph 3; Section 2, Paragraph 3; Section 2, Paragraph 3;
-            Section 2, Paragraph 3; Section 2, Paragraph 6.1.1;
-            Section 2, Paragraph 6.2.1; Section 2, Paragraph 6.3.1;
-            Section 2, Paragraph 7; Section 2, Paragraph 8.2.1;
-            Section 2, Paragraph 8.3.1; Section 2, Paragraph 9;
-            Section 2, Paragraph 9; Section 2, Paragraph 9; Section 2.2;
-            Section 2.2, Paragraph 3.2.1; Section 2.2, Paragraph 3.2.1;
-            Section 3, Paragraph 1; Section 3, Paragraph 2; Section 3,
-            Paragraph 2; Section 3, Paragraph 3; Section 3.2, Paragraph
-            3; Section 4.3, Paragraph 2.3.1; Section 4.3, Paragraph 3;
-            Section 4.4, Paragraph 6; Section 4.6, Paragraph 1;
-            Section 5, Paragraph 1; Section 5, Paragraph 2; Section 5,
-            Paragraph 2; Section 5, Paragraph 3; Section 5, Paragraph 4;
-            Section 5, Paragraph 4; Section 5, Paragraph 4; Section 5,
-            Paragraph 8; Section 5.2, Paragraph 4; Section 5.2,
-            Paragraph 4; Section 5.2, Paragraph 4; Section 5.3,
-            Paragraph 4; Section 5.3, Paragraph 4; Section 5.3,
-            Paragraph 4; Section 5.3, Paragraph 4; Section 6, Paragraph
-            1; Section 6, Paragraph 1; Section 6, Paragraph 2.1.1;
-            Section 6, Paragraph 2.1.1; Section 6, Paragraph 2.1.1;
-            Section 6, Paragraph 2.2.1; Section 6, Paragraph 3;
+            Paragraph 3; Section 2, Paragraph 6.1.1; Section 2,
+            Paragraph 6.2.1; Section 2, Paragraph 6.3.1; Section 2,
+            Paragraph 7; Section 2, Paragraph 8.2.1; Section 2,
+            Paragraph 8.3.1; Section 2, Paragraph 9; Section 2.2;
+            Section 2.2, Paragraph 3.2.1; Section 3, Paragraph 1;
+            Section 3, Paragraph 2; Section 3, Paragraph 3; Section 3.2,
+            Paragraph 3; Section 4.3, Paragraph 2.3.1; Section 4.3,
+            Paragraph 3; Section 4.4, Paragraph 6; Section 4.6,
+            Paragraph 1; Section 5, Paragraph 1; Section 5, Paragraph 2;
+            Section 5, Paragraph 3; Section 5, Paragraph 4; Section 5,
+            Paragraph 8; Section 5.2, Paragraph 4; Section 5.3,
+            Paragraph 4; Section 6, Paragraph 1; Section 6, Paragraph
+            2.1.1; Section 6, Paragraph 2.2.1; Section 6, Paragraph 3;
             Section 6, Paragraph 5.1.1; Section 6, Paragraph 7;
             Section 6, Paragraph 8; Section 6, Paragraph 10.1.1;
-            Section 6, Paragraph 10.1.1; Section 6, Paragraph 10.2.1;
             Section 6, Paragraph 10.2.1; Section 6.1, Paragraph 6;
-            Section 6.1, Paragraph 6; Section 6.1, Paragraph 6;
-            Section 6.1, Paragraph 6; Section 6.2, Paragraph 1;
-            Section 6.2, Paragraph 2; Section 6.2, Paragraph 4;
+            Section 6.2, Paragraph 1; Section 6.2, Paragraph 2;
             Section 6.2, Paragraph 4; Section 6.2.1, Paragraph 1;
-            Section 6.2.1, Paragraph 1; Section 6.2.1, Paragraph 2;
             Section 6.2.1, Paragraph 2; Section 6.2.1, Paragraph 3;
-            Section 6.2.1, Paragraph 3; Section 6.2.1, Paragraph 4;
-            Section 6.2.3, Paragraph 3; Section 6.3, Paragraph 1;
-            Section 6.5, Paragraph 2; Section 6.5, Paragraph 4;
-            Section 6.5, Paragraph 6; Section 6.5.1, Paragraph 1;
-            Section 6.5.1, Paragraph 4; Section 6.5.2, Paragraph 4;
-            Section 6.5.2, Paragraph 5; Section 6.5.2, Paragraph 5;
-            Section 6.5.2, Paragraph 7; Section 6.5.2, Paragraph 7;
-            Section 6.7, Paragraph 2; Section 6.7, Paragraph 2;
+            Section 6.2.1, Paragraph 4; Section 6.2.3, Paragraph 3;
+            Section 6.3, Paragraph 1; Section 6.5, Paragraph 2;
+            Section 6.5, Paragraph 4; Section 6.5, Paragraph 6;
+            Section 6.5.1, Paragraph 1; Section 6.5.1, Paragraph 4;
+            Section 6.5.2, Paragraph 4; Section 6.5.2, Paragraph 5;
+            Section 6.5.2, Paragraph 7; Section 6.7, Paragraph 2;
             Section 6.7, Paragraph 4; Section 6.8, Paragraph 1;
             Section 6.9, Paragraph 1; Section 7, Paragraph 1; Section 7,
-            Paragraph 1; Section 7, Paragraph 1; Section 7, Paragraph 3;
-            Section 7, Paragraph 3; Section 7, Paragraph 4; Section 7,
-            Paragraph 4; Section 7, Paragraph 5; Section 7, Paragraph 5;
-            Section 7, Paragraph 5; Section 7, Paragraph 6; Appendix A,
-            Paragraph 1; Appendix A, Paragraph 1; Appendix A, Paragraph
-            6; Appendix A, Paragraph 6; Appendix A, Paragraph 8;
-            Appendix A, Paragraph 8; Appendix A, Paragraph 8;
-            Appendix A, Paragraph 14; Appendix A, Paragraph 16;
-            Appendix A, Paragraph 36
+            Paragraph 3; Section 7, Paragraph 4; Section 7, Paragraph 5;
+            Section 7, Paragraph 6; Appendix A, Paragraph 1; Appendix A,
+            Paragraph 6; Appendix A, Paragraph 8; Appendix A, Paragraph
+            14; Appendix A, Paragraph 16; Appendix A, Paragraph 36
          Clients  Section 1, Paragraph 5.2.1; Section 1, Paragraph 7;
             Section 2.2, Paragraph 3.8.1; Section 3, Paragraph 1;
-            Section 3, Paragraph 3; Section 3, Paragraph 3; Section 3.2,
-            Paragraph 3; Section 3.2, Paragraph 3; Section 4.3,
-            Paragraph 1; Section 4.4, Paragraph 5; Section 4.4,
-            Paragraph 5; Section 5, Paragraph 1; Section 5.1, Paragraph
-            2; Section 6, Paragraph 10.1.1; Section 6.1, Paragraph 1;
-            Section 6.1, Paragraph 1; Section 6.1, Paragraph 2;
-            Section 6.1, Paragraph 3; Section 6.1, Paragraph 3;
-            Section 6.1, Paragraph 4; Section 6.1, Paragraph 4;
-            Section 6.1, Paragraph 5; Section 6.1, Paragraph 7;
-            Section 6.2, Paragraph 3; Section 6.2, Paragraph 4;
-            Section 6.2.1, Paragraph 1; Section 6.2.1, Paragraph 1;
-            Section 6.2.1, Paragraph 3; Section 6.2.1, Paragraph 3;
-            Section 6.2.1, Paragraph 3; Section 6.2.1, Paragraph 3;
-            Section 6.2.2, Paragraph 2; Section 6.2.3, Paragraph 3;
-            Section 6.2.3, Paragraph 5; Section 6.2.3, Paragraph 5;
-            Section 6.2.3, Paragraph 6; Section 6.5, Paragraph 1;
-            Section 6.5.1, Paragraph 1; Section 6.5.1, Paragraph 4;
-            Section 6.5.2, Paragraph 7; Section 6.5.2, Paragraph 8;
-            Section 6.5.2, Paragraph 10; Section 6.8, Paragraph 1;
-            Section 6.8, Paragraph 1; Section 6.8, Paragraph 2;
-            Section 7, Paragraph 1; Section 7, Paragraph 4; Section 7,
-            Paragraph 4; Section 7, Paragraph 4; Section 7, Paragraph 5;
-            Section 8.1, Paragraph 1; Section 8.2, Paragraph 2;
-            Section 8.3, Paragraph 1; Section 8.3, Paragraph 2
+            Section 3, Paragraph 3; Section 3.2, Paragraph 3;
+            Section 4.3, Paragraph 1; Section 4.4, Paragraph 5;
+            Section 5, Paragraph 1; Section 5.1, Paragraph 2; Section 6,
+            Paragraph 10.1.1; Section 6.1, Paragraph 1; Section 6.1,
+            Paragraph 2; Section 6.1, Paragraph 3; Section 6.1,
+            Paragraph 4; Section 6.1, Paragraph 5; Section 6.1,
+            Paragraph 7; Section 6.2, Paragraph 3; Section 6.2,
+            Paragraph 4; Section 6.2.1, Paragraph 1; Section 6.2.1,
+            Paragraph 3; Section 6.2.2, Paragraph 2; Section 6.2.3,
+            Paragraph 3; Section 6.2.3, Paragraph 5; Section 6.2.3,
+            Paragraph 6; Section 6.5, Paragraph 1; Section 6.5.1,
+            Paragraph 1; Section 6.5.1, Paragraph 4; Section 6.5.2,
+            Paragraph 7; Section 6.5.2, Paragraph 8; Section 6.5.2,
+            Paragraph 10; Section 6.8, Paragraph 1; Section 6.8,
+            Paragraph 2; Section 7, Paragraph 1; Section 7, Paragraph 4;
+            Section 7, Paragraph 5; Section 8.1, Paragraph 1;
+            Section 8.2, Paragraph 2; Section 8.3, Paragraph 1;
+            Section 8.3, Paragraph 2
 
       E
 
@@ -2098,33 +2073,26 @@ Index
             Paragraph 6.3.1; Section 2, Paragraph 7; Section 2.2;
             Section 2.2, Paragraph 3.10.1; Section 2.2, Paragraph
             3.12.1; Section 4, Paragraph 2.1.1; Section 4.1, Paragraph
-            3; Section 4.1, Paragraph 3; Section 4.1, Paragraph 4;
-            Section 4.1, Paragraph 4; Section 4.1, Paragraph 6;
+            3; Section 4.1, Paragraph 4; Section 4.1, Paragraph 6;
             Section 4.3, Paragraph 3; Section 4.3, Paragraph 4.5.1;
-            Section 4.3, Paragraph 8; Section 4.3, Paragraph 8;
-            Section 5, Paragraph 1; Section 5, Paragraph 1; Section 5,
-            Paragraph 1; Section 5, Paragraph 1; Section 5, Paragraph 1;
-            Section 5, Paragraph 1; Section 5, Paragraph 7; Section 5.2,
-            Paragraph 3; Section 5.3, Paragraph 1; Section 6, Paragraph
-            3; Section 6, Paragraph 10.1.1; Section 6.1, Paragraph 6;
-            Section 6.2.3, Paragraph 2; Section 6.3, Paragraph 2;
-            Section 6.4, Paragraph 2; Section 6.5, Paragraph 2;
-            Section 6.10, Paragraph 2; Section 8.2, Paragraph 1;
-            Appendix A, Paragraph 14
+            Section 4.3, Paragraph 8; Section 5, Paragraph 1; Section 5,
+            Paragraph 7; Section 5.2, Paragraph 3; Section 5.3,
+            Paragraph 1; Section 6, Paragraph 3; Section 6, Paragraph
+            10.1.1; Section 6.1, Paragraph 6; Section 6.2.3, Paragraph
+            2; Section 6.3, Paragraph 2; Section 6.4, Paragraph 2;
+            Section 6.5, Paragraph 2; Section 6.10, Paragraph 2;
+            Section 8.2, Paragraph 1; Appendix A, Paragraph 14
          Encapsulated Requests  Section 1, Paragraph 5.2.1; Section 1,
             Paragraph 5.3.1; Section 2.2, Paragraph 3.8.1; Section 3,
             Paragraph 1; Section 4.5, Paragraph 1; Section 4.5,
             Paragraph 2; Section 6.1, Paragraph 2; Section 6.1,
-            Paragraph 7; Section 6.1, Paragraph 7; Section 6.2.1,
-            Paragraph 1; Section 6.5, Paragraph 2; Section 6.5.1,
-            Paragraph 1
+            Paragraph 7; Section 6.2.1, Paragraph 1; Section 6.5,
+            Paragraph 2; Section 6.5.1, Paragraph 1
          Encapsulated Response  Section 2.2; Section 2.2, Paragraph
             3.10.1; Section 4, Paragraph 2.2.1; Section 4.2, Paragraph
-            3; Section 4.2, Paragraph 3; Section 4.2, Paragraph 4;
-            Section 4.2, Paragraph 4; Section 4.2, Paragraph 6;
+            3; Section 4.2, Paragraph 4; Section 4.2, Paragraph 6;
             Section 4.4, Paragraph 1; Section 4.4, Paragraph 2.7.1;
-            Section 4.4, Paragraph 5; Section 5, Paragraph 8; Section 5,
-            Paragraph 8; Section 5, Paragraph 8; Section 5, Paragraph 8;
+            Section 4.4, Paragraph 5; Section 5, Paragraph 8;
             Section 5.2, Paragraph 3; Section 5.2, Paragraph 4;
             Section 6.2, Paragraph 5; Appendix A, Paragraph 24;
             Appendix A, Paragraph 32; Appendix A, Paragraph 36
@@ -2133,143 +2101,110 @@ Index
       K
 
          key configuration  Section 3, Paragraph 1; Section 3, Paragraph
-            1; Section 3, Paragraph 2; Section 3, Paragraph 3;
-            Section 3.1, Paragraph 1; Section 3.1, Paragraph 2;
-            Section 3.1, Paragraph 4; Section 3.2, Paragraph 1;
+            2; Section 3, Paragraph 3; Section 3.1, Paragraph 1;
+            Section 3.1, Paragraph 2; Section 3.1, Paragraph 4;
             Section 3.2, Paragraph 1; Section 3.2, Paragraph 2;
             Section 3.2, Paragraph 3; Section 4.3, Paragraph 1;
             Section 4.3, Paragraph 2.3.1; Section 5.2, Paragraph 4;
             Section 5.3, Paragraph 1; Section 5.3, Paragraph 4;
-            Section 5.3, Paragraph 4; Section 6.1, Paragraph 2;
-            Section 6.6, Paragraph 1; Section 6.6, Paragraph 1;
+            Section 6.1, Paragraph 2; Section 6.6, Paragraph 1;
             Section 6.9, Paragraph 1; Section 7, Paragraph 1; Section 7,
             Paragraph 2; Section 9.1, Paragraph 1; Section 9.1,
             Paragraph 2.18.1; Section 9.5, Paragraph 2.4.1; Appendix A,
             Paragraph 1; Appendix A, Paragraph 4; Appendix A, Paragraph
             6; Appendix A, Paragraph 8
          key configurations  Section 3, Paragraph 2; Section 3,
-            Paragraph 2; Section 3, Paragraph 3; Section 3.2, Paragraph
-            1; Section 3.2, Paragraph 3; Section 3.2, Paragraph 3;
-            Section 6.1, Paragraph 3
+            Paragraph 3; Section 3.2, Paragraph 1; Section 3.2,
+            Paragraph 3; Section 6.1, Paragraph 3
 
       O
 
          Oblivious Gateway Resource  Section 1, Paragraph 5.2.1;
             Section 1, Paragraph 5.3.1; Section 1, Paragraph 6;
             Section 1, Paragraph 7; Section 2, Paragraph 2.1.1;
-            Section 2, Paragraph 2.1.1; Section 2, Paragraph 2.2.1;
-            Section 2, Paragraph 2.3.1; Section 2, Paragraph 3;
-            Section 2, Paragraph 3; Section 2, Paragraph 3; Section 2,
-            Paragraph 5; Section 2, Paragraph 6.4.1; Section 2,
-            Paragraph 6.5.1; Section 2, Paragraph 7; Section 2,
+            Section 2, Paragraph 2.2.1; Section 2, Paragraph 2.3.1;
+            Section 2, Paragraph 3; Section 2, Paragraph 5; Section 2,
+            Paragraph 6.4.1; Section 2, Paragraph 6.5.1; Section 2,
             Paragraph 7; Section 2, Paragraph 8.1.1; Section 2,
-            Paragraph 9; Section 2, Paragraph 9; Section 2.1, Paragraph
-            1; Section 2.2, Paragraph 3.8.1; Section 2.2; Section 3,
-            Paragraph 1; Section 3.1, Paragraph 5.2.1; Section 3.1,
-            Paragraph 5.10.1; Section 4.3, Paragraph 8; Section 4.3,
-            Paragraph 9.1.1; Section 4.3, Paragraph 9.1.2.1.1;
-            Section 4.3, Paragraph 9.1.2.2.1; Section 4.3, Paragraph
+            Paragraph 9; Section 2.1, Paragraph 1; Section 2.2,
+            Paragraph 3.8.1; Section 2.2; Section 3, Paragraph 1;
+            Section 3.1, Paragraph 5.2.1; Section 3.1, Paragraph 5.10.1;
+            Section 4.3, Paragraph 8; Section 4.3, Paragraph 9.1.1;
+            Section 4.3, Paragraph 9.1.2.1.1; Section 4.3, Paragraph
             9.1.2.2.1; Section 4.3, Paragraph 9.4.1; Section 4.3,
             Paragraph 12; Section 4.4, Paragraph 1; Section 4.6,
-            Paragraph 1; Section 5, Paragraph 2; Section 5, Paragraph 2;
-            Section 5, Paragraph 4; Section 5, Paragraph 4; Section 5,
-            Paragraph 5; Section 5, Paragraph 7; Section 5, Paragraph 8;
-            Section 5, Paragraph 9; Section 5, Paragraph 10;
-            Section 5.1, Paragraph 2; Section 5.2, Paragraph 2;
-            Section 5.2, Paragraph 3; Section 5.2, Paragraph 3;
-            Section 5.2, Paragraph 4; Section 5.3, Paragraph 1;
-            Section 5.3, Paragraph 4; Section 6, Paragraph 1; Section 6,
-            Paragraph 3; Section 6, Paragraph 5.3.1; Section 6,
-            Paragraph 6; Section 6, Paragraph 7; Section 6, Paragraph 8;
-            Section 6, Paragraph 8; Section 6.1, Paragraph 1;
-            Section 6.1, Paragraph 2; Section 6.2, Paragraph 1;
-            Section 6.2, Paragraph 1; Section 6.2.2, Paragraph 1;
-            Section 6.2.3, Paragraph 2; Section 6.3, Paragraph 1;
-            Section 6.3, Paragraph 1; Section 6.3, Paragraph 1;
-            Section 6.3, Paragraph 4; Section 6.3, Paragraph 4;
-            Section 6.3, Paragraph 4; Section 6.4, Paragraph 1;
+            Paragraph 1; Section 5, Paragraph 2; Section 5, Paragraph 4;
+            Section 5, Paragraph 5; Section 5, Paragraph 7; Section 5,
+            Paragraph 8; Section 5, Paragraph 9; Section 5, Paragraph
+            10; Section 5.1, Paragraph 2; Section 5.2, Paragraph 2;
+            Section 5.2, Paragraph 3; Section 5.2, Paragraph 4;
+            Section 5.3, Paragraph 1; Section 5.3, Paragraph 4;
+            Section 6, Paragraph 1; Section 6, Paragraph 3; Section 6,
+            Paragraph 5.3.1; Section 6, Paragraph 6; Section 6,
+            Paragraph 7; Section 6, Paragraph 8; Section 6.1, Paragraph
+            1; Section 6.1, Paragraph 2; Section 6.2, Paragraph 1;
+            Section 6.2.2, Paragraph 1; Section 6.2.3, Paragraph 2;
+            Section 6.3, Paragraph 1; Section 6.3, Paragraph 4;
             Section 6.4, Paragraph 1; Section 6.5.1, Paragraph 1;
-            Section 6.5.1, Paragraph 3; Section 6.5.1, Paragraph 3;
             Section 6.5.1, Paragraph 3; Section 6.5.2, Paragraph 1;
             Section 6.5.2, Paragraph 4; Section 6.5.2, Paragraph 5;
             Section 6.5.2, Paragraph 7; Section 6.5.2, Paragraph 8;
-            Section 6.5.2, Paragraph 10; Section 6.5.2, Paragraph 10;
-            Section 6.7, Paragraph 3; Section 6.9, Paragraph 1;
-            Section 6.10, Paragraph 1; Section 6.10, Paragraph 1;
-            Section 6.10, Paragraph 3; Section 6.10, Paragraph 3;
-            Section 6.10, Paragraph 3; Section 6.10, Paragraph 3;
-            Section 6.10, Paragraph 4; Section 6.10, Paragraph 4;
+            Section 6.5.2, Paragraph 10; Section 6.7, Paragraph 3;
+            Section 6.9, Paragraph 1; Section 6.10, Paragraph 1;
+            Section 6.10, Paragraph 3; Section 6.10, Paragraph 4;
             Section 6.10, Paragraph 5; Section 7, Paragraph 1;
-            Section 7, Paragraph 2; Section 7, Paragraph 2; Section 7,
-            Paragraph 2; Section 8.2, Paragraph 1; Section 8.2,
-            Paragraph 1; Section 8.2, Paragraph 2; Appendix A, Paragraph
-            1; Appendix A, Paragraph 2; Appendix A, Paragraph 4;
+            Section 7, Paragraph 2; Section 8.2, Paragraph 1;
+            Section 8.2, Paragraph 2; Appendix A, Paragraph 1;
+            Appendix A, Paragraph 2; Appendix A, Paragraph 4;
             Appendix A, Paragraph 8; Appendix A, Paragraph 18;
-            Appendix A, Paragraph 20; Appendix A, Paragraph 20;
-            Appendix A, Paragraph 34
+            Appendix A, Paragraph 20; Appendix A, Paragraph 34
          Oblivious Gateway Resources  Section 4.4, Paragraph 1;
-            Section 6, Paragraph 10.1.1; Section 6, Paragraph 10.1.1;
-            Section 6, Paragraph 10.2.1; Section 6.1, Paragraph 1;
+            Section 6, Paragraph 10.1.1; Section 6, Paragraph 10.2.1;
             Section 6.1, Paragraph 1; Section 6.2.3, Paragraph 6;
             Section 6.5.1, Paragraph 4; Section 6.5.1, Paragraph 5;
             Section 6.5.2, Paragraph 9; Section 8.2, Paragraph 1;
-            Section 8.2, Paragraph 1; Section 8.2, Paragraph 2
+            Section 8.2, Paragraph 2
          Oblivious Relay and Gateway Resources  Section 2, Paragraph
             2.3.1; Section 7, Paragraph 2
          Oblivious Relay Resource  Section 1, Paragraph 5.2.1;
-            Section 1, Paragraph 6; Section 1, Paragraph 7; Section 1,
-            Paragraph 7; Section 2, Paragraph 2.3.1; Section 2,
-            Paragraph 6.3.1; Section 2, Paragraph 6.4.1; Section 2,
-            Paragraph 8.1.1; Section 2, Paragraph 8.2.1; Section 2.1,
-            Paragraph 1; Section 2.2, Paragraph 3.2.1; Section 2.2;
-            Section 5, Paragraph 1; Section 5, Paragraph 1; Section 5,
-            Paragraph 1; Section 5, Paragraph 1; Section 5, Paragraph 1;
-            Section 5, Paragraph 2; Section 5, Paragraph 2; Section 5,
-            Paragraph 4; Section 5, Paragraph 4; Section 5, Paragraph 4;
-            Section 5, Paragraph 5; Section 5, Paragraph 5; Section 5,
-            Paragraph 6; Section 5.2, Paragraph 2; Section 5.2,
-            Paragraph 4; Section 5.2, Paragraph 4; Section 5.3,
-            Paragraph 4; Section 6, Paragraph 3; Section 6, Paragraph
-            5.2.1; Section 6, Paragraph 7; Section 6, Paragraph 7;
-            Section 6, Paragraph 8; Section 6, Paragraph 10.1.1;
-            Section 6, Paragraph 10.1.1; Section 6.1, Paragraph 3;
-            Section 6.1, Paragraph 4; Section 6.1, Paragraph 6;
-            Section 6.1, Paragraph 6; Section 6.1, Paragraph 6;
-            Section 6.1, Paragraph 7; Section 6.2, Paragraph 1;
-            Section 6.2, Paragraph 2; Section 6.2, Paragraph 3;
-            Section 6.2.3, Paragraph 2; Section 6.2.3, Paragraph 5;
-            Section 6.2.3, Paragraph 5; Section 6.5, Paragraph 2;
-            Section 6.5, Paragraph 2; Section 6.5, Paragraph 4;
-            Section 6.7, Paragraph 4; Section 6.7, Paragraph 4;
-            Section 7, Paragraph 1; Section 7, Paragraph 2; Section 7,
-            Paragraph 3; Section 8.2, Paragraph 1; Section 8.2,
-            Paragraph 1; Section 8.2, Paragraph 1; Appendix A, Paragraph
-            1; Appendix A, Paragraph 16; Appendix A, Paragraph 18;
-            Appendix A, Paragraph 36
+            Section 1, Paragraph 6; Section 1, Paragraph 7; Section 2,
+            Paragraph 2.3.1; Section 2, Paragraph 6.3.1; Section 2,
+            Paragraph 6.4.1; Section 2, Paragraph 8.1.1; Section 2,
+            Paragraph 8.2.1; Section 2.1, Paragraph 1; Section 2.2,
+            Paragraph 3.2.1; Section 2.2; Section 5, Paragraph 1;
+            Section 5, Paragraph 2; Section 5, Paragraph 4; Section 5,
+            Paragraph 5; Section 5, Paragraph 6; Section 5.2, Paragraph
+            2; Section 5.2, Paragraph 4; Section 5.3, Paragraph 4;
+            Section 6, Paragraph 3; Section 6, Paragraph 5.2.1;
+            Section 6, Paragraph 7; Section 6, Paragraph 8; Section 6,
+            Paragraph 10.1.1; Section 6.1, Paragraph 3; Section 6.1,
+            Paragraph 4; Section 6.1, Paragraph 6; Section 6.1,
+            Paragraph 7; Section 6.2, Paragraph 1; Section 6.2,
+            Paragraph 2; Section 6.2, Paragraph 3; Section 6.2.3,
+            Paragraph 2; Section 6.2.3, Paragraph 5; Section 6.5,
+            Paragraph 2; Section 6.5, Paragraph 4; Section 6.7,
+            Paragraph 4; Section 7, Paragraph 1; Section 7, Paragraph 2;
+            Section 7, Paragraph 3; Section 8.2, Paragraph 1;
+            Appendix A, Paragraph 1; Appendix A, Paragraph 16;
+            Appendix A, Paragraph 18; Appendix A, Paragraph 36
          Oblivious Relay Resources  Section 6.2.2, Paragraph 1;
             Section 6.2.3, Paragraph 6; Section 6.10, Paragraph 4;
-            Section 8.2, Paragraph 2; Section 8.2, Paragraph 2
+            Section 8.2, Paragraph 2
 
       T
 
          Target Resource  Section 2, Paragraph 3; Section 2, Paragraph
             5; Section 2, Paragraph 6.1.1; Section 2, Paragraph 9;
-            Section 2, Paragraph 9; Section 2, Paragraph 9; Section 2.2,
-            Paragraph 3.2.1; Section 2.2, Paragraph 3.10.1; Section 2.2;
-            Section 5, Paragraph 2; Section 5, Paragraph 2; Section 5,
-            Paragraph 2; Section 5, Paragraph 7; Section 5, Paragraph 8;
-            Section 5.2, Paragraph 3; Section 5.2, Paragraph 3;
-            Section 6, Paragraph 1; Section 6, Paragraph 5.3.1;
-            Section 6, Paragraph 6; Section 6, Paragraph 8; Section 6.1,
-            Paragraph 1; Section 6.1, Paragraph 1; Section 6.1,
-            Paragraph 3; Section 6.3, Paragraph 1; Section 6.3,
-            Paragraph 1; Section 6.3, Paragraph 4; Section 6.3,
-            Paragraph 4; Section 6.9, Paragraph 3; Section 6.10,
-            Paragraph 1; Section 6.10, Paragraph 3; Section 6.10,
-            Paragraph 3; Section 6.10, Paragraph 3; Section 6.10,
-            Paragraph 3; Section 6.10, Paragraph 4; Section 6.10,
-            Paragraph 5; Appendix A, Paragraph 1; Appendix A, Paragraph
-            20; Appendix A, Paragraph 20
+            Section 2.2, Paragraph 3.2.1; Section 2.2, Paragraph 3.10.1;
+            Section 2.2; Section 5, Paragraph 2; Section 5, Paragraph 7;
+            Section 5, Paragraph 8; Section 5.2, Paragraph 3; Section 6,
+            Paragraph 1; Section 6, Paragraph 5.3.1; Section 6,
+            Paragraph 6; Section 6, Paragraph 8; Section 6.1, Paragraph
+            1; Section 6.1, Paragraph 3; Section 6.3, Paragraph 1;
+            Section 6.3, Paragraph 4; Section 6.9, Paragraph 3;
+            Section 6.10, Paragraph 1; Section 6.10, Paragraph 3;
+            Section 6.10, Paragraph 4; Section 6.10, Paragraph 5;
+            Appendix A, Paragraph 1; Appendix A, Paragraph 20
 
 Authors' Addresses
 

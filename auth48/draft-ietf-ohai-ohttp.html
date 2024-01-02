@@ -13,27 +13,27 @@
       being able to link those requests to the client or to identify the requests as having come from the
       same client, while placing only limited trust in the nodes used to forward the messages. 
     " name="description">
-<meta content="xml2rfc 3.18.2" name="generator">
+<meta content="xml2rfc 3.19.0" name="generator">
 <meta content="privacy" name="keyword">
 <meta content="proxy" name="keyword">
 <meta content="partitioning" name="keyword">
 <meta content="tunnel" name="keyword">
 <meta content="9458" name="rfc.number">
 <!-- Generator version information:
-  xml2rfc 3.18.2
+  xml2rfc 3.19.0
     Python 3.11.6
-    ConfigArgParse 1.5.3
+    ConfigArgParse 1.7
     google-i18n-address 3.1.0
     intervaltree 3.1.0
     Jinja2 3.1.2
     lxml 4.9.3
-    platformdirs 3.11.0
+    platformdirs 4.1.0
     pycountry 22.3.5
-    PyYAML 6.0
+    PyYAML 6.0.1
     requests 2.31.0
-    setuptools 67.7.2
+    setuptools 68.2.2
     six 1.16.0
-    wcwidth 0.2.9
+    wcwidth 0.2.12
 -->
 <link href="draft-ietf-ohai-ohttp.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1035,7 +1035,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">RFC 9458</td>
 <td class="center">Oblivious HTTP</td>
-<td class="right">November 2023</td>
+<td class="right">January 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Thomson &amp; Wood</td>
@@ -1054,7 +1054,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="category">Standards Track</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-11-17" class="published">17 November 2023</time>
+<time datetime="2024-01" class="published">January 2024</time>
     </dd>
 <dt class="label-issn">ISSN:</dt>
 <dd class="issn">2070-1721</dd>
@@ -1106,7 +1106,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
         </h2>
 <p id="section-boilerplate.2-1">
-            Copyright (c) 2023 IETF Trust and the persons identified as the
+            Copyright (c) 2024 IETF Trust and the persons identified as the
             document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.2-2">
             This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1739,7 +1739,7 @@ Key Config {
 <dt id="section-3.1-5.3">HPKE KEM ID:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-5.4">
             <p id="section-3.1-5.4.1">A 16-bit value that identifies the KEM used for the identified key as defined
-            in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.1" class="relref">Section 7.1</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span> or <a href="https://www.iana.org/assignments/hpke">the "HPKE KEM Identifiers" IANA
+            in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.1" class="relref">Section 7.1</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span> or <a href="https://www.iana.org/assignments/hpke">the "HPKE KEM Identifiers"
             registry</a>.<a href="#section-3.1-5.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
@@ -1763,13 +1763,13 @@ Key Config {
               <dt id="section-3.1-5.10.2.1">HPKE KDF ID:</dt>
               <dd style="margin-left: 1.5em" id="section-3.1-5.10.2.2">
                 <p id="section-3.1-5.10.2.2.1">A 16-bit HPKE KDF identifier as defined in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.2" class="relref">Section 7.2</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span> or <a href="https://www.iana.org/assignments/hpke">the
-                "HPKE KDF Identifiers" IANA registry</a>.<a href="#section-3.1-5.10.2.2.1" class="pilcrow">¶</a></p>
+                "HPKE KDF Identifiers" registry</a>.<a href="#section-3.1-5.10.2.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 <dt id="section-3.1-5.10.2.3">HPKE AEAD ID:</dt>
               <dd style="margin-left: 1.5em" id="section-3.1-5.10.2.4">
                 <p id="section-3.1-5.10.2.4.1">A 16-bit HPKE AEAD identifier as defined in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.3" class="relref">Section 7.3</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span> or <a href="https://www.iana.org/assignments/hpke">the
-                "HPKE AEAD Identifiers" IANA registry</a>.<a href="#section-3.1-5.10.2.4.1" class="pilcrow">¶</a></p>
+                "HPKE AEAD Identifiers" registry</a>.<a href="#section-3.1-5.10.2.4.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 </dl>
@@ -1917,7 +1917,7 @@ Encapsulated Response {
         Response.  The Nonce field is either <code>Nn</code> or <code>Nk</code> bytes long, whichever is
         larger.  The <code>Nn</code> and <code>Nk</code> values correspond to parameters of the AEAD used in
         HPKE, which is defined in <span><a href="https://rfc-editor.org/rfc/rfc9180#section-7.3" class="relref">Section 7.3</a> of [<a href="#HPKE" class="cite xref">HPKE</a>]</span> or <a href="https://www.iana.org/assignments/hpke">the "HPKE AEAD
-        Identifiers" IANA registry</a>.  <code>Nn</code> and <code>Nk</code> refer to the size of the AEAD nonce and key,
+        Identifiers" registry</a>.  <code>Nn</code> and <code>Nk</code> refer to the size of the AEAD nonce and key,
         respectively, in bytes.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2167,12 +2167,12 @@ response, error = Open(aead_key, aead_nonce, "", ct)
       forwarding the <span id="iref-encapsulated-request-163" class="iref"></span><a href="#dfn-enc-req" class="internal xref">Encapsulated Request</a> towards the target, such as the <code>Connection</code>
       or <code>Proxy-Authorization</code> header fields <span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <p id="section-5-2">The <span id="iref-client-164" class="iref"></span><a href="#dfn-client" class="internal xref">Client</a> role in this protocol acts as an HTTP client both with respect to the
-      <span id="iref-oblivious-relay-resource-165" class="iref"></span><a href="#dfn-relay" class="internal xref">Oblivious Relay Resource</a> and the <span id="iref-target-resource-166" class="iref"></span><a href="#dfn-target" class="internal xref">Target Resource</a>.  The request, which the <span id="iref-client-167" class="iref"></span><a href="#dfn-client" class="internal xref">Client</a>
-      makes to the <span id="iref-target-resource-168" class="iref"></span><a href="#dfn-target" class="internal xref">Target Resource</a>, diverges from typical HTTP assumptions about
-      the use of a connection (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-3.3" class="relref">Section 3.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>) in that the request and
+      <span id="iref-oblivious-relay-resource-165" class="iref"></span><a href="#dfn-relay" class="internal xref">Oblivious Relay Resource</a> and <span id="iref-target-resource-166" class="iref"></span><a href="#dfn-target" class="internal xref">Target Resource</a>.  The request, which the <span id="iref-client-167" class="iref"></span><a href="#dfn-client" class="internal xref">Client</a>
+      makes to the <span id="iref-target-resource-168" class="iref"></span><a href="#dfn-target" class="internal xref">Target Resource</a>, diverges from typical HTTP assumptions about the
+      use of a connection (see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-3.3" class="relref">Section 3.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>) in that the request and
       response are encrypted rather than sent over a connection.  The <span id="iref-oblivious-relay-resource-169" class="iref"></span><a href="#dfn-relay" class="internal xref">Oblivious Relay
       Resource</a> and the <span id="iref-oblivious-gateway-resource-17" class="iref"></span><a href="#dfn-gateway" class="internal xref">Oblivious Gateway Resource</a> also act as HTTP clients toward the
-      <span id="iref-oblivious-gateway-resource-171" class="iref"></span><a href="#dfn-gateway" class="internal xref">Oblivious Gateway Resource</a> and <span id="iref-target-resource-172" class="iref"></span><a href="#dfn-target" class="internal xref">Target Resource</a>, respectively.<a href="#section-5-2" class="pilcrow">¶</a></p>
+      <span id="iref-oblivious-gateway-resource-171" class="iref"></span><a href="#dfn-gateway" class="internal xref">Oblivious Gateway Resource</a> and the <span id="iref-target-resource-172" class="iref"></span><a href="#dfn-target" class="internal xref">Target Resource</a>, respectively.<a href="#section-5-2" class="pilcrow">¶</a></p>
 <p id="section-5-3">In order to achieve the privacy and security goals of the protocol, a <span id="iref-client-173" class="iref"></span><a href="#dfn-client" class="internal xref">Client</a>
       also needs to observe the guidance in <a href="#sec-client" class="auto internal xref">Section 6.1</a>.<a href="#section-5-3" class="pilcrow">¶</a></p>
 <p id="section-5-4">The <span id="iref-oblivious-relay-resource-17" class="iref"></span><a href="#dfn-relay" class="internal xref">Oblivious Relay Resource</a> interacts with the <span id="iref-oblivious-gateway-resource-175" class="iref"></span><a href="#dfn-gateway" class="internal xref">Oblivious Gateway Resource</a> as an
@@ -2711,15 +2711,16 @@ Content-Length: 128
                   <path d="M 368,80 L 456,80" fill="none" stroke="black"></path>
                   <path d="M 48,142 L 280,142" fill="none" stroke="black"></path>
                   <path d="M 48,146 L 280,146" fill="none" stroke="black"></path>
-                  <path d="M 296,144 L 400,144" fill="none" stroke="black"></path>
+                  <path d="M 288,144 L 400,144" fill="none" stroke="black"></path>
                   <path d="M 56,206 L 288,206" fill="none" stroke="black"></path>
                   <path d="M 56,210 L 288,210" fill="none" stroke="black"></path>
-                  <path d="M 304,208 L 408,208" fill="none" stroke="black"></path>
+                  <path d="M 296,208 L 408,208" fill="none" stroke="black"></path>
                   <path d="M 48,270 L 280,270" fill="none" stroke="black"></path>
                   <path d="M 48,274 L 280,274" fill="none" stroke="black"></path>
-                  <path d="M 296,272 L 400,272" fill="none" stroke="black"></path>
+                  <path d="M 288,272 L 400,272" fill="none" stroke="black"></path>
                   <polygon class="arrowhead" fill="black" points="408,272 396,266.4 396,277.6" transform="rotate(0,400,272)"></polygon>
                   <polygon class="arrowhead" fill="black" points="408,144 396,138.4 396,149.6" transform="rotate(0,400,144)"></polygon>
+                  <polygon class="arrowhead" fill="black" points="304,208 292,202.4 292,213.6" transform="rotate(180,296,208)"></polygon>
                   <polygon class="arrowhead" fill="black" points="288,272 276,266.4 276,277.6" transform="rotate(0,280,272)"></polygon>
                   <polygon class="arrowhead" fill="black" points="288,144 276,138.4 276,149.6" transform="rotate(0,280,144)"></polygon>
                   <polygon class="arrowhead" fill="black" points="64,208 52,202.4 52,213.6" transform="rotate(180,56,208)"></polygon>
@@ -2736,7 +2737,6 @@ Content-Length: 128
                     <text x="364" y="180">Response</text>
                     <text x="352" y="196">+</text>
                     <text x="380" y="196">Date</text>
-                    <text x="296" y="212">&lt;</text>
                     <text x="96" y="244">Request</text>
                     <text x="72" y="260">+</text>
                     <text x="112" y="260">Updated</text>
@@ -3738,9 +3738,6 @@ Content-Length: 38
 <a href="#section-1-7" class="auto internal xref">Section 1, Paragraph 7</a>; 
 <a href="#section-2-1" class="auto internal xref">Section 2, Paragraph 1</a>; 
 <a href="#section-2-3" class="auto internal xref">Section 2, Paragraph 3</a>; 
-<a href="#section-2-3" class="auto internal xref">Section 2, Paragraph 3</a>; 
-<a href="#section-2-3" class="auto internal xref">Section 2, Paragraph 3</a>; 
-<a href="#section-2-3" class="auto internal xref">Section 2, Paragraph 3</a>; 
 <a href="#section-2-6.1.1" class="auto internal xref">Section 2, Paragraph 6.1.1</a>; 
 <a href="#section-2-6.2.1" class="auto internal xref">Section 2, Paragraph 6.2.1</a>; 
 <a href="#section-2-6.3.1" class="auto internal xref">Section 2, Paragraph 6.3.1</a>; 
@@ -3748,13 +3745,9 @@ Content-Length: 38
 <a href="#section-2-8.2.1" class="auto internal xref">Section 2, Paragraph 8.2.1</a>; 
 <a href="#section-2-8.3.1" class="auto internal xref">Section 2, Paragraph 8.3.1</a>; 
 <a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
-<a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
-<a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
 <a href="#dfn-client" class="auto internal xref">Section 2.2</a>; 
 <a href="#section-2.2-3.2.1" class="auto internal xref">Section 2.2, Paragraph 3.2.1</a>; 
-<a href="#section-2.2-3.2.1" class="auto internal xref">Section 2.2, Paragraph 3.2.1</a>; 
 <a href="#section-3-1" class="auto internal xref">Section 3, Paragraph 1</a>; 
-<a href="#section-3-2" class="auto internal xref">Section 3, Paragraph 2</a>; 
 <a href="#section-3-2" class="auto internal xref">Section 3, Paragraph 2</a>; 
 <a href="#section-3-3" class="auto internal xref">Section 3, Paragraph 3</a>; 
 <a href="#section-3.2-3" class="auto internal xref">Section 3.2, Paragraph 3</a>; 
@@ -3764,23 +3757,12 @@ Content-Length: 38
 <a href="#section-4.6-1" class="auto internal xref">Section 4.6, Paragraph 1</a>; 
 <a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
 <a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
-<a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
 <a href="#section-5-3" class="auto internal xref">Section 5, Paragraph 3</a>; 
-<a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
-<a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
 <a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
 <a href="#section-5-8" class="auto internal xref">Section 5, Paragraph 8</a>; 
 <a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
-<a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
-<a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
-<a href="#section-5.3-4" class="auto internal xref">Section 5.3, Paragraph 4</a>; 
-<a href="#section-5.3-4" class="auto internal xref">Section 5.3, Paragraph 4</a>; 
-<a href="#section-5.3-4" class="auto internal xref">Section 5.3, Paragraph 4</a>; 
 <a href="#section-5.3-4" class="auto internal xref">Section 5.3, Paragraph 4</a>; 
 <a href="#section-6-1" class="auto internal xref">Section 6, Paragraph 1</a>; 
-<a href="#section-6-1" class="auto internal xref">Section 6, Paragraph 1</a>; 
-<a href="#section-6-2.1.1" class="auto internal xref">Section 6, Paragraph 2.1.1</a>; 
-<a href="#section-6-2.1.1" class="auto internal xref">Section 6, Paragraph 2.1.1</a>; 
 <a href="#section-6-2.1.1" class="auto internal xref">Section 6, Paragraph 2.1.1</a>; 
 <a href="#section-6-2.2.1" class="auto internal xref">Section 6, Paragraph 2.2.1</a>; 
 <a href="#section-6-3" class="auto internal xref">Section 6, Paragraph 3</a>; 
@@ -3788,22 +3770,13 @@ Content-Length: 38
 <a href="#section-6-7" class="auto internal xref">Section 6, Paragraph 7</a>; 
 <a href="#section-6-8" class="auto internal xref">Section 6, Paragraph 8</a>; 
 <a href="#section-6-10.1.1" class="auto internal xref">Section 6, Paragraph 10.1.1</a>; 
-<a href="#section-6-10.1.1" class="auto internal xref">Section 6, Paragraph 10.1.1</a>; 
 <a href="#section-6-10.2.1" class="auto internal xref">Section 6, Paragraph 10.2.1</a>; 
-<a href="#section-6-10.2.1" class="auto internal xref">Section 6, Paragraph 10.2.1</a>; 
-<a href="#section-6.1-6" class="auto internal xref">Section 6.1, Paragraph 6</a>; 
-<a href="#section-6.1-6" class="auto internal xref">Section 6.1, Paragraph 6</a>; 
-<a href="#section-6.1-6" class="auto internal xref">Section 6.1, Paragraph 6</a>; 
 <a href="#section-6.1-6" class="auto internal xref">Section 6.1, Paragraph 6</a>; 
 <a href="#section-6.2-1" class="auto internal xref">Section 6.2, Paragraph 1</a>; 
 <a href="#section-6.2-2" class="auto internal xref">Section 6.2, Paragraph 2</a>; 
 <a href="#section-6.2-4" class="auto internal xref">Section 6.2, Paragraph 4</a>; 
-<a href="#section-6.2-4" class="auto internal xref">Section 6.2, Paragraph 4</a>; 
-<a href="#section-6.2.1-1" class="auto internal xref">Section 6.2.1, Paragraph 1</a>; 
 <a href="#section-6.2.1-1" class="auto internal xref">Section 6.2.1, Paragraph 1</a>; 
 <a href="#section-6.2.1-2" class="auto internal xref">Section 6.2.1, Paragraph 2</a>; 
-<a href="#section-6.2.1-2" class="auto internal xref">Section 6.2.1, Paragraph 2</a>; 
-<a href="#section-6.2.1-3" class="auto internal xref">Section 6.2.1, Paragraph 3</a>; 
 <a href="#section-6.2.1-3" class="auto internal xref">Section 6.2.1, Paragraph 3</a>; 
 <a href="#section-6.2.1-4" class="auto internal xref">Section 6.2.1, Paragraph 4</a>; 
 <a href="#section-6.2.3-3" class="auto internal xref">Section 6.2.3, Paragraph 3</a>; 
@@ -3815,31 +3788,18 @@ Content-Length: 38
 <a href="#section-6.5.1-4" class="auto internal xref">Section 6.5.1, Paragraph 4</a>; 
 <a href="#section-6.5.2-4" class="auto internal xref">Section 6.5.2, Paragraph 4</a>; 
 <a href="#section-6.5.2-5" class="auto internal xref">Section 6.5.2, Paragraph 5</a>; 
-<a href="#section-6.5.2-5" class="auto internal xref">Section 6.5.2, Paragraph 5</a>; 
 <a href="#section-6.5.2-7" class="auto internal xref">Section 6.5.2, Paragraph 7</a>; 
-<a href="#section-6.5.2-7" class="auto internal xref">Section 6.5.2, Paragraph 7</a>; 
-<a href="#section-6.7-2" class="auto internal xref">Section 6.7, Paragraph 2</a>; 
 <a href="#section-6.7-2" class="auto internal xref">Section 6.7, Paragraph 2</a>; 
 <a href="#section-6.7-4" class="auto internal xref">Section 6.7, Paragraph 4</a>; 
 <a href="#section-6.8-1" class="auto internal xref">Section 6.8, Paragraph 1</a>; 
 <a href="#section-6.9-1" class="auto internal xref">Section 6.9, Paragraph 1</a>; 
 <a href="#section-7-1" class="auto internal xref">Section 7, Paragraph 1</a>; 
-<a href="#section-7-1" class="auto internal xref">Section 7, Paragraph 1</a>; 
-<a href="#section-7-1" class="auto internal xref">Section 7, Paragraph 1</a>; 
-<a href="#section-7-3" class="auto internal xref">Section 7, Paragraph 3</a>; 
 <a href="#section-7-3" class="auto internal xref">Section 7, Paragraph 3</a>; 
 <a href="#section-7-4" class="auto internal xref">Section 7, Paragraph 4</a>; 
-<a href="#section-7-4" class="auto internal xref">Section 7, Paragraph 4</a>; 
-<a href="#section-7-5" class="auto internal xref">Section 7, Paragraph 5</a>; 
-<a href="#section-7-5" class="auto internal xref">Section 7, Paragraph 5</a>; 
 <a href="#section-7-5" class="auto internal xref">Section 7, Paragraph 5</a>; 
 <a href="#section-7-6" class="auto internal xref">Section 7, Paragraph 6</a>; 
 <a href="#appendix-A-1" class="auto internal xref">Appendix A, Paragraph 1</a>; 
-<a href="#appendix-A-1" class="auto internal xref">Appendix A, Paragraph 1</a>; 
 <a href="#appendix-A-6" class="auto internal xref">Appendix A, Paragraph 6</a>; 
-<a href="#appendix-A-6" class="auto internal xref">Appendix A, Paragraph 6</a>; 
-<a href="#appendix-A-8" class="auto internal xref">Appendix A, Paragraph 8</a>; 
-<a href="#appendix-A-8" class="auto internal xref">Appendix A, Paragraph 8</a>; 
 <a href="#appendix-A-8" class="auto internal xref">Appendix A, Paragraph 8</a>; 
 <a href="#appendix-A-14" class="auto internal xref">Appendix A, Paragraph 14</a>; 
 <a href="#appendix-A-16" class="auto internal xref">Appendix A, Paragraph 16</a>; 
@@ -3854,35 +3814,24 @@ Content-Length: 38
 <a href="#section-2.2-3.8.1" class="auto internal xref">Section 2.2, Paragraph 3.8.1</a>; 
 <a href="#section-3-1" class="auto internal xref">Section 3, Paragraph 1</a>; 
 <a href="#section-3-3" class="auto internal xref">Section 3, Paragraph 3</a>; 
-<a href="#section-3-3" class="auto internal xref">Section 3, Paragraph 3</a>; 
-<a href="#section-3.2-3" class="auto internal xref">Section 3.2, Paragraph 3</a>; 
 <a href="#section-3.2-3" class="auto internal xref">Section 3.2, Paragraph 3</a>; 
 <a href="#section-4.3-1" class="auto internal xref">Section 4.3, Paragraph 1</a>; 
-<a href="#section-4.4-5" class="auto internal xref">Section 4.4, Paragraph 5</a>; 
 <a href="#section-4.4-5" class="auto internal xref">Section 4.4, Paragraph 5</a>; 
 <a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
 <a href="#section-5.1-2" class="auto internal xref">Section 5.1, Paragraph 2</a>; 
 <a href="#section-6-10.1.1" class="auto internal xref">Section 6, Paragraph 10.1.1</a>; 
 <a href="#section-6.1-1" class="auto internal xref">Section 6.1, Paragraph 1</a>; 
-<a href="#section-6.1-1" class="auto internal xref">Section 6.1, Paragraph 1</a>; 
 <a href="#section-6.1-2" class="auto internal xref">Section 6.1, Paragraph 2</a>; 
 <a href="#section-6.1-3" class="auto internal xref">Section 6.1, Paragraph 3</a>; 
-<a href="#section-6.1-3" class="auto internal xref">Section 6.1, Paragraph 3</a>; 
-<a href="#section-6.1-4" class="auto internal xref">Section 6.1, Paragraph 4</a>; 
 <a href="#section-6.1-4" class="auto internal xref">Section 6.1, Paragraph 4</a>; 
 <a href="#section-6.1-5" class="auto internal xref">Section 6.1, Paragraph 5</a>; 
 <a href="#section-6.1-7" class="auto internal xref">Section 6.1, Paragraph 7</a>; 
 <a href="#section-6.2-3" class="auto internal xref">Section 6.2, Paragraph 3</a>; 
 <a href="#section-6.2-4" class="auto internal xref">Section 6.2, Paragraph 4</a>; 
 <a href="#section-6.2.1-1" class="auto internal xref">Section 6.2.1, Paragraph 1</a>; 
-<a href="#section-6.2.1-1" class="auto internal xref">Section 6.2.1, Paragraph 1</a>; 
-<a href="#section-6.2.1-3" class="auto internal xref">Section 6.2.1, Paragraph 3</a>; 
-<a href="#section-6.2.1-3" class="auto internal xref">Section 6.2.1, Paragraph 3</a>; 
-<a href="#section-6.2.1-3" class="auto internal xref">Section 6.2.1, Paragraph 3</a>; 
 <a href="#section-6.2.1-3" class="auto internal xref">Section 6.2.1, Paragraph 3</a>; 
 <a href="#section-6.2.2-2" class="auto internal xref">Section 6.2.2, Paragraph 2</a>; 
 <a href="#section-6.2.3-3" class="auto internal xref">Section 6.2.3, Paragraph 3</a>; 
-<a href="#section-6.2.3-5" class="auto internal xref">Section 6.2.3, Paragraph 5</a>; 
 <a href="#section-6.2.3-5" class="auto internal xref">Section 6.2.3, Paragraph 5</a>; 
 <a href="#section-6.2.3-6" class="auto internal xref">Section 6.2.3, Paragraph 6</a>; 
 <a href="#section-6.5-1" class="auto internal xref">Section 6.5, Paragraph 1</a>; 
@@ -3892,11 +3841,8 @@ Content-Length: 38
 <a href="#section-6.5.2-8" class="auto internal xref">Section 6.5.2, Paragraph 8</a>; 
 <a href="#section-6.5.2-10" class="auto internal xref">Section 6.5.2, Paragraph 10</a>; 
 <a href="#section-6.8-1" class="auto internal xref">Section 6.8, Paragraph 1</a>; 
-<a href="#section-6.8-1" class="auto internal xref">Section 6.8, Paragraph 1</a>; 
 <a href="#section-6.8-2" class="auto internal xref">Section 6.8, Paragraph 2</a>; 
 <a href="#section-7-1" class="auto internal xref">Section 7, Paragraph 1</a>; 
-<a href="#section-7-4" class="auto internal xref">Section 7, Paragraph 4</a>; 
-<a href="#section-7-4" class="auto internal xref">Section 7, Paragraph 4</a>; 
 <a href="#section-7-4" class="auto internal xref">Section 7, Paragraph 4</a>; 
 <a href="#section-7-5" class="auto internal xref">Section 7, Paragraph 5</a>; 
 <a href="#section-8.1-1" class="auto internal xref">Section 8.1, Paragraph 1</a>; 
@@ -3928,19 +3874,11 @@ Content-Length: 38
 <a href="#section-2.2-3.12.1" class="auto internal xref">Section 2.2, Paragraph 3.12.1</a>; 
 <a href="#section-4-2.1.1" class="auto internal xref">Section 4, Paragraph 2.1.1</a>; 
 <a href="#section-4.1-3" class="auto internal xref">Section 4.1, Paragraph 3</a>; 
-<a href="#section-4.1-3" class="auto internal xref">Section 4.1, Paragraph 3</a>; 
-<a href="#section-4.1-4" class="auto internal xref">Section 4.1, Paragraph 4</a>; 
 <a href="#section-4.1-4" class="auto internal xref">Section 4.1, Paragraph 4</a>; 
 <a href="#section-4.1-6" class="auto internal xref">Section 4.1, Paragraph 6</a>; 
 <a href="#section-4.3-3" class="auto internal xref">Section 4.3, Paragraph 3</a>; 
 <a href="#section-4.3-4.5.1" class="auto internal xref">Section 4.3, Paragraph 4.5.1</a>; 
 <a href="#section-4.3-8" class="auto internal xref">Section 4.3, Paragraph 8</a>; 
-<a href="#section-4.3-8" class="auto internal xref">Section 4.3, Paragraph 8</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
 <a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
 <a href="#section-5-7" class="auto internal xref">Section 5, Paragraph 7</a>; 
 <a href="#section-5.2-3" class="auto internal xref">Section 5.2, Paragraph 3</a>; 
@@ -3968,7 +3906,6 @@ Content-Length: 38
 <a href="#section-4.5-2" class="auto internal xref">Section 4.5, Paragraph 2</a>; 
 <a href="#section-6.1-2" class="auto internal xref">Section 6.1, Paragraph 2</a>; 
 <a href="#section-6.1-7" class="auto internal xref">Section 6.1, Paragraph 7</a>; 
-<a href="#section-6.1-7" class="auto internal xref">Section 6.1, Paragraph 7</a>; 
 <a href="#section-6.2.1-1" class="auto internal xref">Section 6.2.1, Paragraph 1</a>; 
 <a href="#section-6.5-2" class="auto internal xref">Section 6.5, Paragraph 2</a>; 
 <a href="#section-6.5.1-1" class="auto internal xref">Section 6.5.1, Paragraph 1</a><a href="#appendix-C-2.2.2.1.1.4.1" class="pilcrow">¶</a></p>
@@ -3981,16 +3918,11 @@ Content-Length: 38
 <a href="#section-2.2-3.10.1" class="auto internal xref">Section 2.2, Paragraph 3.10.1</a>; 
 <a href="#section-4-2.2.1" class="auto internal xref">Section 4, Paragraph 2.2.1</a>; 
 <a href="#section-4.2-3" class="auto internal xref">Section 4.2, Paragraph 3</a>; 
-<a href="#section-4.2-3" class="auto internal xref">Section 4.2, Paragraph 3</a>; 
-<a href="#section-4.2-4" class="auto internal xref">Section 4.2, Paragraph 4</a>; 
 <a href="#section-4.2-4" class="auto internal xref">Section 4.2, Paragraph 4</a>; 
 <a href="#section-4.2-6" class="auto internal xref">Section 4.2, Paragraph 6</a>; 
 <a href="#section-4.4-1" class="auto internal xref">Section 4.4, Paragraph 1</a>; 
 <a href="#section-4.4-2.7.1" class="auto internal xref">Section 4.4, Paragraph 2.7.1</a>; 
 <a href="#section-4.4-5" class="auto internal xref">Section 4.4, Paragraph 5</a>; 
-<a href="#section-5-8" class="auto internal xref">Section 5, Paragraph 8</a>; 
-<a href="#section-5-8" class="auto internal xref">Section 5, Paragraph 8</a>; 
-<a href="#section-5-8" class="auto internal xref">Section 5, Paragraph 8</a>; 
 <a href="#section-5-8" class="auto internal xref">Section 5, Paragraph 8</a>; 
 <a href="#section-5.2-3" class="auto internal xref">Section 5.2, Paragraph 3</a>; 
 <a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
@@ -4022,13 +3954,11 @@ Content-Length: 38
                 <dd style="margin-left: 1.5em" id="appendix-C-2.3.2.1.1.2">
                   <p id="appendix-C-2.3.2.1.1.2.1">
                     <a href="#section-3-1" class="auto internal xref">Section 3, Paragraph 1</a>; 
-<a href="#section-3-1" class="auto internal xref">Section 3, Paragraph 1</a>; 
 <a href="#section-3-2" class="auto internal xref">Section 3, Paragraph 2</a>; 
 <a href="#section-3-3" class="auto internal xref">Section 3, Paragraph 3</a>; 
 <a href="#section-3.1-1" class="auto internal xref">Section 3.1, Paragraph 1</a>; 
 <a href="#section-3.1-2" class="auto internal xref">Section 3.1, Paragraph 2</a>; 
 <a href="#section-3.1-4" class="auto internal xref">Section 3.1, Paragraph 4</a>; 
-<a href="#section-3.2-1" class="auto internal xref">Section 3.2, Paragraph 1</a>; 
 <a href="#section-3.2-1" class="auto internal xref">Section 3.2, Paragraph 1</a>; 
 <a href="#section-3.2-2" class="auto internal xref">Section 3.2, Paragraph 2</a>; 
 <a href="#section-3.2-3" class="auto internal xref">Section 3.2, Paragraph 3</a>; 
@@ -4037,9 +3967,7 @@ Content-Length: 38
 <a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
 <a href="#section-5.3-1" class="auto internal xref">Section 5.3, Paragraph 1</a>; 
 <a href="#section-5.3-4" class="auto internal xref">Section 5.3, Paragraph 4</a>; 
-<a href="#section-5.3-4" class="auto internal xref">Section 5.3, Paragraph 4</a>; 
 <a href="#section-6.1-2" class="auto internal xref">Section 6.1, Paragraph 2</a>; 
-<a href="#section-6.6-1" class="auto internal xref">Section 6.6, Paragraph 1</a>; 
 <a href="#section-6.6-1" class="auto internal xref">Section 6.6, Paragraph 1</a>; 
 <a href="#section-6.9-1" class="auto internal xref">Section 6.9, Paragraph 1</a>; 
 <a href="#section-7-1" class="auto internal xref">Section 7, Paragraph 1</a>; 
@@ -4057,10 +3985,8 @@ Content-Length: 38
                 <dd style="margin-left: 1.5em" id="appendix-C-2.3.2.1.1.4">
                   <p id="appendix-C-2.3.2.1.1.4.1">
                     <a href="#section-3-2" class="auto internal xref">Section 3, Paragraph 2</a>; 
-<a href="#section-3-2" class="auto internal xref">Section 3, Paragraph 2</a>; 
 <a href="#section-3-3" class="auto internal xref">Section 3, Paragraph 3</a>; 
 <a href="#section-3.2-1" class="auto internal xref">Section 3.2, Paragraph 1</a>; 
-<a href="#section-3.2-3" class="auto internal xref">Section 3.2, Paragraph 3</a>; 
 <a href="#section-3.2-3" class="auto internal xref">Section 3.2, Paragraph 3</a>; 
 <a href="#section-6.1-3" class="auto internal xref">Section 6.1, Paragraph 3</a><a href="#appendix-C-2.3.2.1.1.4.1" class="pilcrow">¶</a></p>
 </dd>
@@ -4085,19 +4011,14 @@ Content-Length: 38
 <a href="#section-1-6" class="auto internal xref">Section 1, Paragraph 6</a>; 
 <a href="#section-1-7" class="auto internal xref">Section 1, Paragraph 7</a>; 
 <a href="#section-2-2.1.1" class="auto internal xref">Section 2, Paragraph 2.1.1</a>; 
-<a href="#section-2-2.1.1" class="auto internal xref">Section 2, Paragraph 2.1.1</a>; 
 <a href="#section-2-2.2.1" class="auto internal xref">Section 2, Paragraph 2.2.1</a>; 
 <a href="#section-2-2.3.1" class="auto internal xref">Section 2, Paragraph 2.3.1</a>; 
-<a href="#section-2-3" class="auto internal xref">Section 2, Paragraph 3</a>; 
-<a href="#section-2-3" class="auto internal xref">Section 2, Paragraph 3</a>; 
 <a href="#section-2-3" class="auto internal xref">Section 2, Paragraph 3</a>; 
 <a href="#section-2-5" class="auto internal xref">Section 2, Paragraph 5</a>; 
 <a href="#section-2-6.4.1" class="auto internal xref">Section 2, Paragraph 6.4.1</a>; 
 <a href="#section-2-6.5.1" class="auto internal xref">Section 2, Paragraph 6.5.1</a>; 
 <a href="#section-2-7" class="auto internal xref">Section 2, Paragraph 7</a>; 
-<a href="#section-2-7" class="auto internal xref">Section 2, Paragraph 7</a>; 
 <a href="#section-2-8.1.1" class="auto internal xref">Section 2, Paragraph 8.1.1</a>; 
-<a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
 <a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
 <a href="#section-2.1-1" class="auto internal xref">Section 2.1, Paragraph 1</a>; 
 <a href="#section-2.2-3.8.1" class="auto internal xref">Section 2.2, Paragraph 3.8.1</a>; 
@@ -4109,14 +4030,11 @@ Content-Length: 38
 <a href="#section-4.3-9.1.1" class="auto internal xref">Section 4.3, Paragraph 9.1.1</a>; 
 <a href="#section-4.3-9.1.2.1.1" class="auto internal xref">Section 4.3, Paragraph 9.1.2.1.1</a>; 
 <a href="#section-4.3-9.1.2.2.1" class="auto internal xref">Section 4.3, Paragraph 9.1.2.2.1</a>; 
-<a href="#section-4.3-9.1.2.2.1" class="auto internal xref">Section 4.3, Paragraph 9.1.2.2.1</a>; 
 <a href="#section-4.3-9.4.1" class="auto internal xref">Section 4.3, Paragraph 9.4.1</a>; 
 <a href="#section-4.3-12" class="auto internal xref">Section 4.3, Paragraph 12</a>; 
 <a href="#section-4.4-1" class="auto internal xref">Section 4.4, Paragraph 1</a>; 
 <a href="#section-4.6-1" class="auto internal xref">Section 4.6, Paragraph 1</a>; 
 <a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
-<a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
-<a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
 <a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
 <a href="#section-5-5" class="auto internal xref">Section 5, Paragraph 5</a>; 
 <a href="#section-5-7" class="auto internal xref">Section 5, Paragraph 7</a>; 
@@ -4125,7 +4043,6 @@ Content-Length: 38
 <a href="#section-5-10" class="auto internal xref">Section 5, Paragraph 10</a>; 
 <a href="#section-5.1-2" class="auto internal xref">Section 5.1, Paragraph 2</a>; 
 <a href="#section-5.2-2" class="auto internal xref">Section 5.2, Paragraph 2</a>; 
-<a href="#section-5.2-3" class="auto internal xref">Section 5.2, Paragraph 3</a>; 
 <a href="#section-5.2-3" class="auto internal xref">Section 5.2, Paragraph 3</a>; 
 <a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
 <a href="#section-5.3-1" class="auto internal xref">Section 5.3, Paragraph 1</a>; 
@@ -4136,24 +4053,15 @@ Content-Length: 38
 <a href="#section-6-6" class="auto internal xref">Section 6, Paragraph 6</a>; 
 <a href="#section-6-7" class="auto internal xref">Section 6, Paragraph 7</a>; 
 <a href="#section-6-8" class="auto internal xref">Section 6, Paragraph 8</a>; 
-<a href="#section-6-8" class="auto internal xref">Section 6, Paragraph 8</a>; 
 <a href="#section-6.1-1" class="auto internal xref">Section 6.1, Paragraph 1</a>; 
 <a href="#section-6.1-2" class="auto internal xref">Section 6.1, Paragraph 2</a>; 
-<a href="#section-6.2-1" class="auto internal xref">Section 6.2, Paragraph 1</a>; 
 <a href="#section-6.2-1" class="auto internal xref">Section 6.2, Paragraph 1</a>; 
 <a href="#section-6.2.2-1" class="auto internal xref">Section 6.2.2, Paragraph 1</a>; 
 <a href="#section-6.2.3-2" class="auto internal xref">Section 6.2.3, Paragraph 2</a>; 
 <a href="#section-6.3-1" class="auto internal xref">Section 6.3, Paragraph 1</a>; 
-<a href="#section-6.3-1" class="auto internal xref">Section 6.3, Paragraph 1</a>; 
-<a href="#section-6.3-1" class="auto internal xref">Section 6.3, Paragraph 1</a>; 
 <a href="#section-6.3-4" class="auto internal xref">Section 6.3, Paragraph 4</a>; 
-<a href="#section-6.3-4" class="auto internal xref">Section 6.3, Paragraph 4</a>; 
-<a href="#section-6.3-4" class="auto internal xref">Section 6.3, Paragraph 4</a>; 
-<a href="#section-6.4-1" class="auto internal xref">Section 6.4, Paragraph 1</a>; 
 <a href="#section-6.4-1" class="auto internal xref">Section 6.4, Paragraph 1</a>; 
 <a href="#section-6.5.1-1" class="auto internal xref">Section 6.5.1, Paragraph 1</a>; 
-<a href="#section-6.5.1-3" class="auto internal xref">Section 6.5.1, Paragraph 3</a>; 
-<a href="#section-6.5.1-3" class="auto internal xref">Section 6.5.1, Paragraph 3</a>; 
 <a href="#section-6.5.1-3" class="auto internal xref">Section 6.5.1, Paragraph 3</a>; 
 <a href="#section-6.5.2-1" class="auto internal xref">Section 6.5.2, Paragraph 1</a>; 
 <a href="#section-6.5.2-4" class="auto internal xref">Section 6.5.2, Paragraph 4</a>; 
@@ -4161,23 +4069,14 @@ Content-Length: 38
 <a href="#section-6.5.2-7" class="auto internal xref">Section 6.5.2, Paragraph 7</a>; 
 <a href="#section-6.5.2-8" class="auto internal xref">Section 6.5.2, Paragraph 8</a>; 
 <a href="#section-6.5.2-10" class="auto internal xref">Section 6.5.2, Paragraph 10</a>; 
-<a href="#section-6.5.2-10" class="auto internal xref">Section 6.5.2, Paragraph 10</a>; 
 <a href="#section-6.7-3" class="auto internal xref">Section 6.7, Paragraph 3</a>; 
 <a href="#section-6.9-1" class="auto internal xref">Section 6.9, Paragraph 1</a>; 
 <a href="#section-6.10-1" class="auto internal xref">Section 6.10, Paragraph 1</a>; 
-<a href="#section-6.10-1" class="auto internal xref">Section 6.10, Paragraph 1</a>; 
 <a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
-<a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
-<a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
-<a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
-<a href="#section-6.10-4" class="auto internal xref">Section 6.10, Paragraph 4</a>; 
 <a href="#section-6.10-4" class="auto internal xref">Section 6.10, Paragraph 4</a>; 
 <a href="#section-6.10-5" class="auto internal xref">Section 6.10, Paragraph 5</a>; 
 <a href="#section-7-1" class="auto internal xref">Section 7, Paragraph 1</a>; 
 <a href="#section-7-2" class="auto internal xref">Section 7, Paragraph 2</a>; 
-<a href="#section-7-2" class="auto internal xref">Section 7, Paragraph 2</a>; 
-<a href="#section-7-2" class="auto internal xref">Section 7, Paragraph 2</a>; 
-<a href="#section-8.2-1" class="auto internal xref">Section 8.2, Paragraph 1</a>; 
 <a href="#section-8.2-1" class="auto internal xref">Section 8.2, Paragraph 1</a>; 
 <a href="#section-8.2-2" class="auto internal xref">Section 8.2, Paragraph 2</a>; 
 <a href="#appendix-A-1" class="auto internal xref">Appendix A, Paragraph 1</a>; 
@@ -4185,7 +4084,6 @@ Content-Length: 38
 <a href="#appendix-A-4" class="auto internal xref">Appendix A, Paragraph 4</a>; 
 <a href="#appendix-A-8" class="auto internal xref">Appendix A, Paragraph 8</a>; 
 <a href="#appendix-A-18" class="auto internal xref">Appendix A, Paragraph 18</a>; 
-<a href="#appendix-A-20" class="auto internal xref">Appendix A, Paragraph 20</a>; 
 <a href="#appendix-A-20" class="auto internal xref">Appendix A, Paragraph 20</a>; 
 <a href="#appendix-A-34" class="auto internal xref">Appendix A, Paragraph 34</a><a href="#appendix-C-2.4.2.1.1.2.1" class="pilcrow">¶</a></p>
 </dd>
@@ -4195,15 +4093,12 @@ Content-Length: 38
                   <p id="appendix-C-2.4.2.1.1.4.1">
                     <a href="#section-4.4-1" class="auto internal xref">Section 4.4, Paragraph 1</a>; 
 <a href="#section-6-10.1.1" class="auto internal xref">Section 6, Paragraph 10.1.1</a>; 
-<a href="#section-6-10.1.1" class="auto internal xref">Section 6, Paragraph 10.1.1</a>; 
 <a href="#section-6-10.2.1" class="auto internal xref">Section 6, Paragraph 10.2.1</a>; 
-<a href="#section-6.1-1" class="auto internal xref">Section 6.1, Paragraph 1</a>; 
 <a href="#section-6.1-1" class="auto internal xref">Section 6.1, Paragraph 1</a>; 
 <a href="#section-6.2.3-6" class="auto internal xref">Section 6.2.3, Paragraph 6</a>; 
 <a href="#section-6.5.1-4" class="auto internal xref">Section 6.5.1, Paragraph 4</a>; 
 <a href="#section-6.5.1-5" class="auto internal xref">Section 6.5.1, Paragraph 5</a>; 
 <a href="#section-6.5.2-9" class="auto internal xref">Section 6.5.2, Paragraph 9</a>; 
-<a href="#section-8.2-1" class="auto internal xref">Section 8.2, Paragraph 1</a>; 
 <a href="#section-8.2-1" class="auto internal xref">Section 8.2, Paragraph 1</a>; 
 <a href="#section-8.2-2" class="auto internal xref">Section 8.2, Paragraph 2</a><a href="#appendix-C-2.4.2.1.1.4.1" class="pilcrow">¶</a></p>
 </dd>
@@ -4221,7 +4116,6 @@ Content-Length: 38
                     <a href="#section-1-5.2.1" class="auto internal xref">Section 1, Paragraph 5.2.1</a>; 
 <a href="#section-1-6" class="auto internal xref">Section 1, Paragraph 6</a>; 
 <a href="#section-1-7" class="auto internal xref">Section 1, Paragraph 7</a>; 
-<a href="#section-1-7" class="auto internal xref">Section 1, Paragraph 7</a>; 
 <a href="#section-2-2.3.1" class="auto internal xref">Section 2, Paragraph 2.3.1</a>; 
 <a href="#section-2-6.3.1" class="auto internal xref">Section 2, Paragraph 6.3.1</a>; 
 <a href="#section-2-6.4.1" class="auto internal xref">Section 2, Paragraph 6.4.1</a>; 
@@ -4231,33 +4125,20 @@ Content-Length: 38
 <a href="#section-2.2-3.2.1" class="auto internal xref">Section 2.2, Paragraph 3.2.1</a>; 
 <a href="#dfn-relay" class="auto internal xref">Section 2.2</a>; 
 <a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-1" class="auto internal xref">Section 5, Paragraph 1</a>; 
-<a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
 <a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
 <a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
-<a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
-<a href="#section-5-4" class="auto internal xref">Section 5, Paragraph 4</a>; 
-<a href="#section-5-5" class="auto internal xref">Section 5, Paragraph 5</a>; 
 <a href="#section-5-5" class="auto internal xref">Section 5, Paragraph 5</a>; 
 <a href="#section-5-6" class="auto internal xref">Section 5, Paragraph 6</a>; 
 <a href="#section-5.2-2" class="auto internal xref">Section 5.2, Paragraph 2</a>; 
-<a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
 <a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
 <a href="#section-5.3-4" class="auto internal xref">Section 5.3, Paragraph 4</a>; 
 <a href="#section-6-3" class="auto internal xref">Section 6, Paragraph 3</a>; 
 <a href="#section-6-5.2.1" class="auto internal xref">Section 6, Paragraph 5.2.1</a>; 
 <a href="#section-6-7" class="auto internal xref">Section 6, Paragraph 7</a>; 
-<a href="#section-6-7" class="auto internal xref">Section 6, Paragraph 7</a>; 
 <a href="#section-6-8" class="auto internal xref">Section 6, Paragraph 8</a>; 
-<a href="#section-6-10.1.1" class="auto internal xref">Section 6, Paragraph 10.1.1</a>; 
 <a href="#section-6-10.1.1" class="auto internal xref">Section 6, Paragraph 10.1.1</a>; 
 <a href="#section-6.1-3" class="auto internal xref">Section 6.1, Paragraph 3</a>; 
 <a href="#section-6.1-4" class="auto internal xref">Section 6.1, Paragraph 4</a>; 
-<a href="#section-6.1-6" class="auto internal xref">Section 6.1, Paragraph 6</a>; 
-<a href="#section-6.1-6" class="auto internal xref">Section 6.1, Paragraph 6</a>; 
 <a href="#section-6.1-6" class="auto internal xref">Section 6.1, Paragraph 6</a>; 
 <a href="#section-6.1-7" class="auto internal xref">Section 6.1, Paragraph 7</a>; 
 <a href="#section-6.2-1" class="auto internal xref">Section 6.2, Paragraph 1</a>; 
@@ -4265,17 +4146,12 @@ Content-Length: 38
 <a href="#section-6.2-3" class="auto internal xref">Section 6.2, Paragraph 3</a>; 
 <a href="#section-6.2.3-2" class="auto internal xref">Section 6.2.3, Paragraph 2</a>; 
 <a href="#section-6.2.3-5" class="auto internal xref">Section 6.2.3, Paragraph 5</a>; 
-<a href="#section-6.2.3-5" class="auto internal xref">Section 6.2.3, Paragraph 5</a>; 
-<a href="#section-6.5-2" class="auto internal xref">Section 6.5, Paragraph 2</a>; 
 <a href="#section-6.5-2" class="auto internal xref">Section 6.5, Paragraph 2</a>; 
 <a href="#section-6.5-4" class="auto internal xref">Section 6.5, Paragraph 4</a>; 
-<a href="#section-6.7-4" class="auto internal xref">Section 6.7, Paragraph 4</a>; 
 <a href="#section-6.7-4" class="auto internal xref">Section 6.7, Paragraph 4</a>; 
 <a href="#section-7-1" class="auto internal xref">Section 7, Paragraph 1</a>; 
 <a href="#section-7-2" class="auto internal xref">Section 7, Paragraph 2</a>; 
 <a href="#section-7-3" class="auto internal xref">Section 7, Paragraph 3</a>; 
-<a href="#section-8.2-1" class="auto internal xref">Section 8.2, Paragraph 1</a>; 
-<a href="#section-8.2-1" class="auto internal xref">Section 8.2, Paragraph 1</a>; 
 <a href="#section-8.2-1" class="auto internal xref">Section 8.2, Paragraph 1</a>; 
 <a href="#appendix-A-1" class="auto internal xref">Appendix A, Paragraph 1</a>; 
 <a href="#appendix-A-16" class="auto internal xref">Appendix A, Paragraph 16</a>; 
@@ -4289,7 +4165,6 @@ Content-Length: 38
                     <a href="#section-6.2.2-1" class="auto internal xref">Section 6.2.2, Paragraph 1</a>; 
 <a href="#section-6.2.3-6" class="auto internal xref">Section 6.2.3, Paragraph 6</a>; 
 <a href="#section-6.10-4" class="auto internal xref">Section 6.10, Paragraph 4</a>; 
-<a href="#section-8.2-2" class="auto internal xref">Section 8.2, Paragraph 2</a>; 
 <a href="#section-8.2-2" class="auto internal xref">Section 8.2, Paragraph 2</a><a href="#appendix-C-2.4.2.1.1.10.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
@@ -4312,39 +4187,27 @@ Content-Length: 38
 <a href="#section-2-5" class="auto internal xref">Section 2, Paragraph 5</a>; 
 <a href="#section-2-6.1.1" class="auto internal xref">Section 2, Paragraph 6.1.1</a>; 
 <a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
-<a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
-<a href="#section-2-9" class="auto internal xref">Section 2, Paragraph 9</a>; 
 <a href="#section-2.2-3.2.1" class="auto internal xref">Section 2.2, Paragraph 3.2.1</a>; 
 <a href="#section-2.2-3.10.1" class="auto internal xref">Section 2.2, Paragraph 3.10.1</a>; 
 <a href="#dfn-target" class="auto internal xref">Section 2.2</a>; 
 <a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
-<a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
-<a href="#section-5-2" class="auto internal xref">Section 5, Paragraph 2</a>; 
 <a href="#section-5-7" class="auto internal xref">Section 5, Paragraph 7</a>; 
 <a href="#section-5-8" class="auto internal xref">Section 5, Paragraph 8</a>; 
-<a href="#section-5.2-3" class="auto internal xref">Section 5.2, Paragraph 3</a>; 
 <a href="#section-5.2-3" class="auto internal xref">Section 5.2, Paragraph 3</a>; 
 <a href="#section-6-1" class="auto internal xref">Section 6, Paragraph 1</a>; 
 <a href="#section-6-5.3.1" class="auto internal xref">Section 6, Paragraph 5.3.1</a>; 
 <a href="#section-6-6" class="auto internal xref">Section 6, Paragraph 6</a>; 
 <a href="#section-6-8" class="auto internal xref">Section 6, Paragraph 8</a>; 
 <a href="#section-6.1-1" class="auto internal xref">Section 6.1, Paragraph 1</a>; 
-<a href="#section-6.1-1" class="auto internal xref">Section 6.1, Paragraph 1</a>; 
 <a href="#section-6.1-3" class="auto internal xref">Section 6.1, Paragraph 3</a>; 
 <a href="#section-6.3-1" class="auto internal xref">Section 6.3, Paragraph 1</a>; 
-<a href="#section-6.3-1" class="auto internal xref">Section 6.3, Paragraph 1</a>; 
-<a href="#section-6.3-4" class="auto internal xref">Section 6.3, Paragraph 4</a>; 
 <a href="#section-6.3-4" class="auto internal xref">Section 6.3, Paragraph 4</a>; 
 <a href="#section-6.9-3" class="auto internal xref">Section 6.9, Paragraph 3</a>; 
 <a href="#section-6.10-1" class="auto internal xref">Section 6.10, Paragraph 1</a>; 
 <a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
-<a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
-<a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
-<a href="#section-6.10-3" class="auto internal xref">Section 6.10, Paragraph 3</a>; 
 <a href="#section-6.10-4" class="auto internal xref">Section 6.10, Paragraph 4</a>; 
 <a href="#section-6.10-5" class="auto internal xref">Section 6.10, Paragraph 5</a>; 
 <a href="#appendix-A-1" class="auto internal xref">Appendix A, Paragraph 1</a>; 
-<a href="#appendix-A-20" class="auto internal xref">Appendix A, Paragraph 20</a>; 
 <a href="#appendix-A-20" class="auto internal xref">Appendix A, Paragraph 20</a><a href="#appendix-C-2.5.2.1.1.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
