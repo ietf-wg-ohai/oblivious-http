@@ -1,4 +1,5 @@
 LIBDIR := lib
+TIDY := true
 include $(LIBDIR)/main.mk
 
 $(LIBDIR)/main.mk:
